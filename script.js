@@ -181,6 +181,7 @@ function renderHero(hero) {
 
   const heroImageWrap = document.getElementById('hero-image-wrap')
   const heroImageNode = document.getElementById('hero-image')
+  const heroFallbackCollage = document.getElementById('hero-fallback-collage')
 
   if (!heroImageWrap || !heroImageNode) {
     return
@@ -191,10 +192,16 @@ function renderHero(hero) {
   if (!imageUrl) {
     heroImageWrap.hidden = true
     heroImageNode.removeAttribute('src')
+    if (heroFallbackCollage) {
+      heroFallbackCollage.hidden = false
+    }
     return
   }
 
   heroImageWrap.hidden = false
+  if (heroFallbackCollage) {
+    heroFallbackCollage.hidden = true
+  }
   heroImageNode.src = imageUrl
   heroImageNode.alt = hasUsableValue(hero.title) ? hero.title : APP_STATE.brandName
 }
@@ -213,9 +220,16 @@ function renderTrustPoints(trustPoints) {
   trustPoints.forEach((item) => {
     const title = hasUsableValue(item?.title) ? item.title : 'Đang cập nhật'
     const description = hasUsableValue(item?.description) ? item.description : title
+    const trustBadgeText = description.length > 42 ? title : description
 
-    trustStripGrid.appendChild(createNode('p', '', description))
-    heroTrustList.appendChild(createNode('li', '', `${title}: ${description}`))
+    trustStripGrid.appendChild(createNode('p', '', trustBadgeText))
+
+    const listItem = createNode('li', '', '')
+    const titleNode = createNode('strong', '', title)
+    const descriptionNode = createNode('span', '', description)
+    listItem.appendChild(titleNode)
+    listItem.appendChild(descriptionNode)
+    heroTrustList.appendChild(listItem)
   })
 }
 
@@ -664,7 +678,16 @@ function setupProductInterestButtons() {
 
 function setupQuickConsultLink() {
   const link = document.getElementById('quick-consult-link')
+  const mobileLink = document.getElementById('mobile-quick-contact')
+
+  if (mobileLink) {
+    mobileLink.setAttribute('aria-label', 'Liên hệ tư vấn nhanh')
+  }
+
   if (!link) {
+    if (mobileLink) {
+      mobileLink.setAttribute('href', '#contact')
+    }
     return
   }
 
@@ -676,6 +699,12 @@ function setupQuickConsultLink() {
     link.setAttribute('href', chatLink)
     link.setAttribute('target', '_blank')
     link.setAttribute('rel', 'noopener')
+
+    if (mobileLink) {
+      mobileLink.setAttribute('href', chatLink)
+      mobileLink.setAttribute('target', '_blank')
+      mobileLink.setAttribute('rel', 'noopener')
+    }
     return
   }
 
@@ -683,12 +712,24 @@ function setupQuickConsultLink() {
     link.setAttribute('href', mailtoLink)
     link.removeAttribute('target')
     link.removeAttribute('rel')
+
+    if (mobileLink) {
+      mobileLink.setAttribute('href', mailtoLink)
+      mobileLink.removeAttribute('target')
+      mobileLink.removeAttribute('rel')
+    }
     return
   }
 
   link.setAttribute('href', '#contact')
   link.removeAttribute('target')
   link.removeAttribute('rel')
+
+  if (mobileLink) {
+    mobileLink.setAttribute('href', '#contact')
+    mobileLink.removeAttribute('target')
+    mobileLink.removeAttribute('rel')
+  }
 }
 
 function setupHeroIntentLinks() {
@@ -719,16 +760,55 @@ function setupMobileNav() {
     return
   }
 
+  const closeNav = () => {
+    nav.classList.remove('open')
+    navToggle.setAttribute('aria-expanded', 'false')
+    document.body.classList.remove('nav-open')
+  }
+
+  const openNav = () => {
+    nav.classList.add('open')
+    navToggle.setAttribute('aria-expanded', 'true')
+    document.body.classList.add('nav-open')
+  }
+
   navToggle.addEventListener('click', () => {
-    const isOpen = nav.classList.toggle('open')
-    navToggle.setAttribute('aria-expanded', String(isOpen))
+    const isOpen = nav.classList.contains('open')
+
+    if (isOpen) {
+      closeNav()
+    } else {
+      openNav()
+    }
   })
 
   nav.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
-      nav.classList.remove('open')
-      navToggle.setAttribute('aria-expanded', 'false')
+      closeNav()
     })
+  })
+
+  document.addEventListener('click', (event) => {
+    const target = event.target
+    if (!(target instanceof Node)) {
+      return
+    }
+
+    if (!nav.classList.contains('open')) {
+      return
+    }
+
+    if (nav.contains(target) || navToggle.contains(target)) {
+      return
+    }
+
+    closeNav()
+  })
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && nav.classList.contains('open')) {
+      closeNav()
+    }
   })
 }
 
