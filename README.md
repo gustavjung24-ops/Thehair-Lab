@@ -1,6 +1,6 @@
 # The Hair Lab - Static Web + Sanity CMS
 
-Repo nay duoc toi uu theo huong "them CMS" va giu nguyen web tinh hien tai.
+Repo nay duoc toi uu theo huong "them CMS" + refactor UX tu one-page dai sang multi-page.
 
 Kien truc deploy:
 
@@ -10,11 +10,43 @@ Kien truc deploy:
 
 ## 1) Tong quan cau truc
 
-- `index.html`, `styles.css`, `script.js`: website tinh.
+- Website static da tach thanh nhieu route:
+	- `index.html` (Trang chu - ban tom tat)
+	- `thuong-hieu.html`
+	- `san-pham.html`
+	- `hop-tac.html`
+	- `gioi-thieu.html`
+	- `lien-he.html`
+- `script.js`: renderer theo tung page, mobile nav, sticky header, back-to-top, form lead ngan.
+- `styles.css`: style dung chung cho toan bo route.
 - `cms/`: lop ket noi Sanity cho frontend (chi doc published content).
 - `studio/`: Sanity Studio doc lap.
 
-## 2) Cac file da them/sua
+## 2) Refactor UX multi-page (2026-04)
+
+Muc tieu chinh:
+
+- Rut gon homepage thanh cac khoi tom tat de de scan.
+- Tach noi dung chi tiet sang page chuyen biet.
+- Tang kha nang dieu huong tren mobile voi sticky header + mobile menu + CTA ro rang.
+- Giu visual tone hien tai (theme sang) nhung toi uu trai nghiem su dung.
+
+File sua:
+
+- `index.html`
+- `script.js`
+- `styles.css`
+- `README.md`
+
+File them:
+
+- `thuong-hieu.html`
+- `san-pham.html`
+- `hop-tac.html`
+- `gioi-thieu.html`
+- `lien-he.html`
+
+## 3) Cac file da them/sua (CMS + Studio)
 
 Sua:
 
@@ -47,7 +79,7 @@ Them:
 - `studio/schemaTypes/documents/testimonialType.ts`
 - `studio/schemaTypes/documents/contactBlockType.ts`
 
-## 3) Chay local
+## 4) Chay local
 
 ### Website tinh (root)
 
@@ -71,7 +103,7 @@ npm run dev
 
 Mac dinh Studio chay o `http://localhost:3333`.
 
-## 4) Tao project Sanity va lay projectId/dataset
+## 5) Tao project Sanity va lay projectId/dataset
 
 Ban co the tao project theo 2 cach:
 
@@ -88,7 +120,7 @@ Cap nhat 2 noi:
 1. Frontend public config: `cms/sanityConfig.js`
 2. Studio env: `studio/.env` (tu `.env.example`)
 
-## 5) Schema CMS da co
+## 6) Schema CMS da co
 
 Da tao day du cac document type:
 
@@ -111,13 +143,13 @@ Frontend da map noi dung cho cac section chinh:
 
 Neu fetch loi hoac CMS chua co data, frontend tu dong dung fallback content de tranh trang trang.
 
-## 6) Quy tac bao mat (quan trong)
+## 7) Quy tac bao mat (quan trong)
 
 - Frontend KHONG dung write token.
 - Frontend chi dung public config (`projectId`, `dataset`, `apiVersion`, `useCdn`).
 - Neu can mutate/server-side job sau nay, dung token chi o server env (Vercel Functions), KHONG dua vao JS frontend.
 
-## 7) Deploy Vercel (2 project)
+## 8) Deploy Vercel (2 project)
 
 ### Project A: Website tinh
 
@@ -140,7 +172,7 @@ Environment Variables cho Project B:
 - `SANITY_STUDIO_PROJECT_ID`
 - `SANITY_STUDIO_DATASET`
 
-## 8) TODO du lieu that can nhap tren Studio
+## 9) TODO du lieu that can nhap tren Studio
 
 Sau khi chay Studio, tao du lieu toi thieu:
 

@@ -188,6 +188,11 @@ img {
   background: var(--primary-soft);
 }
 
+.site-nav a.is-active {
+  color: var(--primary-deep);
+  background: var(--primary-soft);
+}
+
 .nav-cta {
   margin-left: 0.2rem;
   padding-inline: 0.95rem;
@@ -450,12 +455,59 @@ img {
   padding: 0.55rem 0.7rem;
 }
 
+.page-hero {
+  padding-top: 3.7rem;
+  padding-bottom: 2.4rem;
+}
+
+.page-hero-inner {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 243, 255, 0.88) 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: clamp(1.35rem, 2.4vw, 2rem);
+  display: grid;
+  gap: 0.9rem;
+  max-width: 920px;
+}
+
+.page-hero-actions,
+.section-inline-cta,
+.cta-band-actions,
+.quick-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.section-inline-cta {
+  margin-top: 1.3rem;
+}
+
+.cta-band {
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, rgba(251, 250, 255, 0.98) 0%, rgba(236, 232, 255, 0.9) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: clamp(1.25rem, 2.4vw, 1.95rem);
+  display: grid;
+  gap: 0.85rem;
+}
+
 .about-grid,
 .service-grid,
 .brand-grid,
 .result-grid,
 .team-grid,
 .review-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.brand-page-grid,
+.about-trust-grid,
+.product-showcase-grid,
+.info-card-grid {
   display: grid;
   gap: 1rem;
 }
@@ -571,6 +623,38 @@ img {
   transform: translateY(-1px);
 }
 
+.service-cta-link {
+  width: fit-content;
+}
+
+.filter-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.filter-chip {
+  border: 1px solid #d0caed;
+  border-radius: 999px;
+  padding: 0.5rem 0.84rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #4e5570;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.filter-chip:hover,
+.filter-chip:focus-visible,
+.filter-chip.is-active {
+  color: var(--primary-deep);
+  background: var(--primary-soft);
+  border-color: #beb5e6;
+}
+
 .section-head-secondary {
   margin-top: 2.7rem;
   margin-bottom: 1.1rem;
@@ -580,8 +664,29 @@ img {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.brand-page-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .brand-card {
   gap: 0.72rem;
+}
+
+.brand-page-card {
+  padding: 1.4rem;
+}
+
+.brand-primary-products {
+  color: #4b5672;
+  font-size: 0.91rem;
+  margin-top: 0.2rem;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
 }
 
 .brand-logo-wrap {
@@ -640,6 +745,80 @@ img {
   border-top: 1px dashed #d7d2ee;
   color: #4a546f;
   font-size: 0.92rem;
+}
+
+.product-showcase-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.product-showcase-card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: grid;
+}
+
+.product-showcase-image {
+  min-height: 190px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(145deg, #ebe5ff 0%, #d7cdf9 48%, #efeaff 100%);
+}
+
+.product-showcase-image img {
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  object-fit: cover;
+  display: block;
+}
+
+.product-showcase-body {
+  padding: 1rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.info-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+}
+
+.info-card p {
+  color: #57607a;
+}
+
+.process-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.process-list li {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.15rem;
+}
+
+.process-list li h3 {
+  margin-bottom: 0.35rem;
+}
+
+.process-list li p {
+  color: #566078;
 }
 
 .team-grid {
@@ -719,6 +898,31 @@ img {
   color: #2e3448;
 }
 
+.short-form-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 1rem;
+}
+
+.short-form-intro,
+.short-lead-form {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.3rem;
+}
+
+.short-form-intro {
+  display: grid;
+  gap: 0.82rem;
+}
+
+.short-lead-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
 .booking-wrap {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -763,7 +967,8 @@ img {
   width: 100%;
 }
 
-.booking-form label {
+.booking-form label,
+.short-lead-form label {
   display: grid;
   gap: 0.4rem;
   font-weight: 600;
@@ -773,7 +978,10 @@ img {
 
 .booking-form input,
 .booking-form textarea,
-.booking-form select {
+.booking-form select,
+.short-lead-form input,
+.short-lead-form textarea,
+.short-lead-form select {
   width: 100%;
   border: 1px solid #d7d3eb;
   border-radius: var(--radius-sm);
@@ -784,20 +992,27 @@ img {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.booking-form textarea {
+.booking-form textarea,
+.short-lead-form textarea {
   resize: vertical;
   min-height: 112px;
 }
 
 .booking-form input:hover,
 .booking-form textarea:hover,
-.booking-form select:hover {
+.booking-form select:hover,
+.short-lead-form input:hover,
+.short-lead-form textarea:hover,
+.short-lead-form select:hover {
   border-color: #c4bee6;
 }
 
 .booking-form input:focus,
 .booking-form textarea:focus,
-.booking-form select:focus {
+.booking-form select:focus,
+.short-lead-form input:focus,
+.short-lead-form textarea:focus,
+.short-lead-form select:focus {
   border-color: var(--primary);
   outline: 0;
   box-shadow: 0 0 0 4px rgba(110, 86, 207, 0.14);
@@ -833,6 +1048,14 @@ img {
 
 .contact-cta {
   margin-top: 0.95rem;
+}
+
+.quick-action-row {
+  margin-top: 0.35rem;
+}
+
+.about-trust-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .social-links {
@@ -925,6 +1148,11 @@ img {
   width: 100%;
 }
 
+.btn-small {
+  padding: 0.56rem 0.96rem;
+  font-size: 0.85rem;
+}
+
 .mobile-quick-contact {
   display: none;
   position: fixed;
@@ -941,6 +1169,31 @@ img {
   background: linear-gradient(120deg, var(--primary), var(--primary-deep));
   box-shadow: 0 14px 28px rgba(82, 61, 169, 0.35);
   font-weight: 700;
+}
+
+.back-to-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #cfc9ec;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(120deg, var(--primary), var(--primary-deep));
+  box-shadow: 0 10px 20px rgba(82, 61, 169, 0.28);
+  cursor: pointer;
+  z-index: 82;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .site-footer {
@@ -985,11 +1238,16 @@ img {
 
   .service-grid,
   .brand-grid,
+  .brand-page-grid,
   .result-grid,
+  .product-showcase-grid,
+  .info-card-grid,
   .team-grid,
   .review-grid,
+  .about-trust-grid,
   .about-grid,
   .booking-wrap,
+  .short-form-wrap,
   .contact-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1047,11 +1305,17 @@ img {
   .hero-grid,
   .service-grid,
   .brand-grid,
+  .brand-page-grid,
   .result-grid,
+  .product-showcase-grid,
+  .info-card-grid,
+  .process-list,
   .team-grid,
   .review-grid,
+  .about-trust-grid,
   .about-grid,
   .booking-wrap,
+  .short-form-wrap,
   .contact-grid,
   .hero-kpi-grid,
   .trust-strip-grid,
@@ -1088,14 +1352,37 @@ img {
 
   .booking-form,
   .booking-intro,
+  .short-form-intro,
+  .short-lead-form,
   .contact-card {
     padding: 1.12rem;
+  }
+
+  .page-hero-actions,
+  .section-inline-cta,
+  .cta-band-actions,
+  .quick-action-row,
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .page-hero-actions .btn,
+  .section-inline-cta .btn,
+  .cta-band-actions .btn,
+  .quick-action-row .btn,
+  .card-actions .btn {
+    width: 100%;
   }
 
   .mobile-quick-contact {
     display: inline-flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .back-to-top {
+    right: 0.8rem;
+    bottom: 5.8rem;
   }
 
   .site-footer {
@@ -1117,7 +1404,9 @@ img {
   .review-card,
   .contact-card,
   .booking-form,
-  .booking-intro {
+  .booking-intro,
+  .short-form-intro,
+  .short-lead-form {
     border-radius: 16px;
   }
 

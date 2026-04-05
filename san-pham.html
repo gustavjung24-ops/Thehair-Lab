@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="site-title">The Hair Lab | Sản phẩm và dòng phân phối</title>
+    <meta
+      id="site-description-meta"
+      name="description"
+      content="Các nhóm sản phẩm phân phối của The Hair Lab được chia rõ theo mục tiêu kinh doanh, có bộ lọc nhanh và CTA nhận tư vấn báo giá."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="products" data-nav="products" data-page-title="Sản phẩm">
+    <header class="site-header" id="top">
+      <div class="container header-inner">
+        <a href="index.html" class="brand" data-site-title="brand">The Hair Lab</a>
+
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span class="sr-only">Mở menu</span>
+        </button>
+
+        <nav id="main-nav" class="site-nav" aria-label="Điều hướng chính">
+          <a href="index.html" data-nav="home">Trang chủ</a>
+          <a href="thuong-hieu.html" data-nav="brands">Thương hiệu</a>
+          <a href="san-pham.html" data-nav="products">Sản phẩm</a>
+          <a href="hop-tac.html" data-nav="partnership">Hợp tác</a>
+          <a href="gioi-thieu.html" data-nav="about">Giới thiệu</a>
+          <a href="lien-he.html" data-nav="contact">Liên hệ</a>
+          <a href="lien-he.html#bao-gia-form" class="nav-cta btn btn-primary">Nhận báo giá</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero section">
+        <div class="container page-hero-inner reveal">
+          <p class="eyebrow">Sản phẩm / Dòng phân phối</p>
+          <h1>Danh mục sản phẩm được chia theo nhóm dễ scan và dễ tư vấn cho khách.</h1>
+          <p>
+            Trang này ưu tiên khả năng xem nhanh: chia section rõ, lọc theo nhóm nhu cầu và CTA trực tiếp để nhận giá,
+            catalog hoặc tư vấn lựa chọn SKU.
+          </p>
+          <div class="page-hero-actions">
+            <a href="lien-he.html#bao-gia-form" class="btn btn-primary">Nhận báo giá theo nhóm</a>
+            <a href="hop-tac.html#hop-tac-form" class="btn btn-outline">Đăng ký hợp tác phân phối</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="category-sections">
+        <div class="container">
+          <div class="section-head reveal">
+            <p class="eyebrow">Nhóm sản phẩm</p>
+            <h2>Lọc nhanh theo nhóm để đội sales và quản lý salon ra quyết định nhanh hơn.</h2>
+          </div>
+
+          <div class="filter-chip-row reveal" id="product-filter-bar" role="tablist" aria-label="Lọc nhóm sản phẩm"></div>
+          <div class="service-grid" id="product-category-grid"></div>
+        </div>
+      </section>
+
+      <section class="section section-contrast" id="product-showcase">
+        <div class="container">
+          <div class="section-head reveal">
+            <p class="eyebrow">Card sản phẩm dễ scan</p>
+            <h2>Một số SKU tiêu biểu để tham khảo nhanh trước khi nhận tư vấn chi tiết.</h2>
+          </div>
+
+          <div class="product-showcase-grid" id="product-showcase-grid"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-band reveal">
+            <p class="eyebrow">CTA nhanh</p>
+            <h2>Cần đề xuất gói nhập theo vốn và tệp khách?</h2>
+            <div class="cta-band-actions">
+              <a href="lien-he.html#bao-gia-form" class="btn btn-primary">Yêu cầu báo giá</a>
+              <a href="lien-he.html#thong-tin-lien-he" class="btn btn-outline">Nhắn tư vấn ngay</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© <span id="current-year"></span> The Hair Lab Distribution.</p>
+        <p>
+          Hotline:
+          <a data-contact-link="phone" href="lien-he.html#thong-tin-lien-he"><span data-contact="phone">TODO_REPLACE_REAL_PHONE</span></a>
+          | Email báo giá:
+          <a data-contact-link="email" href="lien-he.html#thong-tin-lien-he"><span data-contact="email">TODO_REPLACE_REAL_EMAIL</span></a>
+        </p>
+      </div>
+    </footer>
+
+    <a id="mobile-quick-contact" class="mobile-quick-contact js-quick-contact-link" href="lien-he.html#bao-gia-form">Tư vấn nhanh</a>
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="Lên đầu trang">↑</button>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

@@ -23,6 +23,82 @@ const APP_STATE = {
   },
 }
 
+const DEFAULT_CAPABILITIES = [
+  {
+    title: 'Tư vấn danh mục theo mô hình',
+    description: 'Đề xuất nhóm sản phẩm theo vốn nhập, tệp khách và mục tiêu doanh thu.',
+  },
+  {
+    title: 'Hỗ trợ triển khai tại điểm bán',
+    description: 'Tài liệu và hướng dẫn ngắn giúp đội ngũ bán hàng tư vấn nhanh hơn.',
+  },
+  {
+    title: 'Đồng hành sau bán',
+    description: 'Theo dõi hiệu quả nhóm hàng để tối ưu vòng nhập tiếp theo.',
+  },
+  {
+    title: 'Phản hồi theo khu vực',
+    description: 'Ưu tiên hỗ trợ nhanh để giảm gián đoạn vận hành cho đối tác.',
+  },
+]
+
+const PRODUCT_SHOWCASE_ITEMS = [
+  {
+    title: 'Argan Oil 50ml',
+    summary: 'Dầu dưỡng dễ upsell tại quầy cho nhóm tóc khô xơ sau tạo kiểu.',
+    image: 'Argan_oil_50ml.jpg',
+    segment: 'recovery',
+  },
+  {
+    title: 'Keratine Mask 1500ml & 500ml',
+    summary: 'Triển khai tốt mô hình dịch vụ tại salon kết hợp sản phẩm mang về.',
+    image: 'Keratine_Mask_1500ml_&500ml.jpg',
+    segment: 'recovery',
+  },
+  {
+    title: 'Thuốc nhuộm 100ml',
+    summary: 'Dễ kiểm soát định mức cho từng ca, phù hợp salon chuyên màu.',
+    image: 'Nhuom_100ml.jpg',
+    segment: 'color',
+  },
+  {
+    title: 'Oxy trợ nhuộm',
+    summary: 'Giúp quy trình nhuộm đồng bộ và giảm sai lệch kỹ thuật.',
+    image: 'Oxy_TroNhuom.jpg',
+    segment: 'color',
+  },
+  {
+    title: 'Gội can 3800ml',
+    summary: 'Tối ưu cost cho salon có tần suất dịch vụ cao mỗi ngày.',
+    image: 'Goi_Can_3800ml.jpg',
+    segment: 'care',
+  },
+  {
+    title: 'Xả can 3800ml',
+    summary: 'Kết hợp gội can để chuẩn hóa trải nghiệm dịch vụ tại ghế.',
+    image: 'Xa_Can_3800ml.jpg',
+    segment: 'care',
+  },
+  {
+    title: 'Bộ gội xả 500ml',
+    summary: 'SKU bán lẻ tốt cho nhóm khách duy trì chăm sóc tóc tại nhà.',
+    image: 'Goi_Xa_500ml.jpg',
+    segment: 'care',
+  },
+  {
+    title: 'Dập uốn duỗi',
+    summary: 'Nhóm kỹ thuật dành cho salon cần mở rộng dịch vụ chuyên sâu.',
+    image: 'Dap_Uon_Duoi.jpg',
+    segment: 'technical',
+  },
+  {
+    title: 'Ép side tóc nam',
+    summary: 'Bổ sung lựa chọn dịch vụ cho barbershop và salon nam.',
+    image: 'Ep_Side_Toc_Nam.jpg',
+    segment: 'technical',
+  },
+]
+
 function isTodoValue(value) {
   return typeof value === 'string' && value.includes('TODO_REPLACE')
 }
@@ -31,20 +107,8 @@ function hasUsableValue(value) {
   return typeof value === 'string' && value.trim() !== '' && !isTodoValue(value)
 }
 
-function formatDisplayValue(value, fallbackTodoLabel) {
-  if (!hasUsableValue(value)) {
-    return fallbackTodoLabel
-  }
-
-  return value
-}
-
-function makeAbsoluteOrAnchorUrl(url, fallback = '#lead') {
-  if (!hasUsableValue(url)) {
-    return fallback
-  }
-
-  return url
+function ensureArray(value) {
+  return Array.isArray(value) ? value : []
 }
 
 function createNode(tagName, className, textValue) {
@@ -59,6 +123,49 @@ function createNode(tagName, className, textValue) {
   }
 
   return node
+}
+
+function appendQuery(baseUrl, key, value) {
+  const separator = baseUrl.includes('?') ? '&' : '?'
+  return `${baseUrl}${separator}${key}=${encodeURIComponent(value)}`
+}
+
+function normalizeLegacyAnchor(url) {
+  if (!hasUsableValue(url)) {
+    return 'lien-he.html#bao-gia-form'
+  }
+
+  const normalized = url.trim()
+
+  if (normalized === '#lead') {
+    return 'lien-he.html#bao-gia-form'
+  }
+
+  if (normalized === '#contact') {
+    return 'lien-he.html#thong-tin-lien-he'
+  }
+
+  if (normalized === '#top') {
+    return 'index.html#top'
+  }
+
+  return normalized
+}
+
+function makeAbsoluteOrAnchorUrl(url, fallback = 'lien-he.html#bao-gia-form') {
+  if (!hasUsableValue(url)) {
+    return fallback
+  }
+
+  return normalizeLegacyAnchor(url)
+}
+
+function buildLeadIntentUrl(interest) {
+  if (!hasUsableValue(interest)) {
+    return 'lien-he.html#bao-gia-form'
+  }
+
+  return `lien-he.html?interest=${encodeURIComponent(interest)}#bao-gia-form`
 }
 
 function normalizeRating(value) {
@@ -111,16 +218,19 @@ function applySiteSettings(siteSettings) {
 }
 
 function renderSiteMeta(siteSettings) {
-  if (!siteSettings || typeof siteSettings !== 'object') {
-    return
-  }
+  const pageTitle = document.body?.dataset?.pageTitle || ''
+  const fallbackTitle = `${APP_STATE.brandName} | Công ty phân phối mỹ phẩm và chăm sóc tóc`
 
-  if (hasUsableValue(siteSettings.siteTitle)) {
+  if (hasUsableValue(pageTitle) && pageTitle !== 'Trang chủ') {
+    document.title = `${APP_STATE.brandName} | ${pageTitle}`
+  } else if (hasUsableValue(siteSettings?.siteTitle)) {
     document.title = siteSettings.siteTitle
+  } else {
+    document.title = fallbackTitle
   }
 
   const metaNode = document.getElementById('site-description-meta')
-  if (metaNode && hasUsableValue(siteSettings.siteDescription)) {
+  if (metaNode && hasUsableValue(siteSettings?.siteDescription)) {
     metaNode.setAttribute('content', siteSettings.siteDescription)
   }
 
@@ -137,10 +247,9 @@ function setCtaLink(node, label, url) {
 
   if (hasUsableValue(label)) {
     node.textContent = label
-    node.setAttribute('data-lead-intent', label)
   }
 
-  const href = makeAbsoluteOrAnchorUrl(url, '#lead')
+  const href = makeAbsoluteOrAnchorUrl(url, 'lien-he.html#bao-gia-form')
   node.setAttribute('href', href)
 
   if (/^https?:\/\//i.test(href)) {
@@ -206,69 +315,54 @@ function renderHero(hero) {
   heroImageNode.alt = hasUsableValue(hero.title) ? hero.title : APP_STATE.brandName
 }
 
-function renderTrustPoints(trustPoints) {
+function renderTrustStrip(trustPoints) {
   const trustStripGrid = document.getElementById('trust-strip-grid')
-  const heroTrustList = document.getElementById('hero-trust-list')
 
-  if (!trustStripGrid || !heroTrustList) {
+  if (!trustStripGrid) {
     return
   }
 
   trustStripGrid.innerHTML = ''
-  heroTrustList.innerHTML = ''
 
   trustPoints.forEach((item) => {
     const title = hasUsableValue(item?.title) ? item.title : 'Đang cập nhật'
     const description = hasUsableValue(item?.description) ? item.description : title
-    const trustBadgeText = description.length > 42 ? title : description
+    const badgeText = description.length > 40 ? title : description
 
-    trustStripGrid.appendChild(createNode('p', '', trustBadgeText))
-
-    const listItem = createNode('li', '', '')
-    const titleNode = createNode('strong', '', title)
-    const descriptionNode = createNode('span', '', description)
-    listItem.appendChild(titleNode)
-    listItem.appendChild(descriptionNode)
-    heroTrustList.appendChild(listItem)
+    trustStripGrid.appendChild(createNode('p', '', badgeText))
   })
 }
 
-function renderCategories(categories) {
-  const categoryGrid = document.getElementById('category-grid')
+function createCategoryCard(category, options = {}) {
+  const {compact = false, cssClass = ''} = options
+  const article = createNode('article', `service-card reveal ${cssClass}`.trim())
 
-  if (!categoryGrid) {
-    return
+  const coverImageUrl = buildImageUrl(category.coverImage, {width: 960, height: 640})
+  if (coverImageUrl) {
+    const coverWrap = createNode('div', 'service-cover')
+    const coverImage = createNode('img', '', '')
+    coverImage.src = coverImageUrl
+    coverImage.loading = 'lazy'
+    coverImage.alt = hasUsableValue(category.name) ? category.name : 'Ảnh nhóm sản phẩm'
+    coverWrap.appendChild(coverImage)
+    article.appendChild(coverWrap)
   }
 
-  categoryGrid.innerHTML = ''
+  const categoryName = hasUsableValue(category.name) ? category.name : 'Nhóm sản phẩm'
+  article.appendChild(createNode('h3', '', categoryName))
 
-  categories.forEach((category) => {
-    const article = createNode('article', 'service-card reveal')
+  const targetCustomer = hasUsableValue(category.targetCustomer)
+    ? category.targetCustomer
+    : 'Salon, spa và đại lý cần danh mục ổn định.'
 
-    const coverImageUrl = buildImageUrl(category.coverImage, {width: 960, height: 640})
-    if (coverImageUrl) {
-      const coverWrap = createNode('div', 'service-cover')
-      const coverImage = createNode('img', '', '')
-      coverImage.src = coverImageUrl
-      coverImage.loading = 'lazy'
-      coverImage.alt = hasUsableValue(category.name) ? category.name : 'Ảnh nhóm sản phẩm'
-      coverWrap.appendChild(coverImage)
-      article.appendChild(coverWrap)
-    }
+  const keyBenefit = hasUsableValue(category.keyBenefit)
+    ? category.keyBenefit
+    : 'Tối ưu hiệu quả kinh doanh từ danh mục phù hợp.'
 
-    article.appendChild(createNode('h3', '', hasUsableValue(category.name) ? category.name : 'Nhóm sản phẩm'))
+  article.appendChild(createNode('p', 'service-for', `Phù hợp: ${targetCustomer}`))
+  article.appendChild(createNode('p', 'service-result', `Lợi ích nổi bật: ${keyBenefit}`))
 
-    const targetCustomer = hasUsableValue(category.targetCustomer)
-      ? category.targetCustomer
-      : 'Salon, spa và đại lý cần danh mục ổn định.'
-
-    const keyBenefit = hasUsableValue(category.keyBenefit)
-      ? category.keyBenefit
-      : 'Tối ưu hiệu quả kinh doanh từ danh mục phù hợp.'
-
-    article.appendChild(createNode('p', 'service-for', `Phù hợp: ${targetCustomer}`))
-    article.appendChild(createNode('p', 'service-result', `Lợi ích nổi bật: ${keyBenefit}`))
-
+  if (!compact) {
     const metaList = createNode('ul', 'service-meta')
     metaList.appendChild(
       createNode(
@@ -279,85 +373,311 @@ function renderCategories(categories) {
     )
     metaList.appendChild(createNode('li', '', `Đối tác mục tiêu: ${targetCustomer}`))
     article.appendChild(metaList)
+  }
 
-    const button = createNode('button', 'service-cta', 'Nhận danh mục sản phẩm')
-    button.type = 'button'
-    button.setAttribute('data-interest', hasUsableValue(category.name) ? category.name : 'Nhận catalog')
-    article.appendChild(button)
+  const action = createNode('a', 'btn btn-soft service-cta-link', compact ? 'Xem chi tiết và nhận giá' : 'Nhận báo giá nhóm này')
+  action.href = buildLeadIntentUrl(categoryName)
+  article.appendChild(action)
 
-    categoryGrid.appendChild(article)
-  })
+  return article
 }
 
-function renderBrands(brands) {
-  const brandGrid = document.getElementById('brand-grid')
-  const sectionHead = document.getElementById('brand-section-head')
+function createBrandCard(brand, categoryNames, options = {}) {
+  const {compact = false, cssClass = ''} = options
+  const article = createNode('article', `brand-card reveal ${cssClass}`.trim())
 
-  if (!brandGrid || !sectionHead) {
+  const logoUrl = buildImageUrl(brand.logo, {width: 480, height: 220})
+  if (logoUrl) {
+    const logoWrap = createNode('div', 'brand-logo-wrap')
+    const logoImage = createNode('img', '', '')
+    logoImage.src = logoUrl
+    logoImage.alt = hasUsableValue(brand.name) ? `${brand.name} logo` : 'Brand logo'
+    logoImage.loading = 'lazy'
+    logoWrap.appendChild(logoImage)
+    article.appendChild(logoWrap)
+  }
+
+  const brandName = hasUsableValue(brand.name) ? brand.name : 'Thương hiệu'
+  article.appendChild(createNode('h3', '', brandName))
+  article.appendChild(
+    createNode(
+      'p',
+      '',
+      hasUsableValue(brand.shortDescription) ? brand.shortDescription : 'Nội dung mô tả thương hiệu sẽ được cập nhật sớm.'
+    )
+  )
+
+  if (!compact && categoryNames.length) {
+    article.appendChild(createNode('p', 'brand-primary-products', `Sản phẩm chính: ${categoryNames.slice(0, 3).join(' · ')}`))
+  }
+
+  const actions = createNode('div', 'card-actions')
+  const detailsLink = createNode('a', 'btn btn-outline btn-small', 'Xem dòng sản phẩm')
+  detailsLink.href = 'san-pham.html'
+
+  const consultLink = createNode('a', 'btn btn-primary btn-small', 'Yêu cầu tư vấn')
+  consultLink.href = buildLeadIntentUrl(brandName)
+
+  actions.appendChild(detailsLink)
+  actions.appendChild(consultLink)
+  article.appendChild(actions)
+
+  return article
+}
+
+function createReviewCard(item) {
+  const reviewCard = createNode('article', 'review-card reveal')
+  reviewCard.appendChild(
+    createNode('span', 'review-tag', hasUsableValue(item.customerType) ? item.customerType : 'Đối tác The Hair Lab')
+  )
+
+  const quote = hasUsableValue(item.quote) ? item.quote : 'Nội dung phản hồi sẽ được cập nhật sớm.'
+  reviewCard.appendChild(createNode('p', '', `"${quote}"`))
+  reviewCard.appendChild(createNode('p', 'review-rating', buildRatingText(item.rating)))
+
+  const customerName = hasUsableValue(item.customerName) ? item.customerName : 'Khách hàng doanh nghiệp'
+  reviewCard.appendChild(createNode('p', 'review-author', customerName))
+
+  return reviewCard
+}
+
+function categorySegmentFromName(name) {
+  const lowerName = String(name || '').toLowerCase()
+
+  if (/nhuộm|màu/.test(lowerName)) {
+    return 'color'
+  }
+
+  if (/phục hồi|dưỡng|keratin/.test(lowerName)) {
+    return 'recovery'
+  }
+
+  if (/kỹ thuật|uốn|duỗi|chuyên salon/.test(lowerName)) {
+    return 'technical'
+  }
+
+  return 'care'
+}
+
+function renderHomePage(content) {
+  const trustPoints = ensureArray(content?.trustPoints)
+  const brands = ensureArray(content?.brands)
+  const categories = ensureArray(content?.productCategories)
+  const testimonials = ensureArray(content?.testimonials)
+  const hero = content?.homepageHero || {}
+
+  renderHero(hero)
+  renderTrustStrip(trustPoints)
+
+  const whyGrid = document.getElementById('home-why-grid')
+  if (whyGrid) {
+    whyGrid.innerHTML = ''
+    trustPoints.slice(0, 4).forEach((item) => {
+      const card = createNode('article', 'about-card reveal')
+      card.appendChild(createNode('h3', '', hasUsableValue(item.title) ? item.title : 'Năng lực hỗ trợ'))
+      card.appendChild(
+        createNode(
+          'p',
+          '',
+          hasUsableValue(item.description)
+            ? item.description
+            : 'Nội dung năng lực hỗ trợ sẽ được cập nhật trong CMS.'
+        )
+      )
+      whyGrid.appendChild(card)
+    })
+  }
+
+  const brandGrid = document.getElementById('home-brand-grid')
+  if (brandGrid) {
+    brandGrid.innerHTML = ''
+    const categoryNames = categories.map((item) => item.name).filter((item) => hasUsableValue(item))
+
+    brands.slice(0, 3).forEach((brand) => {
+      brandGrid.appendChild(createBrandCard(brand, categoryNames, {compact: true}))
+    })
+  }
+
+  const categoryGrid = document.getElementById('home-category-grid')
+  if (categoryGrid) {
+    categoryGrid.innerHTML = ''
+
+    categories.slice(0, 4).forEach((category) => {
+      categoryGrid.appendChild(createCategoryCard(category, {compact: true}))
+    })
+  }
+
+  const capabilityGrid = document.getElementById('home-capability-grid')
+  if (capabilityGrid) {
+    capabilityGrid.innerHTML = ''
+
+    DEFAULT_CAPABILITIES.forEach((item) => {
+      const card = createNode('article', 'team-card reveal')
+      card.appendChild(createNode('h3', '', item.title))
+      card.appendChild(createNode('p', '', item.description))
+      capabilityGrid.appendChild(card)
+    })
+  }
+
+  const testimonialGrid = document.getElementById('home-testimonial-grid')
+  if (testimonialGrid) {
+    testimonialGrid.innerHTML = ''
+
+    testimonials.slice(0, 2).forEach((item) => {
+      testimonialGrid.appendChild(createReviewCard(item))
+    })
+  }
+}
+
+function renderBrandsPage(content) {
+  const brandGrid = document.getElementById('brand-page-grid')
+
+  if (!brandGrid) {
     return
   }
+
+  const brands = ensureArray(content?.brands)
+  const categories = ensureArray(content?.productCategories)
+  const categoryNames = categories.map((item) => item.name).filter((item) => hasUsableValue(item))
 
   brandGrid.innerHTML = ''
 
-  if (!brands.length) {
-    sectionHead.setAttribute('hidden', 'hidden')
-    brandGrid.setAttribute('hidden', 'hidden')
-    return
-  }
-
-  sectionHead.removeAttribute('hidden')
-  brandGrid.removeAttribute('hidden')
-
   brands.forEach((brand) => {
-    const article = createNode('article', 'brand-card reveal')
-
-    const logoUrl = buildImageUrl(brand.logo, {width: 400, height: 180})
-    if (logoUrl) {
-      const logoWrap = createNode('div', 'brand-logo-wrap')
-      const logoImage = createNode('img', '', '')
-      logoImage.src = logoUrl
-      logoImage.alt = hasUsableValue(brand.name) ? `${brand.name} logo` : 'Brand logo'
-      logoImage.loading = 'lazy'
-      logoWrap.appendChild(logoImage)
-      article.appendChild(logoWrap)
-    }
-
-    article.appendChild(createNode('h3', '', hasUsableValue(brand.name) ? brand.name : 'Thương hiệu'))
-    article.appendChild(
-      createNode(
-        'p',
-        '',
-        hasUsableValue(brand.shortDescription) ? brand.shortDescription : 'Nội dung mô tả thương hiệu sẽ được cập nhật sớm.'
-      )
-    )
-
-    brandGrid.appendChild(article)
+    brandGrid.appendChild(createBrandCard(brand, categoryNames, {compact: false, cssClass: 'brand-page-card'}))
   })
 }
 
-function renderTestimonials(testimonials) {
-  const testimonialGrid = document.getElementById('testimonial-grid')
+function renderProductsPage(content) {
+  const filterBar = document.getElementById('product-filter-bar')
+  const categoryGrid = document.getElementById('product-category-grid')
+  const showcaseGrid = document.getElementById('product-showcase-grid')
 
-  if (!testimonialGrid) {
+  if (!filterBar || !categoryGrid || !showcaseGrid) {
     return
   }
 
-  testimonialGrid.innerHTML = ''
+  const categories = ensureArray(content?.productCategories)
 
-  testimonials.forEach((item) => {
-    const reviewCard = createNode('article', 'review-card reveal')
-    reviewCard.appendChild(
-      createNode('span', 'review-tag', hasUsableValue(item.customerType) ? item.customerType : 'Đối tác The Hair Lab')
+  filterBar.innerHTML = ''
+  categoryGrid.innerHTML = ''
+  showcaseGrid.innerHTML = ''
+
+  const filterOptions = [
+    {
+      key: 'all',
+      label: 'Tất cả nhóm',
+      segment: 'all',
+    },
+  ]
+
+  categories.forEach((category, index) => {
+    const key = hasUsableValue(category?._id) ? category._id : `category-${index + 1}`
+    const segment = categorySegmentFromName(category?.name)
+    filterOptions.push({
+      key,
+      label: hasUsableValue(category?.name) ? category.name : `Nhóm ${index + 1}`,
+      segment,
+    })
+
+    const card = createCategoryCard(category, {compact: false, cssClass: 'product-category-card'})
+    card.dataset.filterKey = key
+    card.dataset.segment = segment
+    categoryGrid.appendChild(card)
+  })
+
+  PRODUCT_SHOWCASE_ITEMS.forEach((item) => {
+    const card = createNode('article', 'product-showcase-card reveal')
+    card.dataset.segment = item.segment
+
+    const imageWrap = createNode('div', 'product-showcase-image')
+    const image = createNode('img', '', '')
+    image.src = item.image
+    image.alt = item.title
+    image.loading = 'lazy'
+    imageWrap.appendChild(image)
+
+    const body = createNode('div', 'product-showcase-body')
+    body.appendChild(createNode('h3', '', item.title))
+    body.appendChild(createNode('p', '', item.summary))
+
+    const action = createNode('a', 'btn btn-outline btn-small', 'Nhận tư vấn SKU này')
+    action.href = buildLeadIntentUrl(item.title)
+    body.appendChild(action)
+
+    card.appendChild(imageWrap)
+    card.appendChild(body)
+    showcaseGrid.appendChild(card)
+  })
+
+  filterOptions.forEach((option, index) => {
+    const button = createNode('button', 'filter-chip', option.label)
+    button.type = 'button'
+    button.dataset.filterKey = option.key
+    button.dataset.segment = option.segment
+    button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false')
+    filterBar.appendChild(button)
+  })
+
+  const applyFilter = (activeKey) => {
+    const selectedOption = filterOptions.find((item) => item.key === activeKey) || filterOptions[0]
+    const activeSegment = selectedOption.segment
+
+    Array.from(categoryGrid.children).forEach((card) => {
+      if (!(card instanceof HTMLElement)) {
+        return
+      }
+
+      card.hidden = activeKey !== 'all' && card.dataset.filterKey !== activeKey
+    })
+
+    Array.from(showcaseGrid.children).forEach((card) => {
+      if (!(card instanceof HTMLElement)) {
+        return
+      }
+
+      card.hidden = activeSegment !== 'all' && card.dataset.segment !== activeSegment
+    })
+
+    filterBar.querySelectorAll('.filter-chip').forEach((button) => {
+      const isActive = button.getAttribute('data-filter-key') === activeKey
+      button.classList.toggle('is-active', isActive)
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+    })
+  }
+
+  filterBar.querySelectorAll('.filter-chip').forEach((button) => {
+    button.addEventListener('click', () => {
+      const activeKey = button.getAttribute('data-filter-key') || 'all'
+      applyFilter(activeKey)
+    })
+  })
+
+  applyFilter('all')
+}
+
+function renderAboutPage(content) {
+  const trustGrid = document.getElementById('about-trust-grid')
+
+  if (!trustGrid) {
+    return
+  }
+
+  const trustPoints = ensureArray(content?.trustPoints)
+  trustGrid.innerHTML = ''
+
+  trustPoints.forEach((item) => {
+    const card = createNode('article', 'info-card reveal')
+    card.appendChild(createNode('h3', '', hasUsableValue(item.title) ? item.title : 'Năng lực hỗ trợ'))
+    card.appendChild(
+      createNode(
+        'p',
+        '',
+        hasUsableValue(item.description)
+          ? item.description
+          : 'Nội dung năng lực hỗ trợ sẽ được cập nhật trong CMS.'
+      )
     )
-
-    const quote = hasUsableValue(item.quote) ? item.quote : 'Nội dung phản hồi sẽ được cập nhật sớm.'
-    reviewCard.appendChild(createNode('p', '', `"${quote}"`))
-    reviewCard.appendChild(createNode('p', 'review-rating', buildRatingText(item.rating)))
-
-    const customerName = hasUsableValue(item.customerName) ? item.customerName : 'Khách hàng doanh nghiệp'
-    reviewCard.appendChild(createNode('p', 'review-author', customerName))
-
-    testimonialGrid.appendChild(reviewCard)
+    trustGrid.appendChild(card)
   })
 }
 
@@ -379,7 +699,7 @@ function renderContactBlock(contactBlock) {
   }
 
   const ctaLabel = hasUsableValue(contactBlock?.ctaLabel) ? contactBlock.ctaLabel : 'Nhận tư vấn ngay'
-  const ctaUrl = makeAbsoluteOrAnchorUrl(contactBlock?.ctaUrl, '#lead')
+  const ctaUrl = makeAbsoluteOrAnchorUrl(contactBlock?.ctaUrl, 'lien-he.html#bao-gia-form')
 
   ctaNode.textContent = ctaLabel
   ctaNode.setAttribute('href', ctaUrl)
@@ -393,31 +713,25 @@ function renderContactBlock(contactBlock) {
   }
 }
 
-function syncInterestOptions(categories, hero) {
-  const interestSelect = document.getElementById('interest-select')
-  if (!interestSelect) {
+function renderByPage(pageKey, content) {
+  if (pageKey === 'home') {
+    renderHomePage(content)
     return
   }
 
-  const desiredOptions = [
-    hero.primaryCtaLabel,
-    hero.secondaryCtaLabel,
-    ...categories.map((item) => item.name),
-  ].filter((item) => hasUsableValue(item))
+  if (pageKey === 'brands') {
+    renderBrandsPage(content)
+    return
+  }
 
-  const existingValues = new Set(Array.from(interestSelect.options).map((option) => option.value))
+  if (pageKey === 'products') {
+    renderProductsPage(content)
+    return
+  }
 
-  desiredOptions.forEach((value) => {
-    if (existingValues.has(value)) {
-      return
-    }
-
-    const option = document.createElement('option')
-    option.value = value
-    option.textContent = value
-    interestSelect.appendChild(option)
-    existingValues.add(value)
-  })
+  if (pageKey === 'about') {
+    renderAboutPage(content)
+  }
 }
 
 function updateTextBindings() {
@@ -428,9 +742,12 @@ function updateTextBindings() {
     let value = ''
 
     if (field === 'businessHoursInline') {
-      value = formatDisplayValue(APP_STATE.contact.businessHours, 'TODO_REPLACE_REAL_BUSINESS_HOURS')
+      value = hasUsableValue(APP_STATE.contact.businessHours)
+        ? APP_STATE.contact.businessHours
+        : 'TODO_REPLACE_REAL_BUSINESS_HOURS'
     } else {
-      value = formatDisplayValue(APP_STATE.contact[field], `TODO_REPLACE_REAL_${field.toUpperCase()}`)
+      const sourceValue = APP_STATE.contact[field]
+      value = hasUsableValue(sourceValue) ? sourceValue : `TODO_REPLACE_REAL_${String(field).toUpperCase()}`
     }
 
     node.textContent = value
@@ -476,31 +793,11 @@ function updateLinkBindings() {
       return
     }
 
-    link.setAttribute('href', '#contact')
+    link.setAttribute('href', 'lien-he.html#thong-tin-lien-he')
     link.setAttribute('aria-disabled', 'true')
     link.removeAttribute('target')
     link.removeAttribute('rel')
   })
-}
-
-function buildLeadMessage(formData) {
-  return [
-    `YÊU CẦU LEAD KINH DOANH - ${APP_STATE.brandName}`,
-    `- Mục tiêu liên hệ: ${formData.leadType}`,
-    `- Từ CTA hero: ${formData.heroIntent || 'Không có'}`,
-    `- Họ tên người liên hệ: ${formData.contactName}`,
-    `- Tên đơn vị: ${formData.businessName}`,
-    `- Số điện thoại: ${formData.phone}`,
-    `- Khu vực: ${formData.area}`,
-    `- Mô hình kinh doanh: ${formData.businessModel}`,
-    `- Nhu cầu quan tâm: ${formData.interest}`,
-    `- Ghi chú: ${formData.note || 'Không có ghi chú thêm'}`,
-  ].join('\n')
-}
-
-function appendQuery(baseUrl, key, value) {
-  const separator = baseUrl.includes('?') ? '&' : '?'
-  return `${baseUrl}${separator}${key}=${encodeURIComponent(value)}`
 }
 
 function buildChatLink(message) {
@@ -547,36 +844,9 @@ async function postToWebhook(payload) {
   return response.ok
 }
 
-function validateLeadForm(formData) {
-  if (!formData.contactName || formData.contactName.length < 2) {
-    return 'Vui lòng nhập họ tên người liên hệ hợp lệ.'
-  }
+function showFormStatus(form, message, isError = false) {
+  const statusNode = form.querySelector('[data-form-status]')
 
-  if (!formData.businessName || formData.businessName.length < 2) {
-    return 'Vui lòng nhập tên đơn vị hợp lệ.'
-  }
-
-  if (!/^[0-9+()\s.-]{8,20}$/.test(formData.phone)) {
-    return 'Vui lòng nhập số điện thoại hợp lệ để đội kinh doanh liên hệ.'
-  }
-
-  if (!formData.area) {
-    return 'Vui lòng nhập khu vực hoạt động.'
-  }
-
-  if (!formData.businessModel) {
-    return 'Vui lòng chọn mô hình kinh doanh.'
-  }
-
-  if (!formData.interest) {
-    return 'Vui lòng chọn nhu cầu quan tâm.'
-  }
-
-  return null
-}
-
-function showLeadStatus(message, isError = false) {
-  const statusNode = document.getElementById('lead-status')
   if (!statusNode) {
     return
   }
@@ -585,15 +855,82 @@ function showLeadStatus(message, isError = false) {
   statusNode.style.color = isError ? '#9b223e' : '#35643f'
 }
 
-async function handleLeadSubmit(event) {
-  event.preventDefault()
+function hasRequiredField(form, fieldName) {
+  const field = form.querySelector(`[name="${fieldName}"]`)
+  return Boolean(field && field.hasAttribute('required'))
+}
 
-  const form = event.currentTarget
+function validateLeadForm(form, formData) {
+  if (hasRequiredField(form, 'contactName') && !formData.contactName) {
+    return 'Vui lòng nhập họ tên người liên hệ.'
+  }
+
+  if (formData.contactName && formData.contactName.length < 2) {
+    return 'Họ tên cần có ít nhất 2 ký tự.'
+  }
+
+  if (hasRequiredField(form, 'businessName') && !formData.businessName) {
+    return 'Vui lòng nhập tên đơn vị.'
+  }
+
+  if (hasRequiredField(form, 'phone') && !formData.phone) {
+    return 'Vui lòng nhập số điện thoại để đội kinh doanh liên hệ.'
+  }
+
+  if (formData.phone && !/^[0-9+()\s.-]{8,20}$/.test(formData.phone)) {
+    return 'Vui lòng nhập số điện thoại hợp lệ.'
+  }
+
+  if (hasRequiredField(form, 'area') && !formData.area) {
+    return 'Vui lòng nhập khu vực hoạt động.'
+  }
+
+  if (hasRequiredField(form, 'businessModel') && !formData.businessModel) {
+    return 'Vui lòng chọn mô hình kinh doanh.'
+  }
+
+  if (hasRequiredField(form, 'interest') && !formData.interest) {
+    return 'Vui lòng chọn nhu cầu quan tâm.'
+  }
+
+  return null
+}
+
+function buildLeadMessage(formData) {
+  const lines = [
+    `YÊU CẦU LEAD KINH DOANH - ${APP_STATE.brandName}`,
+    `- Mục tiêu liên hệ: ${formData.leadType}`,
+    `- Nguồn form: ${formData.formPurpose}`,
+    `- Trang gửi: ${formData.pageSource}`,
+  ]
+
+  const optionalFields = [
+    ['Họ tên người liên hệ', formData.contactName],
+    ['Tên đơn vị', formData.businessName],
+    ['Số điện thoại', formData.phone],
+    ['Khu vực', formData.area],
+    ['Mô hình kinh doanh', formData.businessModel],
+    ['Nhu cầu quan tâm', formData.interest],
+    ['Ghi chú', formData.note],
+  ]
+
+  optionalFields.forEach(([label, value]) => {
+    if (hasUsableValue(value)) {
+      lines.push(`- ${label}: ${value}`)
+    }
+  })
+
+  return lines.join('\n')
+}
+
+function collectLeadFormData(form, submitter) {
   const data = new FormData(form)
-  const clickedAction = event.submitter?.value || 'Nhận tư vấn'
-  const formData = {
-    leadType: clickedAction,
-    heroIntent: String(data.get('heroIntent') || '').trim(),
+  const defaultLeadType = form.getAttribute('data-form-purpose') || 'Nhận tư vấn'
+
+  return {
+    leadType: submitter?.value || defaultLeadType,
+    formPurpose: form.getAttribute('data-form-purpose') || 'Biểu mẫu website',
+    pageSource: window.location.pathname,
     contactName: String(data.get('contactName') || '').trim(),
     businessName: String(data.get('businessName') || '').trim(),
     phone: String(data.get('phone') || '').trim(),
@@ -602,16 +939,23 @@ async function handleLeadSubmit(event) {
     interest: String(data.get('interest') || '').trim(),
     note: String(data.get('note') || '').trim(),
   }
+}
 
-  const validationError = validateLeadForm(formData)
+async function handleLeadSubmit(event) {
+  event.preventDefault()
+
+  const form = event.currentTarget
+  const formData = collectLeadFormData(form, event.submitter)
+
+  const validationError = validateLeadForm(form, formData)
   if (validationError) {
-    showLeadStatus(validationError, true)
+    showFormStatus(form, validationError, true)
     return
   }
 
   const message = buildLeadMessage(formData)
   const payload = {
-    source: 'landing-page',
+    source: 'multi-page-website',
     leadKind: 'business-distribution',
     brand: APP_STATE.brandName,
     ...formData,
@@ -621,14 +965,14 @@ async function handleLeadSubmit(event) {
   const chatLink = buildChatLink(message)
   if (chatLink) {
     window.open(chatLink, '_blank', 'noopener')
-    showLeadStatus('Yêu cầu đã được chuyển sang kênh tư vấn. Vui lòng gửi tin nhắn để đội kinh doanh xác nhận.')
+    showFormStatus(form, 'Yêu cầu đã được chuyển sang kênh tư vấn. Vui lòng gửi tin nhắn để đội kinh doanh xác nhận.')
     return
   }
 
   const mailtoLink = buildMailtoLink(message)
   if (mailtoLink) {
     window.location.href = mailtoLink
-    showLeadStatus('Yêu cầu đã được chuyển sang email báo giá. Vui lòng gửi thư để đội kinh doanh xử lý.')
+    showFormStatus(form, 'Yêu cầu đã được chuyển sang email báo giá. Vui lòng gửi thư để đội kinh doanh xử lý.')
     return
   }
 
@@ -636,58 +980,59 @@ async function handleLeadSubmit(event) {
     const webhookSent = await postToWebhook(payload)
 
     if (webhookSent) {
-      showLeadStatus('Yêu cầu đã được chuyển sang hệ thống lead. Đội kinh doanh sẽ liên hệ bạn sớm.')
+      showFormStatus(form, 'Yêu cầu đã được chuyển sang hệ thống lead. Đội kinh doanh sẽ liên hệ bạn sớm.')
       return
     }
   } catch (_error) {
     // Keep silent and fall through to a user-friendly message.
   }
 
-  showLeadStatus(
+  showFormStatus(
+    form,
     'Chưa có kênh liên hệ thật trong cấu hình. Vui lòng cập nhật APP_STATE.contact (Zalo/WhatsApp/email) để nhận lead.',
     true
   )
 }
 
-function setupLeadForm() {
-  const form = document.getElementById('lead-form')
-  if (!form) {
-    return
-  }
+function setupLeadForms() {
+  const forms = document.querySelectorAll('.js-lead-form')
 
-  form.addEventListener('submit', handleLeadSubmit)
-}
-
-function setupProductInterestButtons() {
-  const serviceButtons = document.querySelectorAll('.service-cta')
-  const interestSelect = document.getElementById('interest-select')
-
-  serviceButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const selectedInterest = button.getAttribute('data-interest')
-
-      if (interestSelect && selectedInterest) {
-        interestSelect.value = selectedInterest
-      }
-
-      const leadSection = document.getElementById('lead')
-      leadSection?.scrollIntoView({behavior: 'smooth', block: 'start'})
-    })
+  forms.forEach((form) => {
+    form.addEventListener('submit', handleLeadSubmit)
   })
 }
 
-function setupQuickConsultLink() {
-  const link = document.getElementById('quick-consult-link')
-  const mobileLink = document.getElementById('mobile-quick-contact')
+function setupPrefillInterestFromQuery() {
+  const params = new URLSearchParams(window.location.search)
+  const interest = params.get('interest')
 
-  if (mobileLink) {
-    mobileLink.setAttribute('aria-label', 'Liên hệ tư vấn nhanh')
+  if (!hasUsableValue(interest)) {
+    return
   }
 
-  if (!link) {
-    if (mobileLink) {
-      mobileLink.setAttribute('href', '#contact')
+  document.querySelectorAll('select[name="interest"]').forEach((selectNode) => {
+    const select = selectNode
+    const hasOption = Array.from(select.options).some((option) => option.value === interest)
+
+    if (!hasOption) {
+      const option = document.createElement('option')
+      option.value = interest
+      option.textContent = interest
+      select.appendChild(option)
     }
+
+    select.value = interest
+  })
+
+  document.querySelectorAll('input[name="interest"]').forEach((inputNode) => {
+    inputNode.value = interest
+  })
+}
+
+function setupQuickConsultLinks() {
+  const links = document.querySelectorAll('.js-quick-contact-link, #quick-consult-link')
+
+  if (!links.length) {
     return
   }
 
@@ -695,60 +1040,31 @@ function setupQuickConsultLink() {
   const chatLink = buildChatLink(message)
   const mailtoLink = buildMailtoLink(message)
 
-  if (chatLink) {
-    link.setAttribute('href', chatLink)
-    link.setAttribute('target', '_blank')
-    link.setAttribute('rel', 'noopener')
-
-    if (mobileLink) {
-      mobileLink.setAttribute('href', chatLink)
-      mobileLink.setAttribute('target', '_blank')
-      mobileLink.setAttribute('rel', 'noopener')
+  links.forEach((link) => {
+    if (!(link instanceof HTMLAnchorElement)) {
+      return
     }
-    return
-  }
 
-  if (mailtoLink) {
-    link.setAttribute('href', mailtoLink)
+    if (chatLink) {
+      link.href = chatLink
+      link.setAttribute('target', '_blank')
+      link.setAttribute('rel', 'noopener')
+      return
+    }
+
+    if (mailtoLink) {
+      link.href = mailtoLink
+      link.removeAttribute('target')
+      link.removeAttribute('rel')
+      return
+    }
+
+    if (!link.getAttribute('href')) {
+      link.href = 'lien-he.html#thong-tin-lien-he'
+    }
+
     link.removeAttribute('target')
     link.removeAttribute('rel')
-
-    if (mobileLink) {
-      mobileLink.setAttribute('href', mailtoLink)
-      mobileLink.removeAttribute('target')
-      mobileLink.removeAttribute('rel')
-    }
-    return
-  }
-
-  link.setAttribute('href', '#contact')
-  link.removeAttribute('target')
-  link.removeAttribute('rel')
-
-  if (mobileLink) {
-    mobileLink.setAttribute('href', '#contact')
-    mobileLink.removeAttribute('target')
-    mobileLink.removeAttribute('rel')
-  }
-}
-
-function setupHeroIntentLinks() {
-  const links = document.querySelectorAll('.lead-intent-link')
-  const intentInput = document.getElementById('hero-intent')
-  const interestSelect = document.getElementById('interest-select')
-
-  links.forEach((link) => {
-    link.addEventListener('click', () => {
-      const intent = link.getAttribute('data-lead-intent') || ''
-
-      if (intentInput) {
-        intentInput.value = intent
-      }
-
-      if (interestSelect && hasUsableValue(intent)) {
-        interestSelect.value = intent
-      }
-    })
   })
 }
 
@@ -790,6 +1106,7 @@ function setupMobileNav() {
 
   document.addEventListener('click', (event) => {
     const target = event.target
+
     if (!(target instanceof Node)) {
       return
     }
@@ -810,6 +1127,42 @@ function setupMobileNav() {
       closeNav()
     }
   })
+}
+
+function setupActiveNavigation() {
+  const activeKey = document.body?.dataset?.nav || ''
+
+  document.querySelectorAll('#main-nav a[data-nav]').forEach((link) => {
+    const isActive = link.getAttribute('data-nav') === activeKey
+
+    link.classList.toggle('is-active', isActive)
+
+    if (isActive) {
+      link.setAttribute('aria-current', 'page')
+    } else {
+      link.removeAttribute('aria-current')
+    }
+  })
+}
+
+function setupBackToTop() {
+  const backToTop = document.getElementById('back-to-top')
+
+  if (!backToTop) {
+    return
+  }
+
+  const toggleVisibility = () => {
+    const isVisible = window.scrollY > 420
+    backToTop.classList.toggle('visible', isVisible)
+  }
+
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({top: 0, behavior: 'smooth'})
+  })
+
+  toggleVisibility()
+  window.addEventListener('scroll', toggleVisibility, {passive: true})
 }
 
 function setupRevealAnimations() {
@@ -839,6 +1192,7 @@ function setupRevealAnimations() {
 
 function setupFooterYear() {
   const year = document.getElementById('current-year')
+
   if (!year) {
     return
   }
@@ -846,48 +1200,32 @@ function setupFooterYear() {
   year.textContent = String(new Date().getFullYear())
 }
 
-function renderHomepageContent(content) {
-  const categories = Array.isArray(content?.productCategories) ? content.productCategories : []
-  const brands = Array.isArray(content?.brands) ? content.brands : []
-  const testimonials = Array.isArray(content?.testimonials) ? content.testimonials : []
-  const trustPoints = Array.isArray(content?.trustPoints) ? content.trustPoints : []
-  const hero = content?.homepageHero || {}
+async function initSite() {
+  let homepageContent = {}
 
-  applySiteSettings(content?.siteSettings)
-  renderSiteMeta(content?.siteSettings)
-  renderHero(hero)
-  renderTrustPoints(trustPoints)
-  renderCategories(categories)
-  renderBrands(brands)
-  renderTestimonials(testimonials)
-  renderContactBlock(content?.contactBlock || {})
-  syncInterestOptions(categories, hero)
+  try {
+    homepageContent = await fetchHomepageData()
+  } catch (_error) {
+    homepageContent = {}
+  }
+
+  applySiteSettings(homepageContent?.siteSettings)
+  renderSiteMeta(homepageContent?.siteSettings)
+  renderByPage(document.body?.dataset?.page || 'home', homepageContent)
+  renderContactBlock(homepageContent?.contactBlock || {})
+
   updateTextBindings()
   updateLinkBindings()
-}
-
-async function initLandingPage() {
-  const homepageContent = await fetchHomepageData()
-  renderHomepageContent(homepageContent)
-  setupQuickConsultLink()
-  setupHeroIntentLinks()
+  setupActiveNavigation()
   setupMobileNav()
-  setupProductInterestButtons()
-  setupLeadForm()
+  setupBackToTop()
+  setupQuickConsultLinks()
+  setupLeadForms()
+  setupPrefillInterestFromQuery()
   setupRevealAnimations()
   setupFooterYear()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initLandingPage().catch(() => {
-    updateTextBindings()
-    updateLinkBindings()
-    setupQuickConsultLink()
-    setupHeroIntentLinks()
-    setupMobileNav()
-    setupProductInterestButtons()
-    setupLeadForm()
-    setupRevealAnimations()
-    setupFooterYear()
-  })
+  initSite()
 })
