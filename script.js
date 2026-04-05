@@ -57,12 +57,12 @@
   const formSuccess  = document.getElementById('formSuccess');
 
   // Set minimum date to today
-  var dateInput = document.getElementById('date');
+  const dateInput = document.getElementById('date');
   if (dateInput) {
-    var today = new Date();
-    var yyyy  = today.getFullYear();
-    var mm    = String(today.getMonth() + 1).padStart(2, '0');
-    var dd    = String(today.getDate()).padStart(2, '0');
+    const today = new Date();
+    const yyyy  = today.getFullYear();
+    const mm    = String(today.getMonth() + 1).padStart(2, '0');
+    const dd    = String(today.getDate()).padStart(2, '0');
     dateInput.min = yyyy + '-' + mm + '-' + dd;
   }
 
@@ -70,10 +70,10 @@
     e.preventDefault();
 
     // Basic validation
-    var name  = document.getElementById('name').value.trim();
-    var phone = document.getElementById('phone').value.trim();
-    var date  = document.getElementById('date').value;
-    var time  = document.getElementById('time').value;
+    const name  = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const date  = document.getElementById('date').value;
+    const time  = document.getElementById('time').value;
 
     if (!name || !phone || !date || !time) {
       alert('Vui lòng điền đầy đủ thông tin bắt buộc (*).');
@@ -81,7 +81,7 @@
     }
 
     // Simulate form submission (replace with real endpoint if needed)
-    var submitBtn = bookingForm.querySelector('button[type="submit"]');
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Đang Gửi…';
 
@@ -102,7 +102,7 @@
   if (newsletterForm) {
     newsletterForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      var btn = newsletterForm.querySelector('button');
+      const btn = newsletterForm.querySelector('button');
       btn.textContent = '✓ Đã Đăng Ký!';
       btn.disabled = true;
       newsletterForm.querySelector('input').value = '';
@@ -114,12 +114,12 @@
   }
 
   // ── Intersection Observer – fade-in on scroll ──────────────────────────────
-  var observerOptions = {
+  const observerOptions = {
     threshold: 0.12,
     rootMargin: '0px 0px -40px 0px'
   };
 
-  var observer = new IntersectionObserver(function (entries) {
+  const observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('in-view');
@@ -129,7 +129,7 @@
   }, observerOptions);
 
   // Add fade-in style and observe elements
-  var style = document.createElement('style');
+  const style = document.createElement('style');
   style.textContent = [
     '.fade-in { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }',
     '.fade-in.in-view { opacity: 1; transform: none; }',
@@ -141,7 +141,7 @@
   ].join('\n');
   document.head.appendChild(style);
 
-  var animTargets = document.querySelectorAll(
+  const animTargets = document.querySelectorAll(
     '.service-card, .team-card, .testimonial, .gallery-item, .stat'
   );
   animTargets.forEach(function (el) {
@@ -150,10 +150,10 @@
   });
 
   // ── Active nav link highlight on scroll ───────────────────────────────────
-  var sections = document.querySelectorAll('section[id]');
-  var navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
+  const sections = document.querySelectorAll('section[id]');
+  const navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
 
-  var sectionObserver = new IntersectionObserver(function (entries) {
+  const sectionObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         var id = entry.target.getAttribute('id');
@@ -168,7 +168,7 @@
   }, { threshold: 0.4 });
 
   // Add active link style
-  var activeStyle = document.createElement('style');
+  const activeStyle = document.createElement('style');
   activeStyle.textContent = '.nav-links a.active { color: var(--gold) !important; }';
   document.head.appendChild(activeStyle);
 
