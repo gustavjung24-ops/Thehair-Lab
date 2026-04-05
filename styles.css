@@ -353,6 +353,14 @@ p {
   color: #5b484f;
 }
 
+.result-copy {
+  margin-top: 0.2rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed #e3c8cd;
+  color: #4a343b;
+  font-size: 0.96rem;
+}
+
 .team-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
