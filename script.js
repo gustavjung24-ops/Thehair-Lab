@@ -3,15 +3,15 @@ document.documentElement.classList.add("js-enabled");
 const APP_CONFIG = {
   brandName: "The Hair Lab",
   contact: {
-    phone: "TODO_REPLACE_REAL_PHONE",
-    email: "TODO_REPLACE_REAL_EMAIL",
-    zaloLink: "TODO_REPLACE_REAL_ZALO_LINK",
-    whatsappLink: "TODO_REPLACE_REAL_WHATSAPP_LINK",
-    address: "TODO_REPLACE_REAL_ADDRESS",
-    distributionArea: "TODO_REPLACE_REAL_DISTRIBUTION_AREA",
-    businessHours: ["TODO_REPLACE_REAL_BUSINESS_HOURS"],
-    facebookLink: "TODO_REPLACE_REAL_FACEBOOK_LINK",
-    instagramLink: "TODO_REPLACE_REAL_INSTAGRAM_LINK"
+    phone: "0907.489.278",
+    email: "thehairlab.info@gmail.com",
+    zaloLink: "https://zalo.me/0907489278",
+    whatsappLink: "",
+    address: "Tân Hưng Thuận - Quận 12 - Hồ Chí Minh",
+    distributionArea: "Hồ Chí Minh",
+    businessHours: ["Hỗ trợ qua hotline và Zalo"],
+    facebookLink: "https://www.facebook.com/alphatravn",
+    instagramLink: ""
   },
   lead: {
     // Set webhookEnabled=true only when a real lead endpoint is ready.
