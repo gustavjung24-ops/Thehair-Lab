@@ -1,0 +1,145 @@
+export const fallbackContent = {
+  siteSettings: {
+    siteTitle: 'The Hair Lab | Công ty phân phối mỹ phẩm và chăm sóc tóc',
+    siteDescription:
+      'The Hair Lab là công ty phân phối dòng mỹ phẩm và chăm sóc tóc chính hãng cho salon, spa và đại lý; hỗ trợ tư vấn sản phẩm, báo giá và hợp tác dài hạn.',
+    hotline: '0907.489.278',
+    email: 'thehairlab.info@gmail.com',
+    zaloLink: 'https://zalo.me/0907489278',
+    address: 'Tân Hưng Thuận - Quận 12 - Hồ Chí Minh',
+    businessHours: 'Hỗ trợ qua hotline và Zalo',
+  },
+  homepageHero: {
+    eyebrow: 'Nhà phân phối mỹ phẩm và haircare chính hãng',
+    title: 'Nguồn mỹ phẩm chăm sóc tóc ổn định cho salon, spa và đại lý muốn phát triển kinh doanh bền vững.',
+    subtitle:
+      'The Hair Lab tập trung phân phối dòng sản phẩm chăm sóc tóc chất lượng cao, minh bạch nguồn gốc và chính sách hợp tác rõ ràng. Chúng tôi đồng hành từ khâu chọn danh mục phù hợp mô hình kinh doanh đến đào tạo tư vấn sản phẩm, giúp đối tác bán hàng hiệu quả và giữ khách lâu dài.',
+    primaryCtaLabel: 'Nhận catalog',
+    primaryCtaUrl: '#lead',
+    secondaryCtaLabel: 'Yêu cầu báo giá',
+    secondaryCtaUrl: '#lead',
+    heroImage: null,
+  },
+  trustPoints: [
+    {
+      _id: 'trust-1',
+      title: 'Hàng chính hãng',
+      description: 'Hàng chính hãng, kiểm soát chất lượng đầu vào',
+      iconName: 'shield',
+    },
+    {
+      _id: 'trust-2',
+      title: 'Nguồn hàng ổn định',
+      description: 'Nguồn hàng ổn định, đáp ứng nhanh theo khu vực',
+      iconName: 'truck',
+    },
+    {
+      _id: 'trust-3',
+      title: 'Tư vấn theo mô hình',
+      description: 'Hỗ trợ đối tác bán hàng và tư vấn chọn dòng phù hợp',
+      iconName: 'users',
+    },
+    {
+      _id: 'trust-4',
+      title: 'Đồng hành dài hạn',
+      description: 'Đào tạo sản phẩm và chăm sóc đối tác xuyên suốt',
+      iconName: 'sparkles',
+    },
+  ],
+  brands: [
+    {
+      _id: 'brand-1',
+      name: 'Hair Professional Series',
+      shortDescription: 'Dòng chuyên salon cho chăm sóc và phục hồi tóc.',
+      sortOrder: 1,
+      logo: null,
+    },
+    {
+      _id: 'brand-2',
+      name: 'Color Lab',
+      shortDescription: 'Nhóm màu nhuộm và oxy trợ nhuộm cho dịch vụ kỹ thuật.',
+      sortOrder: 2,
+      logo: null,
+    },
+    {
+      _id: 'brand-3',
+      name: 'Daily Care Home',
+      shortDescription: 'Dòng bán lẻ cho khách chăm sóc tóc tại nhà.',
+      sortOrder: 3,
+      logo: null,
+    },
+  ],
+  productCategories: [
+    {
+      _id: 'cat-1',
+      name: 'Chăm sóc tóc chuyên sâu',
+      shortDescription: 'Dòng gội - xả - mask hỗ trợ làm sạch và nuôi dưỡng cân bằng.',
+      targetCustomer: 'Salon dịch vụ và spa tóc',
+      keyBenefit: 'Nâng chất lượng dịch vụ chăm sóc, tăng tỷ lệ khách quay lại.',
+      sortOrder: 1,
+      coverImage: null,
+    },
+    {
+      _id: 'cat-2',
+      name: 'Phục hồi và dưỡng',
+      shortDescription: 'Bộ phục hồi keratin, dưỡng sâu và tinh dầu hoàn thiện.',
+      targetCustomer: 'Salon cao cấp, studio tạo mẫu',
+      keyBenefit: 'Tăng giá trị mỗi đơn dịch vụ nhờ giải pháp phục hồi chuyên biệt.',
+      sortOrder: 2,
+      coverImage: null,
+    },
+    {
+      _id: 'cat-3',
+      name: 'Màu nhuộm và hỗ trợ tạo kiểu',
+      shortDescription: 'Thuốc nhuộm, oxy trợ nhuộm và sản phẩm hỗ trợ hoàn thiện.',
+      targetCustomer: 'Salon màu và học viện tóc',
+      keyBenefit: 'Lên màu đồng đều, tối ưu thời gian thao tác cho thợ.',
+      sortOrder: 3,
+      coverImage: null,
+    },
+    {
+      _id: 'cat-4',
+      name: 'Dòng chuyên salon',
+      shortDescription: 'Can dung tích lớn, sản phẩm kỹ thuật và bộ dùng nội bộ salon.',
+      targetCustomer: 'Salon có lưu lượng khách cao',
+      keyBenefit: 'Kiểm soát cost tốt hơn, chất lượng đồng nhất giữa các ca.',
+      sortOrder: 4,
+      coverImage: null,
+    },
+  ],
+  testimonials: [
+    {
+      _id: 'review-1',
+      customerName: 'Quản lý salon nữ - Quận 3',
+      customerType: 'Salon đối tác tại TP.HCM',
+      quote:
+        'Danh mục gợi ý rất sát nhu cầu khách của salon. Bên mình nhập thử 2 nhóm phục hồi và bán lẻ tại quầy, sau 1 tháng doanh thu sản phẩm tăng rõ vì khách dễ chọn.',
+      rating: 5,
+      sortOrder: 1,
+    },
+    {
+      _id: 'review-2',
+      customerName: 'Chủ đại lý - Biên Hòa',
+      customerType: 'Đại lý mỹ phẩm tóc',
+      quote:
+        'Ưu điểm là tư vấn SKU theo vốn nhập thực tế, không đẩy hàng dư. Chính sách hỗ trợ ổn, có người theo dõi đơn và phản hồi nhanh khi cần bổ sung hàng gấp.',
+      rating: 5,
+      sortOrder: 2,
+    },
+    {
+      _id: 'review-3',
+      customerName: 'Quản lý vận hành - Bình Dương',
+      customerType: 'Spa kết hợp chăm sóc tóc',
+      quote:
+        'Đội ngũ đào tạo cách tư vấn sản phẩm ngay tại điểm bán nên nhân sự mới cũng triển khai được. Dòng gội xả dung tích lớn giúp bên mình tối ưu chi phí dịch vụ khá tốt.',
+      rating: 5,
+      sortOrder: 3,
+    },
+  ],
+  contactBlock: {
+    title: 'The Hair Lab Distribution',
+    description: 'Thông tin liên hệ được đồng bộ từ CMS để đội ngũ kinh doanh cập nhật nhanh.',
+    ctaLabel: 'Nhận tư vấn ngay',
+    ctaUrl: '#lead',
+  },
+}

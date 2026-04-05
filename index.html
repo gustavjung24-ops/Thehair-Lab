@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Hair Lab | Công ty phân phối mỹ phẩm và chăm sóc tóc</title>
+    <title id="site-title">The Hair Lab | Công ty phân phối mỹ phẩm và chăm sóc tóc</title>
     <meta
+      id="site-description-meta"
       name="description"
       content="The Hair Lab là công ty phân phối dòng mỹ phẩm và chăm sóc tóc chính hãng cho salon, spa và đại lý; hỗ trợ tư vấn sản phẩm, báo giá và hợp tác dài hạn."
     />
@@ -19,7 +20,7 @@
   <body>
     <header class="site-header" id="top">
       <div class="container header-inner">
-        <a href="#top" class="brand">The Hair Lab</a>
+        <a href="#top" class="brand" data-site-title="brand">The Hair Lab</a>
 
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
           <span></span>
@@ -44,19 +45,33 @@
       <section class="hero section" id="hero">
         <div class="container hero-grid">
           <div class="hero-content reveal">
-            <p class="eyebrow">Nhà phân phối mỹ phẩm và haircare chính hãng</p>
-            <h1>
-              Nguồn mỹ phẩm chăm sóc tóc ổn định cho salon, spa và đại lý muốn phát triển kinh doanh bền vững.
-            </h1>
-            <p class="hero-subtitle">
+            <p class="eyebrow" data-hero="eyebrow">Nhà phân phối mỹ phẩm và haircare chính hãng</p>
+            <h1 data-hero="title">Nguồn mỹ phẩm chăm sóc tóc ổn định cho salon, spa và đại lý muốn phát triển kinh doanh bền vững.</h1>
+            <p class="hero-subtitle" data-hero="subtitle">
               The Hair Lab tập trung phân phối dòng sản phẩm chăm sóc tóc chất lượng cao, minh bạch nguồn gốc và chính
               sách hợp tác rõ ràng. Chúng tôi đồng hành từ khâu chọn danh mục phù hợp mô hình kinh doanh đến đào tạo
               tư vấn sản phẩm, giúp đối tác bán hàng hiệu quả và giữ khách lâu dài.
             </p>
 
+            <div class="hero-image-wrap" id="hero-image-wrap" hidden>
+              <img id="hero-image" src="" alt="" loading="lazy" />
+            </div>
+
             <div class="hero-cta-group">
-              <a href="#lead" class="btn btn-primary lead-intent-link" data-lead-intent="Nhận catalog">Nhận catalog</a>
-              <a href="#lead" class="btn btn-outline lead-intent-link" data-lead-intent="Yêu cầu báo giá">Yêu cầu báo giá</a>
+              <a
+                href="#lead"
+                id="hero-primary-cta"
+                class="btn btn-primary lead-intent-link"
+                data-lead-intent="Nhận catalog"
+                >Nhận catalog</a
+              >
+              <a
+                href="#lead"
+                id="hero-secondary-cta"
+                class="btn btn-outline lead-intent-link"
+                data-lead-intent="Yêu cầu báo giá"
+                >Yêu cầu báo giá</a
+              >
               <a href="#contact" id="quick-consult-link" class="btn btn-soft">Nhắn tư vấn nhanh</a>
             </div>
 
@@ -72,7 +87,7 @@
 
           <aside class="hero-panel reveal">
             <h2>Lý do đối tác chọn The Hair Lab</h2>
-            <ul class="trust-list">
+            <ul class="trust-list" id="hero-trust-list">
               <li>Hàng chính hãng, có thông tin lô hàng và xuất xứ rõ ràng.</li>
               <li>Nguồn cung ổn định cho vận hành salon, spa và chuỗi đại lý.</li>
               <li>Đội ngũ tư vấn hỗ trợ chọn SKU theo tệp khách và ngân sách.</li>
@@ -84,7 +99,7 @@
       </section>
 
       <section class="trust-strip" aria-label="Năng lực nổi bật">
-        <div class="container trust-strip-grid">
+        <div class="container trust-strip-grid" id="trust-strip-grid">
           <p>Hàng chính hãng, kiểm soát chất lượng đầu vào</p>
           <p>Nguồn hàng ổn định, đáp ứng nhanh theo khu vực</p>
           <p>Hỗ trợ đối tác bán hàng và tư vấn chọn dòng phù hợp</p>
@@ -139,73 +154,14 @@
             <h2>Danh mục thiết kế để phù hợp nhiều mô hình kinh doanh trong ngành tóc.</h2>
           </div>
 
-          <div class="service-grid">
-            <article class="service-card reveal">
-              <h3>Chăm sóc tóc chuyên sâu</h3>
-              <p class="service-for">Phù hợp: Salon cần sản phẩm xử lý nền tóc khô, xơ và thiếu độ bóng.</p>
-              <p class="service-result">Lợi ích nổi bật: Nâng chất lượng dịch vụ chăm sóc, tăng tỷ lệ khách quay lại.</p>
-              <ul class="service-meta">
-                <li>Mô tả: Dòng gội - xả - mask hỗ trợ làm sạch và nuôi dưỡng cân bằng.</li>
-                <li>Đối tác mục tiêu: Salon dịch vụ và spa tóc.</li>
-              </ul>
-              <button type="button" class="service-cta" data-interest="Chăm sóc tóc chuyên sâu">Nhận danh mục sản phẩm</button>
-            </article>
+          <div class="service-grid" id="category-grid"></div>
 
-            <article class="service-card reveal">
-              <h3>Phục hồi và dưỡng</h3>
-              <p class="service-for">Phù hợp: Đơn vị có tệp khách tóc xử lý hóa chất thường xuyên.</p>
-              <p class="service-result">Lợi ích nổi bật: Tăng giá trị mỗi đơn dịch vụ nhờ giải pháp phục hồi chuyên biệt.</p>
-              <ul class="service-meta">
-                <li>Mô tả: Bộ phục hồi keratin, dưỡng sâu và tinh dầu hoàn thiện.</li>
-                <li>Đối tác mục tiêu: Salon cao cấp, studio tạo mẫu.</li>
-              </ul>
-              <button type="button" class="service-cta" data-interest="Phục hồi và dưỡng">Nhận tư vấn nhập dòng này</button>
-            </article>
-
-            <article class="service-card reveal">
-              <h3>Màu nhuộm và hỗ trợ tạo kiểu</h3>
-              <p class="service-for">Phù hợp: Salon cần bảng màu ổn định và sản phẩm phối kỹ thuật linh hoạt.</p>
-              <p class="service-result">Lợi ích nổi bật: Lên màu đồng đều, tối ưu thời gian thao tác cho thợ.</p>
-              <ul class="service-meta">
-                <li>Mô tả: Thuốc nhuộm, oxy trợ nhuộm và sản phẩm hỗ trợ hoàn thiện.</li>
-                <li>Đối tác mục tiêu: Salon màu và học viện tóc.</li>
-              </ul>
-              <button type="button" class="service-cta" data-interest="Màu nhuộm và hỗ trợ tạo kiểu">Yêu cầu bảng màu và giá</button>
-            </article>
-
-            <article class="service-card reveal">
-              <h3>Dòng chuyên salon</h3>
-              <p class="service-for">Phù hợp: Salon cần dung tích lớn để tối ưu chi phí trên mỗi dịch vụ.</p>
-              <p class="service-result">Lợi ích nổi bật: Kiểm soát cost tốt hơn, chất lượng đồng nhất giữa các ca.</p>
-              <ul class="service-meta">
-                <li>Mô tả: Can dung tích lớn, sản phẩm kỹ thuật và bộ dùng nội bộ salon.</li>
-                <li>Đối tác mục tiêu: Salon có lưu lượng khách cao.</li>
-              </ul>
-              <button type="button" class="service-cta" data-interest="Dòng chuyên salon">Nhận chính sách cho salon</button>
-            </article>
-
-            <article class="service-card reveal">
-              <h3>Dòng bán lẻ và chăm sóc tại nhà</h3>
-              <p class="service-for">Phù hợp: Salon và đại lý muốn phát triển doanh thu bán lẻ sau dịch vụ.</p>
-              <p class="service-result">Lợi ích nổi bật: Tăng doanh thu ngoài ghế làm tóc, giữ chu kỳ chăm sóc tại nhà.</p>
-              <ul class="service-meta">
-                <li>Mô tả: Combo gội xả, dầu dưỡng, sản phẩm chăm sóc tóc hằng ngày.</li>
-                <li>Đối tác mục tiêu: Đại lý mỹ phẩm, cửa hàng chuyên tóc.</li>
-              </ul>
-              <button type="button" class="service-cta" data-interest="Dòng bán lẻ và chăm sóc tại nhà">Nhận combo bán lẻ gợi ý</button>
-            </article>
-
-            <article class="service-card reveal">
-              <h3>Combo cho đại lý và salon</h3>
-              <p class="service-for">Phù hợp: Đối tác mới bắt đầu nhập hàng hoặc cần test thị trường theo khu vực.</p>
-              <p class="service-result">Lợi ích nổi bật: Khởi động nhanh với danh mục tinh gọn, giảm tồn kho ban đầu.</p>
-              <ul class="service-meta">
-                <li>Mô tả: Combo theo ngân sách và mô hình, kèm tư vấn bán hàng cơ bản.</li>
-                <li>Đối tác mục tiêu: Đại lý mới, salon mở chi nhánh.</li>
-              </ul>
-              <button type="button" class="service-cta" data-interest="Combo cho đại lý và salon">Đăng ký nhận combo đề xuất</button>
-            </article>
+          <div class="section-head section-head-secondary reveal" id="brand-section-head">
+            <p class="eyebrow">Thương hiệu phân phối</p>
+            <h3>Danh sách thương hiệu hiện có trong hệ thống The Hair Lab.</h3>
           </div>
+
+          <div class="brand-grid" id="brand-grid"></div>
         </div>
       </section>
 
@@ -391,43 +347,7 @@
             <h2>Phản hồi từ salon, spa và đại lý đang hợp tác.</h2>
           </div>
 
-          <div class="review-grid">
-            <article class="review-card reveal">
-              <span class="review-tag">Salon đối tác tại TP.HCM</span>
-              <p>
-                "Danh mục gợi ý rất sát nhu cầu khách của salon. Bên mình nhập thử 2 nhóm phục hồi và bán lẻ tại quầy,
-                sau 1 tháng doanh thu sản phẩm tăng rõ vì khách dễ chọn."
-              </p>
-              <p class="review-author">Quản lý salon nữ - Quận 3</p>
-            </article>
-
-            <article class="review-card reveal">
-              <span class="review-tag">Đại lý mỹ phẩm tóc</span>
-              <p>
-                "Ưu điểm là tư vấn SKU theo vốn nhập thực tế, không đẩy hàng dư. Chính sách hỗ trợ ổn, có người theo dõi
-                đơn và phản hồi nhanh khi cần bổ sung hàng gấp."
-              </p>
-              <p class="review-author">Chủ đại lý - Biên Hòa</p>
-            </article>
-
-            <article class="review-card reveal">
-              <span class="review-tag">Spa kết hợp chăm sóc tóc</span>
-              <p>
-                "Đội ngũ đào tạo cách tư vấn sản phẩm ngay tại điểm bán nên nhân sự mới cũng triển khai được. Dòng gội xả
-                dung tích lớn giúp bên mình tối ưu chi phí dịch vụ khá tốt."
-              </p>
-              <p class="review-author">Quản lý vận hành - Bình Dương</p>
-            </article>
-
-            <article class="review-card reveal">
-              <span class="review-tag">Chuỗi salon khu vực miền Trung</span>
-              <p>
-                "Điểm mình đánh giá cao là giao hàng và hỗ trợ kỹ thuật ổn định. Có thay đổi danh mục theo mùa, bên phân
-                phối tư vấn lại nhanh nên không bị tồn kho quá lâu."
-              </p>
-              <p class="review-author">Giám sát mua hàng - Đà Nẵng</p>
-            </article>
-          </div>
+          <div class="review-grid" id="testimonial-grid"></div>
         </div>
       </section>
 
@@ -518,10 +438,11 @@
         <div class="container contact-grid reveal">
           <div>
             <p class="eyebrow">Liên hệ kinh doanh</p>
-            <h2>The Hair Lab Distribution</h2>
-            <p class="contact-note">
+            <h2 data-contact-block="title">The Hair Lab Distribution</h2>
+            <p class="contact-note" data-contact-block="description">
               Cập nhật thông tin 1 lần trong object cấu hình JS, toàn bộ website sẽ tự đồng bộ theo.
             </p>
+            <a data-contact-block="ctaLink" class="btn btn-primary contact-cta" href="#lead">Nhận tư vấn ngay</a>
           </div>
 
           <div class="contact-card">
@@ -533,7 +454,6 @@
               Email nhận báo giá:
               <a data-contact-link="email" href="#top"><span data-contact="email">TODO_REPLACE_REAL_EMAIL</span></a>
             </p>
-            <p>Khu vực phân phối: <span data-contact="distributionArea">TODO_REPLACE_REAL_DISTRIBUTION_AREA</span></p>
             <p>Địa chỉ văn phòng: <span data-contact="address">TODO_REPLACE_REAL_ADDRESS</span></p>
             <p>Giờ hỗ trợ đối tác: <span data-contact="businessHoursInline">TODO_REPLACE_REAL_BUSINESS_HOURS</span></p>
 
@@ -560,6 +480,6 @@
       </div>
     </footer>
 
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

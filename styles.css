@@ -187,6 +187,23 @@ p {
   color: #4f3b41;
 }
 
+.hero-image-wrap {
+  margin-top: 1.2rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  max-width: 640px;
+}
+
+.hero-image-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: cover;
+}
+
 .hero-cta-group {
   display: flex;
   flex-wrap: wrap;
@@ -249,6 +266,7 @@ p {
 
 .about-grid,
 .service-grid,
+.brand-grid,
 .result-grid,
 .team-grid,
 .review-grid {
@@ -263,6 +281,7 @@ p {
 .about-card,
 .service-card,
 .result-card,
+.brand-card,
 .team-card,
 .review-card,
 .contact-card,
@@ -276,6 +295,7 @@ p {
 
 .about-card,
 .service-card,
+.brand-card,
 .team-card,
 .review-card {
   padding: 1.4rem;
@@ -294,6 +314,21 @@ p {
 .service-card {
   display: grid;
   gap: 0.85rem;
+}
+
+.service-cover {
+  min-height: 180px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: linear-gradient(145deg, #f8d5c9 0%, #f0bcb2 48%, #f8ddd3 100%);
+}
+
+.service-cover img {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  object-fit: cover;
+  display: block;
 }
 
 .service-for,
@@ -376,6 +411,47 @@ p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.section-head-secondary {
+  margin-top: 2.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.brand-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.brand-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 1.2rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.brand-logo-wrap {
+  width: 100%;
+  min-height: 96px;
+  border-radius: var(--radius-md);
+  background: #fff6f2;
+  border: 1px solid #f1ddd7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+}
+
+.brand-logo-wrap img {
+  width: 100%;
+  max-height: 84px;
+  object-fit: contain;
+}
+
+.brand-card p {
+  color: #5f4b52;
+}
+
 .review-tag {
   display: inline-block;
   margin-bottom: 0.8rem;
@@ -387,6 +463,13 @@ p {
   background: #ffe6de;
   border-radius: 999px;
   padding: 0.26rem 0.72rem;
+}
+
+.review-rating {
+  margin-top: 0.75rem;
+  color: #7c253b;
+  font-weight: 700;
+  font-size: 0.94rem;
 }
 
 .review-author {
@@ -485,6 +568,10 @@ p {
 
 .contact-note {
   color: var(--muted);
+}
+
+.contact-cta {
+  margin-top: 0.95rem;
 }
 
 .social-links {
@@ -589,6 +676,7 @@ p {
   .booking-wrap,
   .contact-grid,
   .service-grid,
+  .brand-grid,
   .team-grid,
   .result-grid,
   .review-grid,
@@ -650,6 +738,7 @@ p {
   .booking-wrap,
   .contact-grid,
   .service-grid,
+  .brand-grid,
   .team-grid,
   .result-grid,
   .review-grid,
