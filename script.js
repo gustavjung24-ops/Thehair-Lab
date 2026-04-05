@@ -5,15 +5,16 @@ const APP_CONFIG = {
   contact: {
     phone: "TODO_REPLACE_REAL_PHONE",
     email: "TODO_REPLACE_REAL_EMAIL",
-    address: "TODO_REPLACE_REAL_ADDRESS",
-    openingHours: ["TODO_REPLACE_REAL_OPENING_HOURS"],
     zaloLink: "TODO_REPLACE_REAL_ZALO_LINK",
     whatsappLink: "TODO_REPLACE_REAL_WHATSAPP_LINK",
+    address: "TODO_REPLACE_REAL_ADDRESS",
+    distributionArea: "TODO_REPLACE_REAL_DISTRIBUTION_AREA",
+    businessHours: ["TODO_REPLACE_REAL_BUSINESS_HOURS"],
     facebookLink: "TODO_REPLACE_REAL_FACEBOOK_LINK",
     instagramLink: "TODO_REPLACE_REAL_INSTAGRAM_LINK"
   },
-  booking: {
-    // Set webhookEnabled=true only when you have a real endpoint.
+  lead: {
+    // Set webhookEnabled=true only when a real lead endpoint is ready.
     webhookEnabled: false,
     webhookEndpoint: "TODO_REPLACE_REAL_WEBHOOK_ENDPOINT",
     webhookMethod: "POST"
@@ -48,8 +49,8 @@ function updateTextBindings() {
     const field = node.getAttribute("data-contact");
     let value;
 
-    if (field === "openingHoursInline") {
-      value = formatDisplayValue(APP_CONFIG.contact.openingHours, "TODO_REPLACE_REAL_OPENING_HOURS");
+    if (field === "businessHoursInline") {
+      value = formatDisplayValue(APP_CONFIG.contact.businessHours, "TODO_REPLACE_REAL_BUSINESS_HOURS");
     } else {
       value = formatDisplayValue(APP_CONFIG.contact[field], `TODO_REPLACE_REAL_${field.toUpperCase()}`);
     }
@@ -97,12 +98,16 @@ function updateLinkBindings() {
 
 function buildLeadMessage(formData) {
   return [
-    `YÊU CẦU ĐẶT LỊCH - ${APP_CONFIG.brandName}`,
-    `- Họ tên: ${formData.name}`,
+    `YÊU CẦU LEAD KINH DOANH - ${APP_CONFIG.brandName}`,
+    `- Mục tiêu liên hệ: ${formData.leadType}`,
+    `- Từ CTA hero: ${formData.heroIntent || "Không có"}`,
+    `- Họ tên người liên hệ: ${formData.contactName}`,
+    `- Tên đơn vị: ${formData.businessName}`,
     `- Số điện thoại: ${formData.phone}`,
-    `- Dịch vụ quan tâm: ${formData.service}`,
-    `- Thời gian mong muốn: ${formData.preferredTime}`,
-    `- Mô tả tình trạng tóc: ${formData.note || "Không có ghi chú thêm"}`
+    `- Khu vực: ${formData.area}`,
+    `- Mô hình kinh doanh: ${formData.businessModel}`,
+    `- Nhu cầu quan tâm: ${formData.interest}`,
+    `- Ghi chú: ${formData.note || "Không có ghi chú thêm"}`
   ].join("\n");
 }
 
@@ -132,13 +137,13 @@ function buildMailtoLink(message) {
     return null;
   }
 
-  const subject = `Dat lich tai ${APP_CONFIG.brandName}`;
+  const subject = `Lead kinh doanh từ website ${APP_CONFIG.brandName}`;
   const base = `mailto:${email}`;
   return `${base}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
 }
 
 async function postToWebhook(payload) {
-  const { webhookEnabled, webhookEndpoint, webhookMethod } = APP_CONFIG.booking;
+  const { webhookEnabled, webhookEndpoint, webhookMethod } = APP_CONFIG.lead;
 
   if (!webhookEnabled || !hasUsableValue(webhookEndpoint)) {
     return false;
@@ -155,56 +160,70 @@ async function postToWebhook(payload) {
   return response.ok;
 }
 
-function validateBookingForm(formData) {
-  if (!formData.name || formData.name.length < 2) {
-    return "Vui lòng nhập họ tên hợp lệ.";
+function validateLeadForm(formData) {
+  if (!formData.contactName || formData.contactName.length < 2) {
+    return "Vui lòng nhập họ tên người liên hệ hợp lệ.";
+  }
+
+  if (!formData.businessName || formData.businessName.length < 2) {
+    return "Vui lòng nhập tên đơn vị hợp lệ.";
   }
 
   if (!/^[0-9+()\s.-]{8,20}$/.test(formData.phone)) {
-    return "Vui lòng nhập số điện thoại hợp lệ để salon liên hệ.";
+    return "Vui lòng nhập số điện thoại hợp lệ để đội kinh doanh liên hệ.";
   }
 
-  if (!formData.service) {
-    return "Vui lòng chọn dịch vụ bạn quan tâm.";
+  if (!formData.area) {
+    return "Vui lòng nhập khu vực hoạt động.";
   }
 
-  if (!formData.preferredTime) {
-    return "Vui lòng cho biết khung giờ bạn muốn đặt lịch.";
+  if (!formData.businessModel) {
+    return "Vui lòng chọn mô hình kinh doanh.";
+  }
+
+  if (!formData.interest) {
+    return "Vui lòng chọn nhu cầu quan tâm.";
   }
 
   return null;
 }
 
-function showBookingStatus(message, isError = false) {
-  const statusNode = document.getElementById("booking-status");
+function showLeadStatus(message, isError = false) {
+  const statusNode = document.getElementById("lead-status");
   if (!statusNode) return;
 
   statusNode.textContent = message;
   statusNode.style.color = isError ? "#9b223e" : "#35643f";
 }
 
-async function handleBookingSubmit(event) {
+async function handleLeadSubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
   const data = new FormData(form);
+  const clickedAction = event.submitter?.value || "Nhận tư vấn";
   const formData = {
-    name: String(data.get("name") || "").trim(),
+    leadType: clickedAction,
+    heroIntent: String(data.get("heroIntent") || "").trim(),
+    contactName: String(data.get("contactName") || "").trim(),
+    businessName: String(data.get("businessName") || "").trim(),
     phone: String(data.get("phone") || "").trim(),
-    service: String(data.get("service") || "").trim(),
-    preferredTime: String(data.get("preferredTime") || "").trim(),
+    area: String(data.get("area") || "").trim(),
+    businessModel: String(data.get("businessModel") || "").trim(),
+    interest: String(data.get("interest") || "").trim(),
     note: String(data.get("note") || "").trim()
   };
 
-  const validationError = validateBookingForm(formData);
+  const validationError = validateLeadForm(formData);
   if (validationError) {
-    showBookingStatus(validationError, true);
+    showLeadStatus(validationError, true);
     return;
   }
 
   const message = buildLeadMessage(formData);
   const payload = {
     source: "landing-page",
+    leadKind: "business-distribution",
     brand: APP_CONFIG.brandName,
     ...formData,
     submittedAt: new Date().toISOString()
@@ -213,14 +232,14 @@ async function handleBookingSubmit(event) {
   const chatLink = buildChatLink(message);
   if (chatLink) {
     window.open(chatLink, "_blank", "noopener");
-    showBookingStatus("Yêu cầu đã được chuyển sang kênh xác nhận. Vui lòng gửi tin nhắn để salon chốt lịch.");
+    showLeadStatus("Yêu cầu đã được chuyển sang kênh tư vấn. Vui lòng gửi tin nhắn để đội kinh doanh xác nhận.");
     return;
   }
 
   const mailtoLink = buildMailtoLink(message);
   if (mailtoLink) {
     window.location.href = mailtoLink;
-    showBookingStatus("Yêu cầu đã được chuyển sang email xác nhận. Vui lòng gửi thư để salon chốt lịch.");
+    showLeadStatus("Yêu cầu đã được chuyển sang email báo giá. Vui lòng gửi thư để đội kinh doanh xử lý.");
     return;
   }
 
@@ -228,40 +247,40 @@ async function handleBookingSubmit(event) {
     const webhookSent = await postToWebhook(payload);
 
     if (webhookSent) {
-      showBookingStatus("Yêu cầu đã được chuyển sang hệ thống xác nhận. Salon sẽ liên hệ bạn sớm.");
+      showLeadStatus("Yêu cầu đã được chuyển sang hệ thống lead. Đội kinh doanh sẽ liên hệ bạn sớm.");
       return;
     }
   } catch (error) {
-    console.error("Booking webhook error:", error);
+    console.error("Lead webhook error:", error);
   }
 
-  showBookingStatus(
+  showLeadStatus(
     "Chưa có kênh liên hệ thật trong cấu hình. Vui lòng cập nhật APP_CONFIG.contact (Zalo/WhatsApp/email) để nhận lead.",
     true
   );
 }
 
-function setupBookingForm() {
-  const form = document.getElementById("booking-form");
+function setupLeadForm() {
+  const form = document.getElementById("lead-form");
   if (!form) return;
 
-  form.addEventListener("submit", handleBookingSubmit);
+  form.addEventListener("submit", handleLeadSubmit);
 }
 
-function setupServiceButtons() {
+function setupProductInterestButtons() {
   const serviceButtons = document.querySelectorAll(".service-cta");
-  const serviceSelect = document.getElementById("service-select");
+  const interestSelect = document.getElementById("interest-select");
 
   serviceButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const selectedService = button.getAttribute("data-service");
+      const selectedInterest = button.getAttribute("data-interest");
 
-      if (serviceSelect && selectedService) {
-        serviceSelect.value = selectedService;
+      if (interestSelect && selectedInterest) {
+        interestSelect.value = selectedInterest;
       }
 
-      const bookingSection = document.getElementById("booking");
-      bookingSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const leadSection = document.getElementById("lead");
+      leadSection?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 }
@@ -270,7 +289,7 @@ function setupQuickConsultLink() {
   const link = document.getElementById("quick-consult-link");
   if (!link) return;
 
-  const message = `Tôi muốn được tư vấn nhanh về dịch vụ tại ${APP_CONFIG.brandName}.`;
+  const message = `Tôi muốn được tư vấn nhanh về danh mục phân phối tại ${APP_CONFIG.brandName}.`;
   const chatLink = buildChatLink(message);
   const mailtoLink = buildMailtoLink(message);
 
@@ -287,6 +306,26 @@ function setupQuickConsultLink() {
   }
 
   link.setAttribute("href", "#contact");
+}
+
+function setupHeroIntentLinks() {
+  const links = document.querySelectorAll(".lead-intent-link");
+  const intentInput = document.getElementById("hero-intent");
+  const interestSelect = document.getElementById("interest-select");
+
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      const intent = link.getAttribute("data-lead-intent") || "";
+
+      if (intentInput) {
+        intentInput.value = intent;
+      }
+
+      if (interestSelect && ["Nhận catalog", "Yêu cầu báo giá", "Đăng ký làm đại lý"].includes(intent)) {
+        interestSelect.value = intent;
+      }
+    });
+  });
 }
 
 function setupMobileNav() {
@@ -342,9 +381,10 @@ function initLandingPage() {
   updateTextBindings();
   updateLinkBindings();
   setupQuickConsultLink();
+  setupHeroIntentLinks();
   setupMobileNav();
-  setupServiceButtons();
-  setupBookingForm();
+  setupProductInterestButtons();
+  setupLeadForm();
   setupRevealAnimations();
   setupFooterYear();
 }
