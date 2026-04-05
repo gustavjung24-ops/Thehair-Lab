@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Hair Lab – Salon & Spa</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ========== NAVIGATION ========== -->
+  <header id="header">
+    <nav class="navbar">
+      <a class="logo" href="#hero">
+        <span class="logo-the">The</span><span class="logo-hair">Hair</span><span class="logo-lab">Lab</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Mở menu">&#9776;</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">Về Chúng Tôi</a></li>
+        <li><a href="#services">Dịch Vụ</a></li>
+        <li><a href="#gallery">Bộ Sưu Tập</a></li>
+        <li><a href="#team">Đội Ngũ</a></li>
+        <li><a href="#contact">Liên Hệ</a></li>
+        <li><a class="btn-book" href="#booking">Đặt Lịch</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-tagline">Phong cách – Đẳng cấp – Cá tính</p>
+      <h1>Chào mừng đến<br /><em>The Hair Lab</em></h1>
+      <p class="hero-desc">Nơi mái tóc của bạn được chăm sóc bởi những nghệ nhân hàng đầu,<br />dùng công thức và sản phẩm tốt nhất dành riêng cho bạn.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#booking">Đặt Lịch Ngay</a>
+        <a class="btn btn-outline" href="#services">Khám Phá Dịch Vụ</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT ========== -->
+  <section id="about" class="section">
+    <div class="container about-grid">
+      <div class="about-image">
+        <div class="about-img-placeholder">
+          <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="200" height="260" rx="12" fill="#c9a96e" opacity=".15"/>
+            <path d="M100 40 C60 40 40 70 40 100 C40 140 70 160 100 170 C130 160 160 140 160 100 C160 70 140 40 100 40Z" fill="#c9a96e" opacity=".5"/>
+            <path d="M60 160 Q100 220 140 160" stroke="#c9a96e" stroke-width="3" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="about-text">
+        <span class="section-label">Câu Chuyện Của Chúng Tôi</span>
+        <h2>Nghệ Thuật Tạo Kiểu<br />Tóc Đỉnh Cao</h2>
+        <p>The Hair Lab ra đời từ niềm đam mê tóc và mong muốn mang đến trải nghiệm salon sang trọng, chuyên nghiệp nhất cho khách hàng Việt Nam. Chúng tôi kết hợp kỹ thuật tạo kiểu hiện đại với sản phẩm chăm sóc tóc cao cấp từ châu Âu.</p>
+        <p>Với hơn 10 năm kinh nghiệm, đội ngũ stylist của chúng tôi luôn cập nhật xu hướng mới nhất để mang đến cho bạn vẻ ngoài hoàn hảo, phù hợp với cá tính riêng.</p>
+        <div class="about-stats">
+          <div class="stat">
+            <strong>10+</strong>
+            <span>Năm Kinh Nghiệm</span>
+          </div>
+          <div class="stat">
+            <strong>5000+</strong>
+            <span>Khách Hàng Hài Lòng</span>
+          </div>
+          <div class="stat">
+            <strong>20+</strong>
+            <span>Stylist Chuyên Nghiệp</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SERVICES ========== -->
+  <section id="services" class="section bg-light">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Dịch Vụ</span>
+        <h2>Chăm Sóc Toàn Diện</h2>
+        <p>Tất cả dịch vụ đều được thực hiện bởi các chuyên gia giàu kinh nghiệm.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">✂️</div>
+          <h3>Cắt &amp; Tạo Kiểu</h3>
+          <p>Tư vấn và tạo kiểu phù hợp với khuôn mặt, phong cách sống của bạn.</p>
+          <span class="service-price">Từ 150.000₫</span>
+        </div>
+        <div class="service-card featured">
+          <div class="service-icon">🎨</div>
+          <h3>Nhuộm &amp; Highlight</h3>
+          <p>Màu sắc rực rỡ, bền màu với các sản phẩm nhuộm tóc an toàn cao cấp.</p>
+          <span class="service-price">Từ 500.000₫</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌀</div>
+          <h3>Uốn &amp; Duỗi</h3>
+          <p>Uốn xoăn bồng bềnh hoặc duỗi thẳng mượt mà với công nghệ hiện đại.</p>
+          <span class="service-price">Từ 400.000₫</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">💆</div>
+          <h3>Phục Hồi &amp; Dưỡng Tóc</h3>
+          <p>Liệu trình phục hồi chuyên sâu cho tóc hư tổn, khô xơ, gãy rụng.</p>
+          <span class="service-price">Từ 300.000₫</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">👰</div>
+          <h3>Làm Tóc Cô Dâu</h3>
+          <p>Trọn gói làm tóc cô dâu – thử tóc, chụp ảnh và ngày cưới.</p>
+          <span class="service-price">Từ 2.000.000₫</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🧴</div>
+          <h3>Gội &amp; Massage</h3>
+          <p>Thư giãn với liệu trình gội đầu thảo dược kết hợp massage đầu thư giãn.</p>
+          <span class="service-price">Từ 100.000₫</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== GALLERY ========== -->
+  <section id="gallery" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Bộ Sưu Tập</span>
+        <h2>Những Kiểu Tóc Nổi Bật</h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item tall" style="--c:#c9a96e">
+          <div class="gallery-placeholder">
+            <span>Tóc Uốn Xoăn</span>
+          </div>
+        </div>
+        <div class="gallery-item" style="--c:#8b6f47">
+          <div class="gallery-placeholder">
+            <span>Highlight Balayage</span>
+          </div>
+        </div>
+        <div class="gallery-item" style="--c:#d4b896">
+          <div class="gallery-placeholder">
+            <span>Tóc Thẳng</span>
+          </div>
+        </div>
+        <div class="gallery-item wide" style="--c:#a07850">
+          <div class="gallery-placeholder">
+            <span>Tóc Cô Dâu</span>
+          </div>
+        </div>
+        <div class="gallery-item" style="--c:#bf9060">
+          <div class="gallery-placeholder">
+            <span>Nhuộm Ombre</span>
+          </div>
+        </div>
+        <div class="gallery-item tall" style="--c:#e8d5b7">
+          <div class="gallery-placeholder">
+            <span>Tóc Bồng Bềnh</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TEAM ========== -->
+  <section id="team" class="section bg-light">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Đội Ngũ</span>
+        <h2>Chuyên Gia Của Chúng Tôi</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar" style="--c:#c9a96e">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="40" cy="28" r="18" fill="currentColor" opacity=".6"/>
+              <ellipse cx="40" cy="72" rx="28" ry="18" fill="currentColor" opacity=".4"/>
+            </svg>
+          </div>
+          <h3>Nguyễn Thị Lan</h3>
+          <span>Master Stylist</span>
+          <p>10 năm kinh nghiệm. Chuyên gia nhuộm tóc sáng tạo và tạo kiểu cô dâu.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="--c:#8b6f47">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="40" cy="28" r="18" fill="currentColor" opacity=".6"/>
+              <ellipse cx="40" cy="72" rx="28" ry="18" fill="currentColor" opacity=".4"/>
+            </svg>
+          </div>
+          <h3>Trần Văn Minh</h3>
+          <span>Senior Stylist</span>
+          <p>Chuyên gia uốn duỗi và phục hồi tóc hư tổn với hơn 7 năm kinh nghiệm.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="--c:#d4b896">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="40" cy="28" r="18" fill="currentColor" opacity=".6"/>
+              <ellipse cx="40" cy="72" rx="28" ry="18" fill="currentColor" opacity=".4"/>
+            </svg>
+          </div>
+          <h3>Phạm Thu Hà</h3>
+          <span>Color Specialist</span>
+          <p>Nghệ sĩ màu sắc, thành thạo balayage, ombre và các kỹ thuật nhuộm âu.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <section id="testimonials" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Đánh Giá</span>
+        <h2>Khách Hàng Nói Gì</h2>
+      </div>
+      <div class="testimonials-grid">
+        <blockquote class="testimonial">
+          <p>"Đây là salon tôi đã đến nhiều lần và chưa bao giờ thất vọng. Stylist Lan rất tận tâm, hiểu đúng ý mình muốn. Tóc sau khi làm đẹp lắm!"</p>
+          <footer>
+            <strong>Hoàng Minh Châu</strong>
+            <span>⭐⭐⭐⭐⭐</span>
+          </footer>
+        </blockquote>
+        <blockquote class="testimonial">
+          <p>"Làm tóc cô dâu ở đây quá tuyệt! Team làm việc rất chuyên nghiệp, từ thử tóc đến ngày cưới đều hoàn hảo. Cảm ơn The Hair Lab!"</p>
+          <footer>
+            <strong>Nguyễn Bích Ngọc</strong>
+            <span>⭐⭐⭐⭐⭐</span>
+          </footer>
+        </blockquote>
+        <blockquote class="testimonial">
+          <p>"Tôi đã nhuộm tóc nhiều nơi nhưng ở đây màu đẹp và giữ màu lâu nhất. Giá cả hợp lý, không gian sạch sẽ, thoải mái. Rất recommend!"</p>
+          <footer>
+            <strong>Lê Thị Thu</strong>
+            <span>⭐⭐⭐⭐⭐</span>
+          </footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BOOKING ========== -->
+  <section id="booking" class="section bg-dark">
+    <div class="container booking-container">
+      <div class="booking-info">
+        <span class="section-label light">Đặt Lịch</span>
+        <h2>Hẹn Gặp Chúng Tôi</h2>
+        <p>Điền form bên cạnh hoặc liên hệ trực tiếp để đặt lịch. Chúng tôi sẽ xác nhận lịch hẹn trong vòng 30 phút.</p>
+        <ul class="booking-contact-list">
+          <li>📞 <a href="tel:+84901234567">0901 234 567</a></li>
+          <li>📧 <a href="mailto:info@thehairlab.vn">info@thehairlab.vn</a></li>
+          <li>📍 123 Nguyễn Huệ, Quận 1, TP.HCM</li>
+          <li>🕐 Thứ 2 – Chủ Nhật: 8:00 – 20:00</li>
+        </ul>
+      </div>
+      <form class="booking-form" id="bookingForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Họ &amp; Tên *</label>
+            <input type="text" id="name" name="name" placeholder="Nguyễn Văn A" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Số Điện Thoại *</label>
+            <input type="tel" id="phone" name="phone" placeholder="0901 234 567" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date">Ngày Hẹn *</label>
+            <input type="date" id="date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label for="time">Giờ Hẹn *</label>
+            <select id="time" name="time" required>
+              <option value="">-- Chọn Giờ --</option>
+              <option>08:00</option>
+              <option>09:00</option>
+              <option>10:00</option>
+              <option>11:00</option>
+              <option>13:00</option>
+              <option>14:00</option>
+              <option>15:00</option>
+              <option>16:00</option>
+              <option>17:00</option>
+              <option>18:00</option>
+              <option>19:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="service">Dịch Vụ</label>
+          <select id="service" name="service">
+            <option value="">-- Chọn Dịch Vụ --</option>
+            <option>Cắt &amp; Tạo Kiểu</option>
+            <option>Nhuộm &amp; Highlight</option>
+            <option>Uốn &amp; Duỗi</option>
+            <option>Phục Hồi &amp; Dưỡng Tóc</option>
+            <option>Làm Tóc Cô Dâu</option>
+            <option>Gội &amp; Massage</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes">Ghi Chú</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Yêu cầu đặc biệt, tên stylist mong muốn..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary full-width">Xác Nhận Đặt Lịch</button>
+        <p class="form-success" id="formSuccess" hidden>✅ Cảm ơn bạn! Chúng tôi sẽ liên hệ sớm để xác nhận lịch hẹn.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT / MAP ========== -->
+  <section id="contact" class="section">
+    <div class="container contact-grid">
+      <div class="contact-info">
+        <span class="section-label">Liên Hệ</span>
+        <h2>Tìm Chúng Tôi</h2>
+        <div class="contact-detail">
+          <strong>Địa Chỉ</strong>
+          <p>123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.Hồ Chí Minh</p>
+        </div>
+        <div class="contact-detail">
+          <strong>Điện Thoại</strong>
+          <p><a href="tel:+84901234567">0901 234 567</a></p>
+        </div>
+        <div class="contact-detail">
+          <strong>Email</strong>
+          <p><a href="mailto:info@thehairlab.vn">info@thehairlab.vn</a></p>
+        </div>
+        <div class="contact-detail">
+          <strong>Giờ Mở Cửa</strong>
+          <p>Thứ 2 – Chủ Nhật: 8:00 – 20:00</p>
+        </div>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook" class="social-link">f</a>
+          <a href="#" aria-label="Instagram" class="social-link">in</a>
+          <a href="#" aria-label="TikTok" class="social-link">tt</a>
+          <a href="#" aria-label="Zalo" class="social-link">za</a>
+        </div>
+      </div>
+      <div class="map-placeholder" aria-label="Bản đồ vị trí The Hair Lab">
+        <div class="map-inner">
+          <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="400" height="280" fill="#f0e8dc"/>
+            <rect x="0" y="120" width="400" height="20" fill="#d4b896" opacity=".6"/>
+            <rect x="180" y="0" width="20" height="280" fill="#d4b896" opacity=".6"/>
+            <rect x="60" y="40" width="80" height="60" rx="4" fill="#c9a96e" opacity=".4"/>
+            <rect x="260" y="160" width="100" height="70" rx="4" fill="#c9a96e" opacity=".4"/>
+            <circle cx="200" cy="130" r="16" fill="#8b2252"/>
+            <circle cx="200" cy="124" r="10" fill="#fff"/>
+            <circle cx="200" cy="124" r="5" fill="#8b2252"/>
+          </svg>
+          <p>123 Nguyễn Huệ, Q.1, TP.HCM</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a class="logo" href="#hero">
+          <span class="logo-the">The</span><span class="logo-hair">Hair</span><span class="logo-lab">Lab</span>
+        </a>
+        <p>Nâng tầm phong cách, lan toả tự tin.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Dịch Vụ</h4>
+        <ul>
+          <li><a href="#services">Cắt &amp; Tạo Kiểu</a></li>
+          <li><a href="#services">Nhuộm Tóc</a></li>
+          <li><a href="#services">Uốn &amp; Duỗi</a></li>
+          <li><a href="#services">Tóc Cô Dâu</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Khám Phá</h4>
+        <ul>
+          <li><a href="#about">Về Chúng Tôi</a></li>
+          <li><a href="#team">Đội Ngũ</a></li>
+          <li><a href="#gallery">Bộ Sưu Tập</a></li>
+          <li><a href="#booking">Đặt Lịch</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter">
+        <h4>Nhận Ưu Đãi</h4>
+        <p>Đăng ký để nhận các ưu đãi và xu hướng tóc mới nhất.</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" placeholder="Email của bạn" required />
+          <button type="submit">Đăng Ký</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 The Hair Lab. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="backToTop" aria-label="Về đầu trang">↑</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
