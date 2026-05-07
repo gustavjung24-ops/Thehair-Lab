@@ -19,6 +19,7 @@ const APP_STATE = {
     // Configure these endpoints in window.THEHAIRLAB_CONFIG.lead for production.
     telegramEndpoint: '',
     sheetEndpoint: '',
+      apiEndpoint: '',
     requestMode: 'cors',
     webhookEnabled: false,
     webhookEndpoint: '',
@@ -142,6 +143,10 @@ function applyRuntimeConfig() {
 
   if (hasUsableValue(lead.sheetEndpoint)) {
     APP_STATE.lead.sheetEndpoint = lead.sheetEndpoint.trim()
+  }
+
+  if (hasUsableValue(lead.apiEndpoint)) {
+    APP_STATE.lead.apiEndpoint = lead.apiEndpoint.trim()
   }
 
   if (lead.requestMode === 'no-cors' || lead.requestMode === 'cors') {
@@ -912,6 +917,30 @@ async function postJson(url, payload) {
   return response.ok
 }
 
+async function postLeadToApi(formData) {
+  const endpoint = APP_STATE.lead.apiEndpoint
+  if (!hasUsableValue(endpoint)) return null
+
+  const apiPayload = {
+    salon_name: formData.businessName,
+    contact_name: formData.contactName,
+    phone_zalo: formData.phone,
+    area: formData.area,
+    product_interest: formData.interest,
+    landing_page_sample: formData.businessModel,
+    note: formData.note,
+    source_url: window.location.href,
+  }
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(apiPayload),
+  })
+
+  return response.json()
+}
+
 async function postLeadToOwnerChannels(payload, message) {
   const tasks = []
 
@@ -1089,17 +1118,32 @@ async function handleLeadSubmit(event) {
   showFormStatus(
     form,
     'Chưa có endpoint nhận form trong cấu hình. Vui lòng cấu hình THEHAIRLAB_CONFIG.lead để gửi về Telegram/Google Sheet.',
-    true
-  )
-}
+    try {
+      const apiResult = await postLeadToApi(formData)
+      if (apiResult) {
+        form.reset()
+        if (apiResult.success) {
+          showFormStatus(form, apiResult.message || 'Đã nhận thông tin, bên em sẽ liên hệ tư vấn sớm.')
+        } else {
+          showFormStatus(form, apiResult.error || 'Có lỗi xảy ra, vui lòng thử lại.', true)
+        }
+        return
+      }
+    } catch (_error) {
+      // API không khả dụng, dùng fallback channels.
+    }
 
-function setupLeadForms() {
-  const forms = document.querySelectorAll('.js-lead-form')
+    try {
+      const ownerChannelSent = await postLeadToOwnerChannels(payload, message)
 
-  forms.forEach((form) => {
-    form.addEventListener('submit', handleLeadSubmit)
-  })
-}
+      if (ownerChannelSent) {
+        form.reset()
+        showFormStatus(form, 'Yêu cầu đã gửi. Đội ngũ The Hair Lab sẽ liên hệ sớm.')
+        return
+      }
+    } catch (_error) {
+      // Fall through to other available channels.
+    }
 
 function setupPrefillInterestFromQuery() {
   const params = new URLSearchParams(window.location.search)

@@ -1,50 +1,143 @@
-# The Hair Lab - Static Web + Sanity CMS
+# The Hair Lab - One-Page Landing Page + Cloudflare Worker
 
-Repo nay duoc toi uu theo huong "them CMS" + refactor UX tu one-page dai sang multi-page.
+Website ban hang cho salon chuyen nghiep. Trang chinh la one-page landing page ban san pham + chuong trinh tang landing page rieng cho salon.
 
-Kien truc deploy:
+## Kien truc hien tai
 
-- GitHub: Luu ma nguon.
-- Vercel Project 1 (root repo): Deploy website tinh.
-- Vercel Project 2 (root directory = studio): Deploy Sanity Studio rieng.
+- **GitHub**: Luu ma nguon.
+- **Vercel** (root repo): Deploy website tinh (index.html + assets).
+- **Cloudflare Worker** (`worker/`): API nhan lead tu form trang chinh.
+- **Cloudflare D1**: Luu tru lead.
+- **Telegram Bot**: Thong bao lead ve nhom quan tri.
+- **Google Sheets API**: Luu lead vao sheet THEHAIRLAB_LEADS.
 
-## 1) Tong quan cau truc
+## 1) Trang chinh (index.html)
 
-- Website static da tach thanh nhieu route:
-	- `index.html` (Trang chu - ban tom tat)
-	- `thuong-hieu.html`
-	- `san-pham.html`
-	- `hop-tac.html`
-	- `gioi-thieu.html`
-	- `lien-he.html`
-- `script.js`: renderer theo tung page, mobile nav, sticky header, back-to-top, form lead ngan.
-- `styles.css`: style dung chung cho toan bo route.
-- `cms/`: lop ket noi Sanity cho frontend (chi doc published content).
-- `studio/`: Sanity Studio doc lap.
+One-page landing page chuyen dung ban san pham + tang landing page salon.
 
-## 2) Refactor UX multi-page (2026-04)
+Cac section:
+- Hero: USP chinh + form dat lich thu nho (mockup)
+- Van de thuong gap cua salon
+- Uu dai salon (mua hang tu 2tr, tang landing page)
+- 5 nhom san pham chinh (anh thuc te)
+- Mau landing page tang kem (3 mau)
+- Cach form hoat dong
+- Admin rieng cho salon
+- Quy trinh trien khai
+- Form nhan bao gia (POST /api/leads)
+- FAQ
 
-Muc tieu chinh:
+## 2) Cau truc file
 
-- Rut gon homepage thanh cac khoi tom tat de de scan.
-- Tach noi dung chi tiet sang page chuyen biet.
-- Tang kha nang dieu huong tren mobile voi sticky header + mobile menu + CTA ro rang.
-- Giu visual tone hien tai (theme sang) nhung toi uu trai nghiem su dung.
+```
+index.html          # One-page landing chinh
+script.js           # Logic frontend: mobile nav, form submit, animations
+styles.css          # Style toan trang
+public/image/       # Anh san pham thuc te (PNG/JPG da duoc chup)
+worker/             # Cloudflare Worker cho /api/leads
+	src/index.js      # Entry point Worker
+	schema.sql        # D1 schema
+	wrangler.toml     # Config deploy
+cms/                # Lop ket noi Sanity (du phong, hien khong dung)
+studio/             # Sanity Studio doc lap (chua deploy)
+```
 
-File sua:
+## 3) API /api/leads (Cloudflare Worker)
 
-- `index.html`
-- `script.js`
-- `styles.css`
-- `README.md`
+**Endpoint**: `POST /api/leads`
 
-File them:
+**Fields**:
+- `salon_name` - Ten salon
+- `contact_name` - Nguoi lien he
+- `phone_zalo` - So dien thoai / Zalo (bat buoc)
+- `area` - Khu vuc
+- `product_interest` - Nhom san pham quan tam
+- `landing_page_sample` - Mau landing page muon nhan
+- `note` - Ghi chu
+- `source_url` - URL trang gui form
 
-- `thuong-hieu.html`
-- `san-pham.html`
-- `hop-tac.html`
-- `gioi-thieu.html`
-- `lien-he.html`
+**Xu ly**:
+1. Validate: `phone_zalo` hoac `contact_name` bat buoc
+2. Luu vao Cloudflare D1 bang `leads`
+3. Gui Telegram ve nhom lead tong
+4. Ghi vao Google Sheet `THEHAIRLAB_LEADS` tab `leads`
+5. Tra JSON `{ success: true }` hoac `{ success: false, error: "..." }`
+
+## 4) D1 Schema
+
+```sql
+CREATE TABLE IF NOT EXISTS leads (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	salon_name TEXT,
+	contact_name TEXT,
+	phone_zalo TEXT NOT NULL,
+	area TEXT,
+	product_interest TEXT,
+	landing_page_sample TEXT,
+	note TEXT,
+	source_url TEXT,
+	status TEXT DEFAULT 'new',
+	created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## 5) Cloudflare Secrets can cau hinh
+
+| Secret | Mo ta |
+|--------|-------|
+| `TELEGRAM_BOT_TOKEN` | Token bot Telegram |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Email service account GCP |
+| `GOOGLE_PRIVATE_KEY` | Private key service account (PEM) |
+| `GOOGLE_PROJECT_ID` | Project ID GCP |
+| `GOOGLE_LEADS_SHEET_ID` | Sheet ID cua THEHAIRLAB_LEADS |
+
+## 6) Cloudflare Variables
+
+| Variable | Gia tri mac dinh |
+|----------|-----------------|
+| `TELEGRAM_LEADS_CHAT_ID` | ID nhom Telegram nhan lead |
+| `GOOGLE_LEADS_SHEET_TAB` | `leads` |
+
+## 7) Google Sheet THEHAIRLAB_LEADS
+
+Tab: `leads`
+
+Columns:
+1. Thoi gian
+2. Nguon trang
+3. Ten salon
+4. Nguoi lien he
+5. So dien thoai / Zalo
+6. Khu vuc
+7. Nhom san pham quan tam
+8. Mau landing page muon nhan
+9. Ghi chu
+10. Trang thai xu ly
+11. Nguoi phu trach
+12. Ngay hen goi lai
+13. Ghi chu cham soc
+
+## 8) Deploy
+
+### Website (Vercel)
+- Output Directory: `.` (root)
+- Framework: Other
+- Domain: thehairlab.top, www.thehairlab.top
+
+### Worker (Cloudflare)
+```bash
+cd worker
+npm install
+wrangler d1 create thehairlab-leads
+wrangler d1 execute thehairlab-leads --file=schema.sql
+wrangler deploy
+```
+
+### Sau khi deploy Worker, cap nhat bien:
+```
+VITE_LEADS_API_URL=https://thehairlab-worker.YOUR_SUBDOMAIN.workers.dev/api/leads
+```
+hoac set trong script.js (window.THEHAIRLAB_CONFIG.lead.apiEndpoint).
 
 ## 3) Cac file da them/sua (CMS + Studio)
 
