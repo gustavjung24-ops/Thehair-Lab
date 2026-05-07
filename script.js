@@ -16,9 +16,12 @@ const APP_STATE = {
     instagramLink: '',
   },
   lead: {
-    // Set webhookEnabled=true only when a real lead endpoint is ready.
+    // Configure these endpoints in window.THEHAIRLAB_CONFIG.lead for production.
+    telegramEndpoint: '',
+    sheetEndpoint: '',
+    requestMode: 'cors',
     webhookEnabled: false,
-    webhookEndpoint: 'TODO_REPLACE_REAL_WEBHOOK_ENDPOINT',
+    webhookEndpoint: '',
     webhookMethod: 'POST',
   },
 }
@@ -109,6 +112,53 @@ function hasUsableValue(value) {
 
 function ensureArray(value) {
   return Array.isArray(value) ? value : []
+}
+
+function applyRuntimeConfig() {
+  const runtimeConfig = window.THEHAIRLAB_CONFIG
+
+  if (!runtimeConfig || typeof runtimeConfig !== 'object') {
+    return
+  }
+
+  const contact = runtimeConfig.contact || {}
+  const lead = runtimeConfig.lead || {}
+
+  if (hasUsableValue(contact.phone)) {
+    APP_STATE.contact.phone = contact.phone.trim()
+  }
+
+  if (hasUsableValue(contact.email)) {
+    APP_STATE.contact.email = contact.email.trim()
+  }
+
+  if (hasUsableValue(contact.zaloLink)) {
+    APP_STATE.contact.zaloLink = contact.zaloLink.trim()
+  }
+
+  if (hasUsableValue(lead.telegramEndpoint)) {
+    APP_STATE.lead.telegramEndpoint = lead.telegramEndpoint.trim()
+  }
+
+  if (hasUsableValue(lead.sheetEndpoint)) {
+    APP_STATE.lead.sheetEndpoint = lead.sheetEndpoint.trim()
+  }
+
+  if (lead.requestMode === 'no-cors' || lead.requestMode === 'cors') {
+    APP_STATE.lead.requestMode = lead.requestMode
+  }
+
+  if (typeof lead.webhookEnabled === 'boolean') {
+    APP_STATE.lead.webhookEnabled = lead.webhookEnabled
+  }
+
+  if (hasUsableValue(lead.webhookEndpoint)) {
+    APP_STATE.lead.webhookEndpoint = lead.webhookEndpoint.trim()
+  }
+
+  if (hasUsableValue(lead.webhookMethod)) {
+    APP_STATE.lead.webhookMethod = lead.webhookMethod.trim().toUpperCase()
+  }
 }
 
 function createNode(tagName, className, textValue) {
@@ -219,7 +269,7 @@ function applySiteSettings(siteSettings) {
 
 function renderSiteMeta(siteSettings) {
   const pageTitle = document.body?.dataset?.pageTitle || ''
-  const fallbackTitle = `${APP_STATE.brandName} | Công ty phân phối mỹ phẩm và chăm sóc tóc`
+  const fallbackTitle = `${APP_STATE.brandName} | Sản phẩm tóc chuyên nghiệp cho salon`
 
   if (hasUsableValue(pageTitle) && pageTitle !== 'Trang chủ') {
     document.title = `${APP_STATE.brandName} | ${pageTitle}`
@@ -844,6 +894,43 @@ async function postToWebhook(payload) {
   return response.ok
 }
 
+async function postJson(url, payload) {
+  const requestMode = APP_STATE.lead.requestMode === 'no-cors' ? 'no-cors' : 'cors'
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    mode: requestMode,
+    body: JSON.stringify(payload),
+  })
+
+  if (requestMode === 'no-cors') {
+    return true
+  }
+
+  return response.ok
+}
+
+async function postLeadToOwnerChannels(payload, message) {
+  const tasks = []
+
+  if (hasUsableValue(APP_STATE.lead.telegramEndpoint)) {
+    tasks.push(postJson(APP_STATE.lead.telegramEndpoint, {text: message, payload}))
+  }
+
+  if (hasUsableValue(APP_STATE.lead.sheetEndpoint)) {
+    tasks.push(postJson(APP_STATE.lead.sheetEndpoint, payload))
+  }
+
+  if (!tasks.length) {
+    return false
+  }
+
+  const results = await Promise.allSettled(tasks)
+  return results.some((item) => item.status === 'fulfilled' && item.value === true)
+}
+
 function showFormStatus(form, message, isError = false) {
   const statusNode = form.querySelector('[data-form-status]')
 
@@ -909,7 +996,7 @@ function buildLeadMessage(formData) {
     ['Tên đơn vị', formData.businessName],
     ['Số điện thoại', formData.phone],
     ['Khu vực', formData.area],
-    ['Mô hình kinh doanh', formData.businessModel],
+    ['Mẫu landing page / mô hình kinh doanh', formData.businessModel],
     ['Nhu cầu quan tâm', formData.interest],
     ['Ghi chú', formData.note],
   ]
@@ -962,6 +1049,18 @@ async function handleLeadSubmit(event) {
     submittedAt: new Date().toISOString(),
   }
 
+  try {
+    const ownerChannelSent = await postLeadToOwnerChannels(payload, message)
+
+    if (ownerChannelSent) {
+      form.reset()
+      showFormStatus(form, 'Yêu cầu đã gửi về hệ thống Telegram/Google Sheet. Đội ngũ The Hair Lab sẽ liên hệ sớm.')
+      return
+    }
+  } catch (_error) {
+    // Fall through to other available channels.
+  }
+
   const chatLink = buildChatLink(message)
   if (chatLink) {
     window.open(chatLink, '_blank', 'noopener')
@@ -989,7 +1088,7 @@ async function handleLeadSubmit(event) {
 
   showFormStatus(
     form,
-    'Chưa có kênh liên hệ thật trong cấu hình. Vui lòng cập nhật APP_STATE.contact (Zalo/WhatsApp/email) để nhận lead.',
+    'Chưa có endpoint nhận form trong cấu hình. Vui lòng cấu hình THEHAIRLAB_CONFIG.lead để gửi về Telegram/Google Sheet.',
     true
   )
 }
@@ -1130,6 +1229,11 @@ function setupMobileNav() {
 }
 
 function setupActiveNavigation() {
+  if (document.body?.dataset?.page === 'home') {
+    setupHomeAnchorNavigation()
+    return
+  }
+
   const activeKey = document.body?.dataset?.nav || ''
 
   document.querySelectorAll('#main-nav a[data-nav]').forEach((link) => {
@@ -1142,6 +1246,80 @@ function setupActiveNavigation() {
     } else {
       link.removeAttribute('aria-current')
     }
+  })
+}
+
+function setupHomeAnchorNavigation() {
+  const nav = document.getElementById('main-nav')
+
+  if (!nav) {
+    return
+  }
+
+  const anchorLinks = Array.from(nav.querySelectorAll('a[href^="#"]'))
+
+  if (!anchorLinks.length) {
+    return
+  }
+
+  const sections = anchorLinks
+    .map((link) => {
+      const id = link.getAttribute('href')?.slice(1)
+      if (!id) {
+        return null
+      }
+
+      const section = document.getElementById(id)
+      if (!section) {
+        return null
+      }
+
+      return {link, section, id}
+    })
+    .filter(Boolean)
+
+  const setActiveLink = (id) => {
+    sections.forEach((item) => {
+      const isActive = item.id === id
+      item.link.classList.toggle('is-active', isActive)
+      if (isActive) {
+        item.link.setAttribute('aria-current', 'page')
+      } else {
+        item.link.removeAttribute('aria-current')
+      }
+    })
+  }
+
+  const hashId = window.location.hash.replace('#', '')
+  if (hashId) {
+    setActiveLink(hashId)
+  } else if (sections[0]) {
+    setActiveLink(sections[0].id)
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+
+      if (!visible?.target?.id) {
+        return
+      }
+
+      setActiveLink(visible.target.id)
+    },
+    {
+      rootMargin: '-35% 0px -45% 0px',
+      threshold: [0.15, 0.35, 0.55],
+    }
+  )
+
+  sections.forEach((item) => {
+    observer.observe(item.section)
+    item.link.addEventListener('click', () => {
+      setActiveLink(item.id)
+    })
   })
 }
 
@@ -1202,6 +1380,8 @@ function setupFooterYear() {
 
 async function initSite() {
   let homepageContent = {}
+
+  applyRuntimeConfig()
 
   try {
     homepageContent = await fetchHomepageData()

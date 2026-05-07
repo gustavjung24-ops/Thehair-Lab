@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title id="site-title">The Hair Lab | Trang chủ</title>
+    <title id="site-title">The Hair Lab | Sản phẩm tóc chuyên nghiệp cho salon</title>
     <meta
       id="site-description-meta"
       name="description"
-      content="The Hair Lab là công ty phân phối mỹ phẩm và chăm sóc tóc chính hãng cho salon, spa và đại lý; hỗ trợ tư vấn danh mục, báo giá và hợp tác dài hạn."
+      content="The Hair Lab cung cấp sản phẩm tóc chuyên nghiệp cho salon. Mua gói từ 2.000.000đ được tặng landing page riêng có form đặt lịch, Telegram, Google Sheet và admin quản lý."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,7 +20,7 @@
   <body data-page="home" data-nav="home" data-page-title="Trang chủ">
     <header class="site-header" id="top">
       <div class="container header-inner">
-        <a href="index.html" class="brand" data-site-title="brand">The Hair Lab</a>
+        <a href="#top" class="brand" data-site-title="brand">The Hair Lab</a>
 
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
           <span></span>
@@ -30,170 +30,372 @@
         </button>
 
         <nav id="main-nav" class="site-nav" aria-label="Điều hướng chính">
-          <a href="index.html" data-nav="home">Trang chủ</a>
-          <a href="thuong-hieu.html" data-nav="brands">Thương hiệu</a>
-          <a href="san-pham.html" data-nav="products">Sản phẩm</a>
-          <a href="hop-tac.html" data-nav="partnership">Hợp tác</a>
-          <a href="gioi-thieu.html" data-nav="about">Giới thiệu</a>
-          <a href="lien-he.html" data-nav="contact">Liên hệ</a>
-          <a href="lien-he.html#bao-gia-form" class="nav-cta btn btn-primary">Nhận báo giá</a>
+          <a href="#san-pham" data-nav="section">Sản phẩm</a>
+          <a href="#uu-dai-salon" data-nav="section">Ưu đãi salon</a>
+          <a href="#mau-landing" data-nav="section">Mẫu landing page</a>
+          <a href="#quy-trinh" data-nav="section">Quy trình</a>
+          <a href="#faq" data-nav="section">FAQ</a>
+          <a href="#nhan-bao-gia" class="nav-cta btn btn-primary" data-nav="section">Nhận báo giá</a>
         </nav>
       </div>
     </header>
 
     <main>
       <section class="hero section" id="hero">
-        <div class="container hero-grid">
+        <div class="container landing-hero-grid">
           <div class="hero-content reveal">
-            <p class="eyebrow" data-hero="eyebrow">Nhà phân phối mỹ phẩm và haircare chính hãng</p>
-            <h1 data-hero="title">
-              Nguồn mỹ phẩm chăm sóc tóc ổn định cho salon, spa và đại lý muốn phát triển kinh doanh bền vững.
-            </h1>
-            <p class="hero-subtitle" data-hero="subtitle">
-              The Hair Lab tập trung vào các dòng sản phẩm có khả năng bán lại tốt, chính sách rõ ràng và hỗ trợ triển khai nhanh
-              cho đối tác B2B.
+            <p class="eyebrow">Giải pháp bán hàng cho salon chuyên nghiệp</p>
+            <h1>Sản phẩm tóc chuyên nghiệp cho salon</h1>
+            <p class="hero-subtitle">
+              Mua gói hàng từ 2.000.000đ tặng landing page riêng giúp salon giới thiệu dịch vụ và nhận lịch hẹn khách online.
             </p>
 
-            <div class="hero-bullet-list">
-              <span>Danh mục theo nhóm lợi nhuận</span>
-              <span>Tư vấn theo mô hình vận hành</span>
-              <span>Đồng hành sau bán</span>
-            </div>
+            <ul class="bullet-check">
+              <li>Có form đặt lịch</li>
+              <li>Có Telegram và Google Sheet riêng</li>
+              <li>Có admin tự chỉnh thông tin, dịch vụ và bảng giá</li>
+            </ul>
 
             <div class="hero-cta-group">
-              <a href="san-pham.html" id="hero-primary-cta" class="btn btn-primary">Xem dòng phân phối</a>
-              <a href="lien-he.html#bao-gia-form" id="hero-secondary-cta" class="btn btn-outline">Yêu cầu báo giá</a>
-              <a href="lien-he.html#thong-tin-lien-he" id="quick-consult-link" class="btn btn-soft js-quick-contact-link">Nhắn tư vấn nhanh</a>
-            </div>
-
-            <div class="hero-meta">
-              <p>
-                Kênh hỗ trợ nhanh:
-                <a data-contact-link="zaloLink" href="lien-he.html#thong-tin-lien-he" class="inline-link">Zalo</a>
-                / <a data-contact-link="whatsappLink" href="lien-he.html#thong-tin-lien-he" class="inline-link">WhatsApp</a>
-              </p>
-              <p>Giờ hỗ trợ kinh doanh: <span data-contact="businessHoursInline">Đang cập nhật</span></p>
+              <a href="#nhan-bao-gia" class="btn btn-primary">Nhận báo giá sản phẩm</a>
+              <a href="#mau-landing" class="btn btn-outline">Xem mẫu landing page</a>
             </div>
           </div>
 
-          <aside class="hero-panel reveal">
-            <p class="hero-panel-label">Danh mục nổi bật</p>
-            <div class="hero-image-wrap" id="hero-image-wrap" hidden>
-              <img id="hero-image" src="" alt="" loading="lazy" />
-            </div>
-            <div class="hero-fallback-collage" id="hero-fallback-collage" aria-label="Cụm sản phẩm nổi bật">
-              <img src="Argan_oil_50ml.jpg" alt="Argan Oil 50ml" loading="lazy" />
-              <img src="Goi_Xa_500ml.jpg" alt="Bộ gội xả 500ml" loading="lazy" />
-              <img src="Nhuom_100ml.jpg" alt="Thuốc nhuộm 100ml" loading="lazy" />
-            </div>
+          <aside class="hero-panel reveal hero-visual-stack" aria-label="Visual sản phẩm và form đặt lịch">
+            <figure class="hero-product-cluster">
+              <img src="public/image/thehairlab-hero-product-lineup.png" alt="Cụm sản phẩm tóc chuyên nghiệp The Hair Lab" loading="lazy" />
+            </figure>
 
-            <div class="hero-kpi-grid" aria-label="Điểm nổi bật">
-              <article>
-                <strong>Hàng chính hãng</strong>
-                <span>Minh bạch nguồn gốc</span>
+            <div class="mockup-pair">
+              <article class="mockup-device laptop-mockup">
+                <p class="mockup-title">Landing page salon</p>
+                <ul>
+                  <li>Giới thiệu dịch vụ</li>
+                  <li>Bảng giá rõ ràng</li>
+                  <li>Nút đặt lịch nhanh</li>
+                </ul>
               </article>
-              <article>
-                <strong>Hỗ trợ theo vùng</strong>
-                <span>Điều phối linh hoạt</span>
-              </article>
-              <article>
-                <strong>B2B đồng hành</strong>
-                <span>Từ nhập hàng đến sau bán</span>
+
+              <article class="mockup-device phone-mockup">
+                <p class="mockup-title">Form đặt lịch</p>
+                <div class="mockup-field">Tên khách</div>
+                <div class="mockup-field">Số điện thoại</div>
+                <div class="mockup-field">Dịch vụ</div>
+                <button type="button" class="mockup-btn">Gửi lịch hẹn</button>
               </article>
             </div>
-
-            <a href="hop-tac.html#hop-tac-form" class="btn btn-primary btn-block">Đăng ký hợp tác ngay</a>
           </aside>
         </div>
       </section>
 
-      <section class="trust-strip" aria-label="Năng lực nổi bật">
-        <div class="container trust-strip-grid" id="trust-strip-grid">
-          <p>Chính hãng 100%</p>
-          <p>Tồn kho ổn định</p>
-          <p>Tư vấn danh mục</p>
-          <p>Hỗ trợ sau bán</p>
-        </div>
-      </section>
-
-      <section class="section" id="home-why">
+      <section class="section section-contrast" id="van-de">
         <div class="container">
           <div class="section-head reveal">
-            <p class="eyebrow">Lý do chọn chúng tôi</p>
-            <h2>Tập trung đúng điều đối tác B2B cần: hàng ổn, chính sách rõ, hỗ trợ sát thực tế.</h2>
-            <p class="section-note">Mỗi điểm mạnh được thiết kế để giúp bạn vận hành ổn định và tăng doanh thu bền vững.</p>
+            <p class="eyebrow">Vấn đề thường gặp</p>
+            <h2>Salon đang mất khách vì thiếu một điểm chốt thông tin tập trung.</h2>
           </div>
-
-          <div class="about-grid" id="home-why-grid"></div>
+          <div class="problem-grid">
+            <article class="about-card reveal"><h3>Facebook/Zalo bài dễ trôi</h3></article>
+            <article class="about-card reveal"><h3>Khách hỏi giá lặp lại nhiều lần</h3></article>
+            <article class="about-card reveal"><h3>Chưa có nơi gom dịch vụ và bảng giá</h3></article>
+            <article class="about-card reveal"><h3>Chưa có form đặt lịch rõ ràng</h3></article>
+          </div>
         </div>
       </section>
 
-      <section class="section section-contrast" id="home-brands">
+      <section class="section" id="uu-dai-salon">
         <div class="container">
           <div class="section-head reveal">
-            <p class="eyebrow">Thương hiệu nổi bật</p>
-            <h2>Những thương hiệu đang được triển khai tốt tại hệ thống salon, spa và đại lý.</h2>
-            <p class="section-note">Bạn có thể xem danh sách đầy đủ và yêu cầu tư vấn phù hợp theo khu vực.</p>
+            <p class="eyebrow">Ưu đãi nổi bật</p>
+            <h2>Mua gói hàng từ 2.000.000đ<br />Tặng landing page riêng cho salon</h2>
           </div>
 
-          <div class="brand-grid" id="home-brand-grid"></div>
-
-          <div class="section-inline-cta reveal">
-            <a href="thuong-hieu.html" class="btn btn-outline">Xem toàn bộ thương hiệu</a>
+          <div class="benefit-grid">
+            <article class="service-card reveal"><h3>Landing page theo tên salon</h3></article>
+            <article class="service-card reveal"><h3>Form đặt lịch khách</h3></article>
+            <article class="service-card reveal"><h3>Admin riêng</h3></article>
+            <article class="service-card reveal"><h3>Tự chỉnh dịch vụ và bảng giá</h3></article>
+            <article class="service-card reveal"><h3>Telegram báo lịch hẹn</h3></article>
+            <article class="service-card reveal"><h3>Google Sheet lưu danh sách khách</h3></article>
+            <article class="service-card reveal"><h3>Hiển thị đẹp trên điện thoại</h3></article>
           </div>
         </div>
       </section>
 
-      <section class="section" id="home-products">
+      <section class="section section-contrast" id="san-pham">
         <div class="container">
           <div class="section-head reveal">
-            <p class="eyebrow">Nhóm sản phẩm nổi bật</p>
-            <h2>Danh mục được chia theo bài toán kinh doanh để bạn dễ chọn và dễ bán.</h2>
-            <p class="section-note">Mỗi nhóm đều có mục tiêu khách hàng, lợi ích chính và hướng triển khai rõ ràng.</p>
+            <p class="eyebrow">Nhóm sản phẩm chuyên salon</p>
+            <h2>5 nhóm hàng bán chạy và dễ triển khai dịch vụ.</h2>
           </div>
 
-          <div class="service-grid" id="home-category-grid"></div>
+          <div class="product-group-grid">
+            <article class="service-card reveal">
+              <div class="service-cover">
+                <img src="public/image/thehairlab-hero-product-lineup.png" alt="Dầu gội - xả chuyên salon" loading="lazy" />
+              </div>
+              <h3>Dầu gội - xả chuyên salon</h3>
+              <p>Bộ sản phẩm tối ưu chi phí dịch vụ và bán lẻ tại quầy.</p>
+              <a href="#nhan-bao-gia" class="btn btn-soft service-cta-link">Nhận báo giá</a>
+            </article>
 
-          <div class="section-inline-cta reveal">
-            <a href="san-pham.html" class="btn btn-outline">Xem chi tiết dòng phân phối</a>
+            <article class="service-card reveal">
+              <div class="service-cover">
+                <img src="public/image/thehairlab-collagen-deep-banner.png" alt="Hấp phục hồi Collagen" loading="lazy" />
+              </div>
+              <h3>Hấp phục hồi Collagen</h3>
+              <p>Tăng giá trị dịch vụ phục hồi và giữ khách quay lại định kỳ.</p>
+              <a href="#nhan-bao-gia" class="btn btn-soft service-cta-link">Nhận báo giá</a>
+            </article>
+
+            <article class="service-card reveal">
+              <div class="service-cover">
+                <img src="public/image/thehairlab-care-oil-treatment.png" alt="Dầu dưỡng và serum tóc" loading="lazy" />
+              </div>
+              <h3>Dầu dưỡng / serum tóc</h3>
+              <p>Dễ upsell cho khách sau dịch vụ, tăng doanh thu đơn hàng.</p>
+              <a href="#nhan-bao-gia" class="btn btn-soft service-cta-link">Nhận báo giá</a>
+            </article>
+
+            <article class="service-card reveal">
+              <div class="service-cover">
+                <img src="public/image/thehairlab-professional-hair-color.png" alt="Thuốc nhuộm chuyên nghiệp" loading="lazy" />
+              </div>
+              <h3>Thuốc nhuộm</h3>
+              <p>Bảng màu linh hoạt cho salon chuyên màu, dễ phối công thức.</p>
+              <a href="#nhan-bao-gia" class="btn btn-soft service-cta-link">Nhận báo giá</a>
+            </article>
+
+            <article class="service-card reveal">
+              <div class="service-cover">
+                <img src="public/image/thehairlab-salon-technical-products.png" alt="Nhóm uốn duỗi và trung hòa" loading="lazy" />
+              </div>
+              <h3>Uốn / duỗi / trung hòa</h3>
+              <p>Nhóm kỹ thuật cho salon muốn mở rộng dịch vụ chuyên sâu.</p>
+              <a href="#nhan-bao-gia" class="btn btn-soft service-cta-link">Nhận báo giá</a>
+            </article>
           </div>
         </div>
       </section>
 
-      <section class="section section-contrast" id="home-capabilities">
+      <section class="section" id="mau-landing">
         <div class="container">
           <div class="section-head reveal">
-            <p class="eyebrow">Năng lực hỗ trợ</p>
-            <h2>Đội ngũ đồng hành theo toàn bộ vòng đời hợp tác, không dừng ở bước giao hàng.</h2>
+            <p class="eyebrow">Mẫu landing page tặng kèm</p>
+            <h2>Chọn mẫu phù hợp phong cách salon trước khi setup.</h2>
           </div>
 
-          <div class="team-grid" id="home-capability-grid"></div>
+          <div class="demo-grid">
+            <article class="result-card reveal">
+              <div class="demo-preview">
+                <img src="public/image/mau-01.jpg" alt="Mẫu landing page Lavender Beauty" loading="lazy" />
+              </div>
+              <div class="result-caption">
+                <strong>Lavender Beauty</strong>
+                <p>Phù hợp salon nữ, làm đẹp nhẹ nhàng, ưu tiên khách trẻ.</p>
+                <a href="#nhan-bao-gia" class="btn btn-outline btn-small">Chọn mẫu / nhận demo</a>
+              </div>
+            </article>
+
+            <article class="result-card reveal">
+              <div class="demo-preview">
+                <img src="public/image/mau-03.jpg" alt="Mẫu landing page Green Natural" loading="lazy" />
+              </div>
+              <div class="result-caption">
+                <strong>Green Natural</strong>
+                <p>Phù hợp salon thiên nhiên, chăm sóc phục hồi và da đầu.</p>
+                <a href="#nhan-bao-gia" class="btn btn-outline btn-small">Chọn mẫu / nhận demo</a>
+              </div>
+            </article>
+
+            <article class="result-card reveal">
+              <div class="demo-preview">
+                <img src="public/image/mau-02.jpg" alt="Mẫu landing page Black Gold Luxury" loading="lazy" />
+              </div>
+              <div class="result-caption">
+                <strong>Black Gold Luxury</strong>
+                <p>Phù hợp salon premium cần hình ảnh sang trọng, đẳng cấp.</p>
+                <a href="#nhan-bao-gia" class="btn btn-outline btn-small">Chọn mẫu / nhận demo</a>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section class="section" id="home-social-proof">
+      <section class="section section-contrast" id="cach-form-hoat-dong">
         <div class="container">
           <div class="section-head reveal">
-            <p class="eyebrow">Social Proof</p>
-            <h2>Phản hồi ngắn từ đối tác đang hợp tác cùng The Hair Lab.</h2>
+            <p class="eyebrow">Cách form hoạt động</p>
+            <h2>Luồng xử lý đơn giản, salon nhận lịch hẹn ngay.</h2>
           </div>
 
-          <div class="review-grid" id="home-testimonial-grid"></div>
+          <ol class="steps-grid">
+            <li class="info-card reveal">
+              <h3>1. Khách vào landing page của salon</h3>
+            </li>
+            <li class="info-card reveal">
+              <h3>2. Điền form đặt lịch</h3>
+            </li>
+            <li class="info-card reveal">
+              <h3>3. Salon nhận thông báo qua Telegram</h3>
+            </li>
+            <li class="info-card reveal">
+              <h3>4. Google Sheet lưu dữ liệu tự động</h3>
+            </li>
+          </ol>
         </div>
       </section>
 
-      <section class="section section-contrast" id="home-cta">
+      <section class="section" id="admin-rieng">
         <div class="container">
-          <div class="cta-band reveal">
-            <p class="eyebrow">Bắt đầu nhanh</p>
-            <h2>Muốn nhận đề xuất danh mục theo ngân sách và mô hình của bạn?</h2>
-            <p>
-              Gửi thông tin trong 1 phút, đội ngũ The Hair Lab sẽ phản hồi bằng lộ trình nhập hàng và chính sách phù hợp.
-            </p>
-            <div class="cta-band-actions">
-              <a href="hop-tac.html#hop-tac-form" class="btn btn-primary">Đăng ký hợp tác</a>
-              <a href="lien-he.html#bao-gia-form" class="btn btn-outline">Nhận báo giá nhanh</a>
+          <div class="section-head reveal">
+            <p class="eyebrow">Admin riêng cho salon</p>
+            <h2>Mỗi salon có tài khoản admin riêng để tự chỉnh nội dung.</h2>
+            <p class="section-note">Salon chỉ quản lý trang của mình.</p>
+          </div>
+
+          <div class="admin-grid">
+            <article class="team-card reveal"><h3>Tên salon</h3></article>
+            <article class="team-card reveal"><h3>Số điện thoại</h3></article>
+            <article class="team-card reveal"><h3>Địa chỉ</h3></article>
+            <article class="team-card reveal"><h3>Giờ làm việc</h3></article>
+            <article class="team-card reveal"><h3>Ảnh banner</h3></article>
+            <article class="team-card reveal"><h3>Dịch vụ</h3></article>
+            <article class="team-card reveal"><h3>Bảng giá</h3></article>
+            <article class="team-card reveal"><h3>Ưu đãi</h3></article>
+            <article class="team-card reveal"><h3>Ẩn / hiện dịch vụ</h3></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-contrast" id="quy-trinh">
+        <div class="container">
+          <div class="section-head reveal">
+            <p class="eyebrow">Quy trình triển khai</p>
+            <h2>Triển khai nhanh trong 1 - 3 ngày tùy nội dung.</h2>
+          </div>
+
+          <ol class="process-list">
+            <li class="reveal">
+              <h3>Salon chọn gói sản phẩm từ 2 triệu</h3>
+            </li>
+            <li class="reveal">
+              <h3>Gửi thông tin salon, logo, ảnh, bảng giá</h3>
+            </li>
+            <li class="reveal">
+              <h3>Chọn mẫu landing page</h3>
+            </li>
+            <li class="reveal">
+              <h3>Bên mình setup form, Telegram, Google Sheet</h3>
+            </li>
+            <li class="reveal">
+              <h3>Bàn giao link và tài khoản admin</h3>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="nhan-bao-gia">
+        <div class="container">
+          <div class="section-head reveal">
+            <p class="eyebrow">Nhận báo giá</p>
+            <h2>Đăng ký nhận báo giá sản phẩm và mẫu landing page phù hợp.</h2>
+            <p class="section-note">Form gửi về Telegram/Sheet của đội vận hành The Hair Lab.</p>
+          </div>
+
+          <form class="booking-form js-lead-form quote-form reveal" data-form-purpose="Nhận báo giá trang chủ" novalidate>
+            <div class="lead-form-grid">
+              <label>
+                Tên salon
+                <input type="text" name="businessName" required placeholder="Ví dụ: Salon Hair Beauty" />
+              </label>
+
+              <label>
+                Người liên hệ
+                <input type="text" name="contactName" required placeholder="Ví dụ: Nguyễn Minh Anh" autocomplete="name" />
+              </label>
+
+              <label>
+                Số điện thoại / Zalo
+                <input type="tel" name="phone" required placeholder="Ví dụ: 0907 489 278" autocomplete="tel" />
+              </label>
+
+              <label>
+                Khu vực
+                <input type="text" name="area" required placeholder="Ví dụ: Quận 3, TP.HCM" />
+              </label>
+
+              <label>
+                Nhóm sản phẩm quan tâm
+                <select name="interest" required>
+                  <option value="">Chọn nhóm sản phẩm</option>
+                  <option value="Dầu gội - xả chuyên salon">Dầu gội - xả chuyên salon</option>
+                  <option value="Hấp phục hồi Collagen">Hấp phục hồi Collagen</option>
+                  <option value="Dầu dưỡng / serum tóc">Dầu dưỡng / serum tóc</option>
+                  <option value="Thuốc nhuộm">Thuốc nhuộm</option>
+                  <option value="Uốn / duỗi / trung hòa">Uốn / duỗi / trung hòa</option>
+                </select>
+              </label>
+
+              <label>
+                Mẫu landing page muốn nhận
+                <select name="businessModel" required>
+                  <option value="">Chọn mẫu landing page</option>
+                  <option value="Lavender Beauty">Lavender Beauty</option>
+                  <option value="Green Natural">Green Natural</option>
+                  <option value="Black Gold Luxury">Black Gold Luxury</option>
+                </select>
+              </label>
             </div>
+
+            <label>
+              Ghi chú
+              <textarea name="note" rows="4" placeholder="Mô tả thêm quy mô salon, số chi nhánh hoặc nhu cầu riêng"></textarea>
+            </label>
+
+            <button type="submit" class="btn btn-primary">Gửi yêu cầu báo giá</button>
+            <p class="booking-status" data-form-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section section-contrast" id="faq">
+        <div class="container">
+          <div class="section-head reveal">
+            <p class="eyebrow">FAQ</p>
+            <h2>Câu hỏi thường gặp từ salon.</h2>
+          </div>
+
+          <div class="faq-list">
+            <details class="info-card reveal">
+              <summary>Có mất phí làm web không?</summary>
+              <p>Không thu phí riêng khi salon mua gói hàng từ 2.000.000đ theo chương trình hiện tại.</p>
+            </details>
+            <details class="info-card reveal">
+              <summary>Salon có tự sửa bảng giá không?</summary>
+              <p>Có. Salon có tài khoản admin riêng để tự chỉnh thông tin dịch vụ và bảng giá.</p>
+            </details>
+            <details class="info-card reveal">
+              <summary>Khách đặt lịch báo về đâu?</summary>
+              <p>Lịch hẹn được gửi qua Telegram và đồng thời lưu vào Google Sheet riêng.</p>
+            </details>
+            <details class="info-card reveal">
+              <summary>Có dùng tên miền riêng không?</summary>
+              <p>Giai đoạn này triển khai theo cấu trúc hệ thống hiện tại, có thể mở rộng tên miền riêng ở giai đoạn sau.</p>
+            </details>
+            <details class="info-card reveal">
+              <summary>Bao lâu bàn giao?</summary>
+              <p>Thông thường từ 1 - 3 ngày tùy mức độ đầy đủ của nội dung salon cung cấp.</p>
+            </details>
+            <details class="info-card reveal">
+              <summary>Không rành kỹ thuật có dùng được không?</summary>
+              <p>Được. Giao diện quản lý được thiết kế đơn giản để salon dễ cập nhật thông tin hằng ngày.</p>
+            </details>
+            <details class="info-card reveal">
+              <summary>Có đổi mẫu giao diện sau này không?</summary>
+              <p>Có thể đổi khi nâng cấp giai đoạn sau, giữ dữ liệu khách và lịch hẹn đang dùng.</p>
+            </details>
           </div>
         </div>
       </section>
@@ -204,14 +406,18 @@
         <p>© <span id="current-year"></span> The Hair Lab Distribution.</p>
         <p>
           Hotline:
-          <a data-contact-link="phone" href="lien-he.html#thong-tin-lien-he"><span data-contact="phone">TODO_REPLACE_REAL_PHONE</span></a>
+          <a data-contact-link="phone" href="tel:0907489278"><span data-contact="phone">0907.489.278</span></a>
           | Email báo giá:
-          <a data-contact-link="email" href="lien-he.html#thong-tin-lien-he"><span data-contact="email">TODO_REPLACE_REAL_EMAIL</span></a>
+          <a data-contact-link="email" href="mailto:thehairlab.info@gmail.com"><span data-contact="email">thehairlab.info@gmail.com</span></a>
         </p>
       </div>
     </footer>
 
-    <a id="mobile-quick-contact" class="mobile-quick-contact js-quick-contact-link" href="lien-he.html#bao-gia-form">Tư vấn nhanh</a>
+    <div class="mobile-cta-bar" aria-label="Liên hệ nhanh trên điện thoại">
+      <a class="btn btn-soft" data-contact-link="zaloLink" href="https://zalo.me/0907489278">Zalo tư vấn</a>
+      <a class="btn btn-primary" data-contact-link="phone" href="tel:0907489278">Gọi hotline</a>
+    </div>
+
     <button id="back-to-top" class="back-to-top" type="button" aria-label="Lên đầu trang">↑</button>
 
     <script type="module" src="script.js"></script>
