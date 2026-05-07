@@ -1137,6 +1137,13 @@ async function handleLeadSubmit(event) {
   )
 }
 
+function setupLeadForms() {
+  const forms = document.querySelectorAll('.js-lead-form')
+  forms.forEach((form) => {
+    form.addEventListener('submit', handleLeadSubmit)
+  })
+}
+
 function setupPrefillInterestFromQuery() {
   const params = new URLSearchParams(window.location.search)
   const interest = params.get('interest')
