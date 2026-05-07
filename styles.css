@@ -266,6 +266,36 @@ img {
   color: #4f5670;
 }
 
+.hero-offer-block {
+  margin-top: 0.95rem;
+  border: 1px solid #d9d0fb;
+  border-radius: 14px;
+  background: linear-gradient(140deg, #f4efff 0%, #eaf9f0 100%);
+  padding: 0.85rem 1rem;
+}
+
+.hero-offer-line {
+  margin: 0;
+  color: #2f3550;
+  font-weight: 700;
+  line-height: 1.38;
+}
+
+.hero-offer-line + .hero-offer-line {
+  margin-top: 0.28rem;
+}
+
+.hero-offer-price {
+  display: inline-block;
+  margin-left: 0.2rem;
+  font-size: clamp(1.4rem, 3.1vw, 2rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-weight: 900;
+  color: #7f2f04;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
 .hero-bullet-list {
   margin-top: 1rem;
   display: flex;
@@ -1597,6 +1627,14 @@ img {
   .hero-content,
   .hero-panel {
     border-radius: 18px;
+  }
+
+  .hero-offer-block {
+    padding: 0.8rem 0.88rem;
+  }
+
+  .hero-offer-price {
+    font-size: clamp(1.55rem, 8.8vw, 2.05rem);
   }
 
   .hero-cta-group .btn {

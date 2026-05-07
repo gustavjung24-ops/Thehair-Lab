@@ -1079,11 +1079,26 @@ async function handleLeadSubmit(event) {
   }
 
   try {
+    const apiResult = await postLeadToApi(formData)
+    if (apiResult) {
+      if (apiResult.success) {
+        form.reset()
+        showFormStatus(form, apiResult.message || 'Đã nhận thông tin, bên em sẽ liên hệ tư vấn sớm.')
+      } else {
+        showFormStatus(form, apiResult.error || 'Có lỗi xảy ra, vui lòng thử lại.', true)
+      }
+      return
+    }
+  } catch (_error) {
+    // API không khả dụng, dùng fallback channels.
+  }
+
+  try {
     const ownerChannelSent = await postLeadToOwnerChannels(payload, message)
 
     if (ownerChannelSent) {
       form.reset()
-      showFormStatus(form, 'Yêu cầu đã gửi về hệ thống Telegram/Google Sheet. Đội ngũ The Hair Lab sẽ liên hệ sớm.')
+      showFormStatus(form, 'Yêu cầu đã gửi. Đội ngũ The Hair Lab sẽ liên hệ sớm.')
       return
     }
   } catch (_error) {
@@ -1118,32 +1133,9 @@ async function handleLeadSubmit(event) {
   showFormStatus(
     form,
     'Chưa có endpoint nhận form trong cấu hình. Vui lòng cấu hình THEHAIRLAB_CONFIG.lead để gửi về Telegram/Google Sheet.',
-    try {
-      const apiResult = await postLeadToApi(formData)
-      if (apiResult) {
-        form.reset()
-        if (apiResult.success) {
-          showFormStatus(form, apiResult.message || 'Đã nhận thông tin, bên em sẽ liên hệ tư vấn sớm.')
-        } else {
-          showFormStatus(form, apiResult.error || 'Có lỗi xảy ra, vui lòng thử lại.', true)
-        }
-        return
-      }
-    } catch (_error) {
-      // API không khả dụng, dùng fallback channels.
-    }
-
-    try {
-      const ownerChannelSent = await postLeadToOwnerChannels(payload, message)
-
-      if (ownerChannelSent) {
-        form.reset()
-        showFormStatus(form, 'Yêu cầu đã gửi. Đội ngũ The Hair Lab sẽ liên hệ sớm.')
-        return
-      }
-    } catch (_error) {
-      // Fall through to other available channels.
-    }
+    true
+  )
+}
 
 function setupPrefillInterestFromQuery() {
   const params = new URLSearchParams(window.location.search)
@@ -1294,13 +1286,20 @@ function setupActiveNavigation() {
 }
 
 function setupHomeAnchorNavigation() {
-  const nav = document.getElementById('main-nav')
-
-  if (!nav) {
+  if (document.body?.dataset?.page !== 'home') {
     return
   }
 
-  const anchorLinks = Array.from(nav.querySelectorAll('a[href^="#"]'))
+  const sectionIds = new Set([
+    'san-pham',
+    'uu-dai-salon',
+    'mau-landing',
+    'quy-trinh',
+    'faq',
+    'nhan-bao-gia',
+  ])
+
+  const anchorLinks = Array.from(document.querySelectorAll('a[data-scroll-target], a[href^="#"]'))
 
   if (!anchorLinks.length) {
     return
@@ -1308,8 +1307,10 @@ function setupHomeAnchorNavigation() {
 
   const sections = anchorLinks
     .map((link) => {
-      const id = link.getAttribute('href')?.slice(1)
-      if (!id) {
+      const datasetId = String(link.getAttribute('data-scroll-target') || '').trim()
+      const hrefId = link.getAttribute('href')?.startsWith('#') ? String(link.getAttribute('href') || '').slice(1) : ''
+      const id = datasetId || hrefId
+      if (!id || !sectionIds.has(id)) {
         return null
       }
 
@@ -1318,9 +1319,16 @@ function setupHomeAnchorNavigation() {
         return null
       }
 
+      // Normalize anchor links so browser URL stays at current path without hash.
+      const cleanPath = `${window.location.pathname}${window.location.search}`
+      link.setAttribute('data-scroll-target', id)
+      link.setAttribute('href', cleanPath)
+
       return {link, section, id}
     })
     .filter(Boolean)
+
+  const sectionMap = new Map(sections.map((item) => [item.id, item]))
 
   const setActiveLink = (id) => {
     sections.forEach((item) => {
@@ -1334,12 +1342,54 @@ function setupHomeAnchorNavigation() {
     })
   }
 
+  const clearHashFromUrl = () => {
+    if (!window.location.hash) {
+      return
+    }
+
+    const cleanPath = `${window.location.pathname}${window.location.search}`
+    window.history.replaceState(null, '', cleanPath)
+  }
+
+  const scrollToSection = (section) => {
+    if (!(section instanceof HTMLElement)) {
+      return
+    }
+
+    section.scrollIntoView({behavior: 'smooth', block: 'start'})
+
+    // Ensure URL remains clean after anchor-based scroll.
+    window.setTimeout(clearHashFromUrl, 120)
+  }
+
+  const handleHashNavigation = () => {
+    const id = window.location.hash.replace('#', '')
+    if (!id) {
+      return
+    }
+
+    const item = sectionMap.get(id)
+    if (!item) {
+      return
+    }
+
+    setActiveLink(item.id)
+    scrollToSection(item.section)
+  }
+
   const hashId = window.location.hash.replace('#', '')
   if (hashId) {
     setActiveLink(hashId)
+    const target = document.getElementById(hashId)
+    if (target) {
+      target.scrollIntoView({behavior: 'auto', block: 'start'})
+      clearHashFromUrl()
+    }
   } else if (sections[0]) {
     setActiveLink(sections[0].id)
   }
+
+  window.addEventListener('hashchange', handleHashNavigation)
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -1361,9 +1411,34 @@ function setupHomeAnchorNavigation() {
 
   sections.forEach((item) => {
     observer.observe(item.section)
-    item.link.addEventListener('click', () => {
-      setActiveLink(item.id)
-    })
+  })
+
+  document.addEventListener('click', (event) => {
+    const target = event.target
+    if (!(target instanceof Element)) {
+      return
+    }
+
+    const link = target.closest('a[data-scroll-target], a[href^="#"]')
+    if (!(link instanceof HTMLAnchorElement)) {
+      return
+    }
+
+    const datasetId = String(link.getAttribute('data-scroll-target') || '').trim()
+    const hrefId = link.getAttribute('href')?.startsWith('#') ? String(link.getAttribute('href') || '').slice(1) : ''
+    const id = datasetId || hrefId
+    if (!id) {
+      return
+    }
+
+    const item = sectionMap.get(id)
+    if (!item) {
+      return
+    }
+
+    event.preventDefault()
+    setActiveLink(item.id)
+    scrollToSection(item.section)
   })
 }
 
@@ -1421,6 +1496,7 @@ function setupFooterYear() {
 
   year.textContent = String(new Date().getFullYear())
 }
+
 
 async function initSite() {
   let homepageContent = {}
