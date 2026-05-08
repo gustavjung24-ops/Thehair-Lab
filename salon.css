@@ -12,6 +12,11 @@
   --radius-xl: 24px;
   --radius-lg: 18px;
   --container: 1160px;
+  --salon-hero-gradient: linear-gradient(118deg, rgba(237, 233, 254, 0.88) 0%, rgba(217, 199, 255, 0.82) 28%, rgba(167, 139, 250, 0.76) 58%, rgba(139, 92, 246, 0.72) 100%);
+  --salon-hero-panel-gradient: linear-gradient(145deg, rgba(34, 27, 53, 0.64) 0%, rgba(44, 25, 86, 0.58) 100%);
+  --salon-monogram-gradient: linear-gradient(140deg, #a78bfa 0%, #8b5cf6 62%, #6d28d9 100%);
+  --salon-hero-glow: rgba(109, 40, 217, 0.16);
+  --salon-hero-backdrop-image: url('/public/image/salon-mau-01-hero.png');
 }
 
 * {
@@ -190,7 +195,7 @@ a {
   place-items: center;
   color: #fff;
   font-weight: 800;
-  background: radial-gradient(circle at top left, #b49bff 0%, var(--deep) 100%);
+  background: var(--salon-monogram-gradient);
 }
 
 .nav-brand strong {
@@ -221,8 +226,8 @@ a {
   background:
     radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0) 48%),
     radial-gradient(circle at 85% 20%, rgba(214, 181, 109, 0.18) 0%, rgba(214, 181, 109, 0) 44%),
-    linear-gradient(118deg, rgba(237, 233, 254, 0.88) 0%, rgba(217, 199, 255, 0.82) 28%, rgba(167, 139, 250, 0.76) 58%, rgba(139, 92, 246, 0.72) 100%),
-    url('/public/image/salon-mau-01-hero.png') right center / auto 115% no-repeat;
+    var(--salon-hero-gradient),
+    var(--salon-hero-backdrop-image) right center / auto 115% no-repeat;
 }
 
 .hero::before,
@@ -246,7 +251,7 @@ a {
   height: 62%;
   background:
     radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 64%),
-    radial-gradient(ellipse at 74% 20%, rgba(109, 40, 217, 0.16) 0%, rgba(109, 40, 217, 0) 58%);
+    radial-gradient(ellipse at 74% 20%, var(--salon-hero-glow) 0%, rgba(109, 40, 217, 0) 58%);
 }
 
 .hero-inner {
@@ -278,7 +283,7 @@ a {
 
 .hero-left {
   padding: 1.6rem;
-  background: linear-gradient(145deg, rgba(34, 27, 53, 0.64) 0%, rgba(44, 25, 86, 0.58) 100%);
+  background: var(--salon-hero-panel-gradient);
   color: #fff;
 }
 
@@ -307,7 +312,7 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.3);
   background:
     radial-gradient(circle at 22% 16%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 40%),
-    linear-gradient(140deg, #a78bfa 0%, #8b5cf6 62%, #6d28d9 100%);
+    var(--salon-monogram-gradient);
   color: #fff;
 }
 

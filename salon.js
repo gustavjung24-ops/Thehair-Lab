@@ -15,6 +15,7 @@ const TEMPLATE_CONFIGS = {
       accent: "#ede9fe",
       background: "#fffaf5",
       textDark: "#221b35",
+      heroGradient: "linear-gradient(118deg, rgba(237, 233, 254, 0.88) 0%, rgba(217, 199, 255, 0.82) 28%, rgba(167, 139, 250, 0.76) 58%, rgba(139, 92, 246, 0.72) 100%)",
     },
   },
   "02": {
@@ -32,6 +33,7 @@ const TEMPLATE_CONFIGS = {
       accent: "#DDE8CF",
       background: "#F6F8F2",
       textDark: "#2F3A2C",
+      heroGradient: "linear-gradient(135deg, #F6F8F2 0%, #DDE8CF 45%, #A8BF8A 100%)",
     },
   },
   "03": {
@@ -49,6 +51,7 @@ const TEMPLATE_CONFIGS = {
       accent: "#E7D3A8",
       background: "#F8F5EF",
       textDark: "#1F1A17",
+      heroGradient: "linear-gradient(135deg, #171717 0%, #2B241B 48%, #C8A96B 100%)",
     },
   },
   "04": {
@@ -66,6 +69,7 @@ const TEMPLATE_CONFIGS = {
       accent: "#FFF1D9",
       background: "#FFF8F6",
       textDark: "#5C4A4F",
+      heroGradient: "linear-gradient(135deg, #FFF8F6 0%, #FFF1D9 42%, #F7C9B6 100%)",
     },
   },
   "05": {
@@ -83,6 +87,7 @@ const TEMPLATE_CONFIGS = {
       accent: "#F7EED5",
       background: "#FFFCF5",
       textDark: "#4C3A1E",
+      heroGradient: "linear-gradient(135deg, #FFFCF5 0%, #F7EED5 45%, #E5D2A2 100%)",
     },
   },
 };
@@ -416,8 +421,10 @@ function applyTheme(templateTheme, themeColorOverride) {
   const soft = templateTheme.accent;
   const cream = templateTheme.background;
   const textDark = templateTheme.textDark;
+  const heroGradient = templateTheme.heroGradient;
   const { r, g, b } = hexToRgb(color);
   const deepRgb = hexToRgb(deep);
+  const textDarkRgb = hexToRgb(textDark);
 
   document.documentElement.style.setProperty("--primary", color);
   document.documentElement.style.setProperty("--deep", deep);
@@ -428,6 +435,16 @@ function applyTheme(templateTheme, themeColorOverride) {
   document.documentElement.style.setProperty("--text-soft", `rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0.8)`);
   document.documentElement.style.setProperty("--line", `rgba(${r}, ${g}, ${b}, 0.18)`);
   document.documentElement.style.setProperty("--shadow", `0 20px 45px rgba(${r}, ${g}, ${b}, 0.14)`);
+  document.documentElement.style.setProperty("--salon-hero-gradient", heroGradient);
+  document.documentElement.style.setProperty(
+    "--salon-hero-panel-gradient",
+    `linear-gradient(145deg, rgba(${textDarkRgb.r}, ${textDarkRgb.g}, ${textDarkRgb.b}, 0.82) 0%, rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0.74) 100%)`
+  );
+  document.documentElement.style.setProperty(
+    "--salon-monogram-gradient",
+    `linear-gradient(140deg, ${deep} 0%, ${color} 62%, ${textDark} 100%)`
+  );
+  document.documentElement.style.setProperty("--salon-hero-glow", `rgba(${r}, ${g}, ${b}, 0.16)`);
 
   document.body.style.background =
     `radial-gradient(circle at 12% -8%, rgba(${r}, ${g}, ${b}, 0.18) 0%, rgba(${r}, ${g}, ${b}, 0) 36%),` +
@@ -671,7 +688,14 @@ function updateContactActions(salon) {
     node.hidden = !setHref(node, callLink);
   });
 
-  [els.ctaZalo, els.navZalo, els.stickyZalo].forEach((node) => {
+  // Hide Zalo in top navigation only; keep hero and sticky Zalo actions.
+  if (els.navZalo) {
+    els.navZalo.hidden = true;
+    els.navZalo.style.display = "none";
+    els.navZalo.removeAttribute("href");
+  }
+
+  [els.ctaZalo, els.stickyZalo].forEach((node) => {
     if (!node) {
       return;
     }
