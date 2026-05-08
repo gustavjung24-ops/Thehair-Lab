@@ -1,0 +1,628 @@
+﻿{
+    "generatedAt":  "2026-05-08T23:07:17.0545998+07:00",
+    "bucket":  "the-hair-lab",
+    "prefix":  "thehairlab",
+    "cdnBase":  "https://cdn.thehairlab.top/thehairlab",
+    "uploadSkipped":  true,
+    "summary":  {
+                    "uploaded":  0,
+                    "mapOnly":  67,
+                    "missing":  1,
+                    "totalMapped":  67
+                },
+    "assets":  {
+                   "salon.mau02.hero":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-hero.jpg",
+                   "salon.mau02.hero02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-hero-02.jpg",
+                   "salon.mau02.consultation":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-consultation.jpg",
+                   "salon.mau02.colorService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-color-service.jpg",
+                   "salon.mau02.stylingService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-styling-service.jpg",
+                   "salon.mau02.treatmentService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-treatment-service.jpg",
+                   "salon.mau02.space01":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-space-01.jpg",
+                   "salon.mau02.space02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-space-02.jpg",
+                   "salon.mau02.space03":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-space-03.jpg",
+                   "salon.mau02.experience":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-experience.jpg",
+                   "salon.mau02.services.cut":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-cat-tao-kieu.jpg",
+                   "salon.mau02.services.color":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-mau-toc.jpg",
+                   "salon.mau02.services.fashionColor":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-nhuom-thoi-trang.jpg",
+                   "salon.mau02.services.perm":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-uon-setting.jpg",
+                   "salon.mau02.services.straight":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-duoi-phuc-hoi.jpg",
+                   "salon.mau02.services.treatment":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-cham-soc-phuc-hoi.jpg",
+                   "salon.mau02.products":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-products.png",
+                   "salon.mau03.hero":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-hero.png",
+                   "salon.mau03.hero02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-hero-02.png",
+                   "salon.mau03.colorService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-color-service.png",
+                   "salon.mau03.stylingService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-styling-service.png",
+                   "salon.mau03.treatmentService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-treatment-service.png",
+                   "salon.mau03.space01":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-space-01.png",
+                   "salon.mau03.space02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-space-02.png",
+                   "salon.mau03.space03":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-space-03.png",
+                   "salon.mau03.experience":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-experience.png",
+                   "salon.mau03.services.cut":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-cat-tao-kieu.png",
+                   "salon.mau03.services.color":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-mau-toc.png",
+                   "salon.mau03.services.fashionColor":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-nhuom-thoi-trang.png",
+                   "salon.mau03.services.perm":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-uon-setting.png",
+                   "salon.mau03.services.straight":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-duoi-phuc-hoi.png",
+                   "salon.mau03.services.treatment":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-cham-soc-phuc-hoi.png",
+                   "salon.mau03.products":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-products.png",
+                   "salon.mau04.hero":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-hero.png",
+                   "salon.mau04.hero02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-hero-02.png",
+                   "salon.mau04.consultation":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-consultation.png",
+                   "salon.mau04.colorService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-color-service.png",
+                   "salon.mau04.stylingService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-styling-service.png",
+                   "salon.mau04.treatmentService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-treatment-service.png",
+                   "salon.mau04.space01":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-space-01.png",
+                   "salon.mau04.space02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-space-02.png",
+                   "salon.mau04.space03":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-space-03.png",
+                   "salon.mau04.experience":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-experience.png",
+                   "salon.mau04.services.cut":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-cat-tao-kieu.png",
+                   "salon.mau04.services.color":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-mau-toc.png",
+                   "salon.mau04.services.fashionColor":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-nhuom-thoi-trang.png",
+                   "salon.mau04.services.perm":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-uon-setting.png",
+                   "salon.mau04.services.straight":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-duoi-phuc-hoi.png",
+                   "salon.mau04.services.treatment":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-cham-soc-phuc-hoi.png",
+                   "salon.mau04.products":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-products.png",
+                   "salon.mau05.hero":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-hero.png",
+                   "salon.mau05.hero02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-hero-02.png",
+                   "salon.mau05.consultation":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-consultation.png",
+                   "salon.mau05.colorService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-color-service.png",
+                   "salon.mau05.stylingService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-styling-service.png",
+                   "salon.mau05.treatmentService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-treatment-service.png",
+                   "salon.mau05.space01":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-space-01.png",
+                   "salon.mau05.space02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-space-02.png",
+                   "salon.mau05.space03":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-space-03.png",
+                   "salon.mau05.experience":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-experience.png",
+                   "salon.mau05.services.cut":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-cat-tao-kieu.png",
+                   "salon.mau05.services.color":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-mau-toc.png",
+                   "salon.mau05.services.fashionColor":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-nhuom-thoi-trang.png",
+                   "salon.mau05.services.perm":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-uon-setting.png",
+                   "salon.mau05.services.straight":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-duoi-phuc-hoi.png",
+                   "salon.mau05.services.treatment":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-cham-soc-phuc-hoi.png",
+                   "salon.mau05.products":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-products.png"
+               },
+    "report":  [
+                   {
+                       "template":  2,
+                       "basename":  "hero",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-hero.jpg",
+                       "key":  "salon.mau02.hero",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-hero.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "hero-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-hero-02.jpg",
+                       "key":  "salon.mau02.hero02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-hero-02.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "consultation",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-consultation.jpg",
+                       "key":  "salon.mau02.consultation",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-consultation.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "color-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-color-service.jpg",
+                       "key":  "salon.mau02.colorService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-color-service.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "styling-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-styling-service.jpg",
+                       "key":  "salon.mau02.stylingService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-styling-service.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "treatment-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-treatment-service.jpg",
+                       "key":  "salon.mau02.treatmentService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-treatment-service.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "space-01",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-space-01.jpg",
+                       "key":  "salon.mau02.space01",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-space-01.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "space-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-space-02.jpg",
+                       "key":  "salon.mau02.space02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-space-02.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "space-03",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-space-03.jpg",
+                       "key":  "salon.mau02.space03",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-space-03.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "experience",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-experience.jpg",
+                       "key":  "salon.mau02.experience",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-experience.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "dv-cat-tao-kieu",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-dv-cat-tao-kieu.jpg",
+                       "key":  "salon.mau02.services.cut",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-cat-tao-kieu.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "dv-mau-toc",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-dv-mau-toc.jpg",
+                       "key":  "salon.mau02.services.color",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-mau-toc.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "dv-nhuom-thoi-trang",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-dv-nhuom-thoi-trang.jpg",
+                       "key":  "salon.mau02.services.fashionColor",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-nhuom-thoi-trang.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "dv-uon-setting",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-dv-uon-setting.jpg",
+                       "key":  "salon.mau02.services.perm",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-uon-setting.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "dv-duoi-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-dv-duoi-phuc-hoi.jpg",
+                       "key":  "salon.mau02.services.straight",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-duoi-phuc-hoi.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "dv-cham-soc-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-dv-cham-soc-phuc-hoi.jpg",
+                       "key":  "salon.mau02.services.treatment",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-dv-cham-soc-phuc-hoi.jpg"
+                   },
+                   {
+                       "template":  2,
+                       "basename":  "products",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-02\\salon-mau-02-products.png",
+                       "key":  "salon.mau02.products",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-products.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "hero",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-hero.png",
+                       "key":  "salon.mau03.hero",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-hero.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "hero-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-hero-02.png",
+                       "key":  "salon.mau03.hero02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-hero-02.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "consultation",
+                       "status":  "missing",
+                       "source":  "",
+                       "key":  "salon.mau03.consultation",
+                       "url":  ""
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "color-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-color-service.png",
+                       "key":  "salon.mau03.colorService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-color-service.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "styling-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-styling-service.png",
+                       "key":  "salon.mau03.stylingService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-styling-service.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "treatment-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-treatment-service.png",
+                       "key":  "salon.mau03.treatmentService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-treatment-service.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "space-01",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-space-01.png",
+                       "key":  "salon.mau03.space01",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-space-01.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "space-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-space-02.png",
+                       "key":  "salon.mau03.space02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-space-02.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "space-03",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-space-03.png",
+                       "key":  "salon.mau03.space03",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-space-03.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "experience",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-experience.png",
+                       "key":  "salon.mau03.experience",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-experience.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "dv-cat-tao-kieu",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-dv-cat-tao-kieu.png",
+                       "key":  "salon.mau03.services.cut",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-cat-tao-kieu.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "dv-mau-toc",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-dv-mau-toc.png",
+                       "key":  "salon.mau03.services.color",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-mau-toc.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "dv-nhuom-thoi-trang",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-dv-nhuom-thoi-trang.png",
+                       "key":  "salon.mau03.services.fashionColor",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-nhuom-thoi-trang.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "dv-uon-setting",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-dv-uon-setting.png",
+                       "key":  "salon.mau03.services.perm",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-uon-setting.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "dv-duoi-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-dv-duoi-phuc-hoi.png",
+                       "key":  "salon.mau03.services.straight",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-duoi-phuc-hoi.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "dv-cham-soc-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-dv-cham-soc-phuc-hoi.png",
+                       "key":  "salon.mau03.services.treatment",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-dv-cham-soc-phuc-hoi.png"
+                   },
+                   {
+                       "template":  3,
+                       "basename":  "products",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-03\\salon-mau-03-products.png",
+                       "key":  "salon.mau03.products",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-products.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "hero",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-hero.png",
+                       "key":  "salon.mau04.hero",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-hero.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "hero-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-hero-02.png",
+                       "key":  "salon.mau04.hero02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-hero-02.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "consultation",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-consultation.png",
+                       "key":  "salon.mau04.consultation",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-consultation.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "color-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-color-service.png",
+                       "key":  "salon.mau04.colorService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-color-service.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "styling-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-styling-service.png",
+                       "key":  "salon.mau04.stylingService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-styling-service.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "treatment-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-treatment-service.png",
+                       "key":  "salon.mau04.treatmentService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-treatment-service.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "space-01",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-space-01.png",
+                       "key":  "salon.mau04.space01",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-space-01.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "space-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-space-02.png",
+                       "key":  "salon.mau04.space02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-space-02.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "space-03",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-space-03.png",
+                       "key":  "salon.mau04.space03",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-space-03.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "experience",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-experience.png",
+                       "key":  "salon.mau04.experience",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-experience.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "dv-cat-tao-kieu",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-dv-cat-tao-kieu.png",
+                       "key":  "salon.mau04.services.cut",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-cat-tao-kieu.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "dv-mau-toc",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-dv-mau-toc.png",
+                       "key":  "salon.mau04.services.color",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-mau-toc.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "dv-nhuom-thoi-trang",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-dv-nhuom-thoi-trang.png",
+                       "key":  "salon.mau04.services.fashionColor",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-nhuom-thoi-trang.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "dv-uon-setting",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-dv-uon-setting.png",
+                       "key":  "salon.mau04.services.perm",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-uon-setting.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "dv-duoi-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-dv-duoi-phuc-hoi.png",
+                       "key":  "salon.mau04.services.straight",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-duoi-phuc-hoi.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "dv-cham-soc-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-dv-cham-soc-phuc-hoi.png",
+                       "key":  "salon.mau04.services.treatment",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-dv-cham-soc-phuc-hoi.png"
+                   },
+                   {
+                       "template":  4,
+                       "basename":  "products",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-04\\salon-mau-04-products.png",
+                       "key":  "salon.mau04.products",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-04/salon-mau-04-products.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "hero",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-hero.png",
+                       "key":  "salon.mau05.hero",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-hero.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "hero-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-hero-02.png",
+                       "key":  "salon.mau05.hero02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-hero-02.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "consultation",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-consultation.png",
+                       "key":  "salon.mau05.consultation",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-consultation.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "color-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-color-service.png",
+                       "key":  "salon.mau05.colorService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-color-service.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "styling-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-styling-service.png",
+                       "key":  "salon.mau05.stylingService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-styling-service.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "treatment-service",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-treatment-service.png",
+                       "key":  "salon.mau05.treatmentService",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-treatment-service.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "space-01",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-space-01.png",
+                       "key":  "salon.mau05.space01",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-space-01.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "space-02",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-space-02.png",
+                       "key":  "salon.mau05.space02",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-space-02.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "space-03",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-space-03.png",
+                       "key":  "salon.mau05.space03",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-space-03.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "experience",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-experience.png",
+                       "key":  "salon.mau05.experience",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-experience.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "dv-cat-tao-kieu",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-dv-cat-tao-kieu.png",
+                       "key":  "salon.mau05.services.cut",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-cat-tao-kieu.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "dv-mau-toc",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-dv-mau-toc.png",
+                       "key":  "salon.mau05.services.color",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-mau-toc.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "dv-nhuom-thoi-trang",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-dv-nhuom-thoi-trang.png",
+                       "key":  "salon.mau05.services.fashionColor",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-nhuom-thoi-trang.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "dv-uon-setting",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-dv-uon-setting.png",
+                       "key":  "salon.mau05.services.perm",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-uon-setting.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "dv-duoi-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-dv-duoi-phuc-hoi.png",
+                       "key":  "salon.mau05.services.straight",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-duoi-phuc-hoi.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "dv-cham-soc-phuc-hoi",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-dv-cham-soc-phuc-hoi.png",
+                       "key":  "salon.mau05.services.treatment",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-dv-cham-soc-phuc-hoi.png"
+                   },
+                   {
+                       "template":  5,
+                       "basename":  "products",
+                       "status":  "ok",
+                       "source":  "F:\\1_A_Disk_D\\Khương Bình\\the-hair-lab\\public\\image\\salon-test-mau-05\\salon-mau-05-products.png",
+                       "key":  "salon.mau05.products",
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-05/salon-mau-05-products.png"
+                   }
+               ]
+}

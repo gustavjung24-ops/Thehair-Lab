@@ -1,14 +1,102 @@
 const API_BASE = "https://thehairlab-leads-worker.khuongbinh-thehairlab.workers.dev/api/public/salons";
-const DEFAULT_THEME = "#8b5cf6";
+const TEMPLATE_CONFIGS = {
+  "01": {
+    slug: "salon-test-mau-01",
+    assetPrefix: "salon.mau01",
+    name: "Salon Test Mẫu 01 - Lavender Beauty",
+    subtitle: "Lavender Beauty",
+    monogram: "M01",
+    phone: "0900000000",
+    zalo: "https://zalo.me/0900000000",
+    address: "123 Lavender Beauty, Phường Salon, TP. Hồ Chí Minh",
+    theme: {
+      primary: "#8b5cf6",
+      secondary: "#6d28d9",
+      accent: "#ede9fe",
+      background: "#fffaf5",
+      textDark: "#221b35",
+    },
+  },
+  "02": {
+    slug: "salon-test-mau-02",
+    assetPrefix: "salon.mau02",
+    name: "Salon Test Mẫu 02 - Green Natural Care",
+    subtitle: "Green Natural",
+    monogram: "M02",
+    phone: "0900000000",
+    zalo: "https://zalo.me/0900000000",
+    address: "98 Green Garden, Quận 7, TP. Hồ Chí Minh",
+    theme: {
+      primary: "#6E8F62",
+      secondary: "#A8BF8A",
+      accent: "#DDE8CF",
+      background: "#F6F8F2",
+      textDark: "#2F3A2C",
+    },
+  },
+  "03": {
+    slug: "salon-test-mau-03",
+    assetPrefix: "salon.mau03",
+    name: "Salon Test Mẫu 03 - Black Gold Luxury",
+    subtitle: "Black Gold Luxury",
+    monogram: "M03",
+    phone: "0900000000",
+    zalo: "https://zalo.me/0900000000",
+    address: "15 Gold Tower, Quận 1, TP. Hồ Chí Minh",
+    theme: {
+      primary: "#171717",
+      secondary: "#C8A96B",
+      accent: "#E7D3A8",
+      background: "#F8F5EF",
+      textDark: "#1F1A17",
+    },
+  },
+  "04": {
+    slug: "salon-test-mau-04",
+    assetPrefix: "salon.mau04",
+    name: "Salon Test Mẫu 04 - Spring Fresh Studio",
+    subtitle: "Spring Fresh",
+    monogram: "M04",
+    phone: "0900000000",
+    zalo: "https://zalo.me/0900000000",
+    address: "52 Blossom Avenue, Phú Nhuận, TP. Hồ Chí Minh",
+    theme: {
+      primary: "#E8A7B5",
+      secondary: "#F7C9B6",
+      accent: "#FFF1D9",
+      background: "#FFF8F6",
+      textDark: "#5C4A4F",
+    },
+  },
+  "05": {
+    slug: "salon-test-mau-05",
+    assetPrefix: "salon.mau05",
+    name: "Salon Test Mẫu 05 - Gold Luxury Professional",
+    subtitle: "Gold Luxury Pro",
+    monogram: "M05",
+    phone: "0900000000",
+    zalo: "https://zalo.me/0900000000",
+    address: "28 Prestige Center, Quận 3, TP. Hồ Chí Minh",
+    theme: {
+      primary: "#B8924A",
+      secondary: "#E5D2A2",
+      accent: "#F7EED5",
+      background: "#FFFCF5",
+      textDark: "#4C3A1E",
+    },
+  },
+};
+
+const DEFAULT_TEMPLATE_ID = "01";
 
 const DEFAULT_SALON = {
-  salon_name: "Salon Test Mẫu 01 - Lavender Beauty",
-  phone: "0900000000",
-  zalo_url: "https://zalo.me/0900000000",
+  salon_name: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].name,
+  phone: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].phone,
+  zalo_url: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].zalo,
   facebook_url: "https://facebook.com/thehairlab.top",
-  address: "123 Lavender Beauty, Phường Salon, TP. Hồ Chí Minh",
+  address: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].address,
   working_hours: "08:00 - 20:00 mỗi ngày",
-  theme_color: "#8b5cf6",
+  theme_color: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].theme.primary,
   logo_url: "",
 };
 
@@ -19,56 +107,94 @@ function resolveAsset(key, fallback) {
   return fallback;
 }
 
-const LOCAL_ASSETS = {
-  logo: "/public/image/logo.png",
-  hero: "/public/image/salon-mau-01-hero.png",
-  hero02: "/public/image/salon-mau-01-hero-02.png",
-  consultation: "/public/image/salon-mau-01-consultation.png",
-  colorService: "/public/image/salon-mau-01-color-service.png",
-  stylingService: "/public/image/salon-mau-01-styling-service.png",
-  treatmentService: "/public/image/salon-mau-01-treatment-service.png",
-  space01: "/public/image/salon-mau-01-space-01.png",
-  space02: "/public/image/salon-mau-01-space-02.png",
-  space03: "/public/image/salon-mau-01-space-03.png",
-  experience: "/public/image/salon-mau-01-experience.png",
-  products: "/public/image/salon-mau-01-products.png",
-  services: {
-    cut: "/public/image/dv-cat-tao-kieu.png",
-    color: "/public/image/dv-mau-toc.png",
-    fashionColor: "/public/image/dv-nhuom-thoi-trang.png",
-    perm: "/public/image/dv-uon-setting.png",
-    straight: "/public/image/dv-duoi-phuc-hoi.png",
-    treatment: "/public/image/dv-cham-soc-phuc-hoi.png",
-  },
-};
+function getTemplateIdFromSlug(slug) {
+  const match = String(slug || "").match(/salon-test-mau-(\d{2})/i);
+  return match ? match[1] : DEFAULT_TEMPLATE_ID;
+}
 
-const DEFAULT_BANNER = resolveAsset("salon.mau01.hero", LOCAL_ASSETS.hero);
-const DEFAULT_PRODUCT_IMAGE = resolveAsset(
-  "site.productLineup",
-  "/public/image/thehairlab-hero-product-lineup.png"
-);
+function getTemplateConfig(slug) {
+  const templateId = getTemplateIdFromSlug(slug);
+  return TEMPLATE_CONFIGS[templateId] || TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
+}
 
-const SALON_ASSETS = {
-  hero: DEFAULT_BANNER,
-  hero02: resolveAsset("salon.mau01.hero02", LOCAL_ASSETS.hero02),
-  consultation: resolveAsset("salon.mau01.consultation", LOCAL_ASSETS.consultation),
-  colorService: resolveAsset("salon.mau01.colorService", LOCAL_ASSETS.colorService),
-  stylingService: resolveAsset("salon.mau01.stylingService", LOCAL_ASSETS.stylingService),
-  treatmentService: resolveAsset("salon.mau01.treatmentService", LOCAL_ASSETS.treatmentService),
-  space01: resolveAsset("salon.mau01.space01", LOCAL_ASSETS.space01),
-  space02: resolveAsset("salon.mau01.space02", LOCAL_ASSETS.space02),
-  space03: resolveAsset("salon.mau01.space03", LOCAL_ASSETS.space03),
-  experience: resolveAsset("salon.mau01.experience", LOCAL_ASSETS.experience),
-  productLineup: resolveAsset("salon.mau01.products", DEFAULT_PRODUCT_IMAGE),
-  services: {
-    cut: resolveAsset("salon.mau01.services.cut", LOCAL_ASSETS.services.cut),
-    color: resolveAsset("salon.mau01.services.color", LOCAL_ASSETS.services.color),
-    fashionColor: resolveAsset("salon.mau01.services.fashionColor", LOCAL_ASSETS.services.fashionColor),
-    perm: resolveAsset("salon.mau01.services.perm", LOCAL_ASSETS.services.perm),
-    straight: resolveAsset("salon.mau01.services.straight", LOCAL_ASSETS.services.straight),
-    treatment: resolveAsset("salon.mau01.services.treatment", LOCAL_ASSETS.services.treatment),
-  },
-};
+function getLocalAssetsByTemplate(templateId) {
+  if (templateId !== "01") {
+    return {
+      logo: "/public/image/logo.png",
+      hero: "",
+      hero02: "",
+      consultation: "",
+      colorService: "",
+      stylingService: "",
+      treatmentService: "",
+      space01: "",
+      space02: "",
+      space03: "",
+      experience: "",
+      products: "",
+      services: {
+        cut: "",
+        color: "",
+        fashionColor: "",
+        perm: "",
+        straight: "",
+        treatment: "",
+      },
+    };
+  }
+
+  return {
+    logo: "/public/image/logo.png",
+    hero: "/public/image/salon-mau-01-hero.png",
+    hero02: "/public/image/salon-mau-01-hero-02.png",
+    consultation: "/public/image/salon-mau-01-consultation.png",
+    colorService: "/public/image/salon-mau-01-color-service.png",
+    stylingService: "/public/image/salon-mau-01-styling-service.png",
+    treatmentService: "/public/image/salon-mau-01-treatment-service.png",
+    space01: "/public/image/salon-mau-01-space-01.png",
+    space02: "/public/image/salon-mau-01-space-02.png",
+    space03: "/public/image/salon-mau-01-space-03.png",
+    experience: "/public/image/salon-mau-01-experience.png",
+    products: "/public/image/salon-mau-01-products.png",
+    services: {
+      cut: "/public/image/dv-cat-tao-kieu.png",
+      color: "/public/image/dv-mau-toc.png",
+      fashionColor: "/public/image/dv-nhuom-thoi-trang.png",
+      perm: "/public/image/dv-uon-setting.png",
+      straight: "/public/image/dv-duoi-phuc-hoi.png",
+      treatment: "/public/image/dv-cham-soc-phuc-hoi.png",
+    },
+  };
+}
+
+function buildSalonAssets(templateConfig, localAssets) {
+  const prefix = templateConfig.assetPrefix;
+  return {
+    hero: resolveAsset(`${prefix}.hero`, localAssets.hero),
+    hero02: resolveAsset(`${prefix}.hero02`, localAssets.hero02),
+    consultation: resolveAsset(`${prefix}.consultation`, localAssets.consultation),
+    colorService: resolveAsset(`${prefix}.colorService`, localAssets.colorService),
+    stylingService: resolveAsset(`${prefix}.stylingService`, localAssets.stylingService),
+    treatmentService: resolveAsset(`${prefix}.treatmentService`, localAssets.treatmentService),
+    space01: resolveAsset(`${prefix}.space01`, localAssets.space01),
+    space02: resolveAsset(`${prefix}.space02`, localAssets.space02),
+    space03: resolveAsset(`${prefix}.space03`, localAssets.space03),
+    experience: resolveAsset(`${prefix}.experience`, localAssets.experience),
+    productLineup: resolveAsset(`${prefix}.products`, localAssets.products),
+    services: {
+      cut: resolveAsset(`${prefix}.services.cut`, localAssets.services.cut),
+      color: resolveAsset(`${prefix}.services.color`, localAssets.services.color),
+      fashionColor: resolveAsset(`${prefix}.services.fashionColor`, localAssets.services.fashionColor),
+      perm: resolveAsset(`${prefix}.services.perm`, localAssets.services.perm),
+      straight: resolveAsset(`${prefix}.services.straight`, localAssets.services.straight),
+      treatment: resolveAsset(`${prefix}.services.treatment`, localAssets.services.treatment),
+    },
+  };
+}
+
+let activeTemplateConfig = TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
+let LOCAL_ASSETS = getLocalAssetsByTemplate(DEFAULT_TEMPLATE_ID);
+let SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 
 const PRODUCT_IMAGE_PATTERN =
   /thehairlab-hero-product-lineup|thehairlab-|care-oil|collagen|professional-hair-color|salon-technical-products/i;
@@ -237,29 +363,34 @@ function hexToRgb(hex) {
   };
 }
 
-function applyTheme(themeColor) {
-  const color = themeColor || DEFAULT_THEME;
+function applyTheme(templateTheme, themeColorOverride) {
+  const color = themeColorOverride || templateTheme.primary;
+  const deep = templateTheme.secondary;
+  const soft = templateTheme.accent;
+  const cream = templateTheme.background;
+  const textDark = templateTheme.textDark;
   const { r, g, b } = hexToRgb(color);
-  document.documentElement.style.setProperty("--primary", color);
-  document.documentElement.style.setProperty("--deep", color === DEFAULT_THEME ? "#6d28d9" : color);
-  document.documentElement.style.setProperty("--line", `rgba(${r}, ${g}, ${b}, 0.18)`);
-}
+  const deepRgb = hexToRgb(deep);
 
-function getBrandSubtitle(name) {
-  if (!name) {
-    return "Lavender Beauty";
-  }
-  const parts = String(name).split("-");
-  if (parts.length > 1) {
-    return parts.slice(1).join("-").trim() || "Lavender Beauty";
-  }
-  return "Lavender Beauty";
+  document.documentElement.style.setProperty("--primary", color);
+  document.documentElement.style.setProperty("--deep", deep);
+  document.documentElement.style.setProperty("--soft", soft);
+  document.documentElement.style.setProperty("--cream", cream);
+  document.documentElement.style.setProperty("--champagne", templateTheme.secondary);
+  document.documentElement.style.setProperty("--text-dark", textDark);
+  document.documentElement.style.setProperty("--text-soft", `rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0.8)`);
+  document.documentElement.style.setProperty("--line", `rgba(${r}, ${g}, ${b}, 0.18)`);
+  document.documentElement.style.setProperty("--shadow", `0 20px 45px rgba(${r}, ${g}, ${b}, 0.14)`);
+
+  document.body.style.background =
+    `radial-gradient(circle at 12% -8%, rgba(${r}, ${g}, ${b}, 0.18) 0%, rgba(${r}, ${g}, ${b}, 0) 36%),` +
+    `radial-gradient(circle at 88% 2%, rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0.16) 0%, rgba(${deepRgb.r}, ${deepRgb.g}, ${deepRgb.b}, 0) 30%),` +
+    `linear-gradient(145deg, ${cream} 0%, ${soft} 52%, #ffffff 100%)`;
 }
 
 function updateSeo(salon) {
   const title = `${salon.salon_name} | Tư vấn kiểu tóc phù hợp`;
-  const description =
-    "Đặt lịch tư vấn miễn phí kiểu tóc phù hợp với gương mặt tại Salon Test Mẫu 01 - Lavender Beauty. Tư vấn màu tóc, uốn, duỗi, nhuộm và chăm sóc phục hồi tóc.";
+  const description = `Đặt lịch tư vấn miễn phí kiểu tóc phù hợp với gương mặt tại ${salon.salon_name}. Tư vấn màu tóc, uốn, duỗi, nhuộm và chăm sóc phục hồi tóc.`;
 
   document.title = title;
   if (els.metaDescription) {
@@ -501,20 +632,43 @@ function updateContactActions(salon) {
   });
 }
 
-function mergeSalonData(apiSalon) {
+function mergeSalonData(apiSalon, templateConfig) {
+  const templateSalon = {
+    salon_name: templateConfig.name,
+    phone: templateConfig.phone,
+    zalo_url: templateConfig.zalo,
+    address: templateConfig.address,
+    theme_color: templateConfig.theme.primary,
+  };
+
   return {
     ...DEFAULT_SALON,
+    ...templateSalon,
     ...(apiSalon || {}),
   };
 }
 
 function renderSalon(salon, slug) {
-  applyTheme(salon.theme_color);
+  applyTheme(activeTemplateConfig.theme, salon.theme_color);
   updateSeo(salon);
 
-  const subtitle = getBrandSubtitle(salon.salon_name);
+  const subtitle = activeTemplateConfig.subtitle;
   if (els.navBrandSubtitle) {
     els.navBrandSubtitle.textContent = subtitle;
+  }
+
+  if (els.navMonogram) {
+    els.navMonogram.textContent = activeTemplateConfig.monogram;
+  }
+  if (els.salonMonogram) {
+    const codeNode = els.salonMonogram.querySelector("strong");
+    const subNode = els.salonMonogram.querySelector("span");
+    if (codeNode) {
+      codeNode.textContent = activeTemplateConfig.monogram;
+    }
+    if (subNode) {
+      subNode.textContent = activeTemplateConfig.subtitle;
+    }
   }
 
   setText(els.salonName, salon.salon_name, DEFAULT_SALON.salon_name);
@@ -601,6 +755,10 @@ async function loadSalon() {
     return;
   }
 
+  activeTemplateConfig = getTemplateConfig(slug);
+  LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdFromSlug(slug));
+  SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
+
   const controller = new AbortController();
   const fetchTimeout = setTimeout(() => controller.abort(), 8000);
 
@@ -624,12 +782,12 @@ async function loadSalon() {
       return;
     }
 
-    const salon = mergeSalonData(data.salon);
+    const salon = mergeSalonData(data.salon, activeTemplateConfig);
     renderSalon(salon, slug);
     bindDemoForm(salon);
   } catch {
     clearTimeout(fetchTimeout);
-    const fallbackSalon = mergeSalonData(null);
+    const fallbackSalon = mergeSalonData(null, activeTemplateConfig);
     renderSalon(fallbackSalon, slug);
     bindDemoForm(fallbackSalon);
   }
