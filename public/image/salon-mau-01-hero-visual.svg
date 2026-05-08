@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="20" x2="1180" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EDE9FE"/>
+      <stop offset="0.55" stop-color="#CDB4FF"/>
+      <stop offset="1" stop-color="#FFFaf5"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(240 220) rotate(35) scale(320 260)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1020 150) rotate(35) scale(260 220)">
+      <stop stop-color="#D6B56D" stop-opacity="0.44"/>
+      <stop offset="1" stop-color="#D6B56D" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="860" fill="url(#bg)"/>
+  <ellipse cx="250" cy="260" rx="360" ry="280" fill="url(#glow1)"/>
+  <ellipse cx="1040" cy="180" rx="320" ry="220" fill="url(#glow2)"/>
+  <path d="M0 640C180 560 320 560 470 620C590 668 730 700 920 655C1040 626 1140 586 1280 604V860H0V640Z" fill="#8B5CF6" fill-opacity="0.18"/>
+  <path d="M60 570C220 500 360 500 490 548C620 596 790 624 1000 596C1120 580 1200 548 1280 560" stroke="#6D28D9" stroke-opacity="0.28" stroke-width="4"/>
+  <circle cx="960" cy="530" r="110" fill="#8B5CF6" fill-opacity="0.1"/>
+  <circle cx="860" cy="500" r="70" fill="#D6B56D" fill-opacity="0.24"/>
+  <rect x="192" y="165" width="440" height="520" rx="44" fill="white" fill-opacity="0.5"/>
+  <rect x="228" y="214" width="368" height="280" rx="30" fill="#FFFFFF" fill-opacity="0.84"/>
+  <rect x="228" y="520" width="244" height="20" rx="10" fill="#6D28D9" fill-opacity="0.24"/>
+  <rect x="228" y="558" width="318" height="16" rx="8" fill="#6D28D9" fill-opacity="0.18"/>
+  <rect x="228" y="588" width="278" height="16" rx="8" fill="#6D28D9" fill-opacity="0.14"/>
+  <text x="760" y="338" fill="#221B35" font-family="Manrope, Arial, sans-serif" font-size="48" font-weight="700">Lavender Beauty</text>
+  <text x="760" y="392" fill="#6D28D9" font-family="Manrope, Arial, sans-serif" font-size="26" font-weight="600">Salon Visual Placeholder</text>
+  <text x="760" y="438" fill="#221B35" fill-opacity="0.74" font-family="Manrope, Arial, sans-serif" font-size="20">Thay file này bằng ảnh salon thật khi chạy quảng cáo.</text>
+</svg>
