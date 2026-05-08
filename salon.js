@@ -89,6 +89,53 @@ const TEMPLATE_CONFIGS = {
 
 const DEFAULT_TEMPLATE_ID = "01";
 
+const TEMPLATE_SALON_OVERRIDES = {
+  "salon-test-mau-02": {
+    slug: "salon-test-mau-02",
+    templateId: "02",
+    salon_name: "Salon Test Mẫu 02 - Green Natural",
+    status: "active",
+    themeName: "Green Natural",
+    phone: "0902 964 685",
+    zalo_url: "https://zalo.me/0902964685",
+    address: "The Hair Lab - Mẫu giao diện salon thiên nhiên",
+    description: "Mẫu landing page salon phong cách thiên nhiên, phục hồi và chăm sóc tóc lành tính.",
+  },
+  "salon-test-mau-03": {
+    slug: "salon-test-mau-03",
+    templateId: "03",
+    salon_name: "Salon Test Mẫu 03 - Black Gold Luxury",
+    status: "active",
+    themeName: "Black Gold Luxury",
+    phone: "0902 964 685",
+    zalo_url: "https://zalo.me/0902964685",
+    address: "The Hair Lab - Mẫu giao diện salon cao cấp",
+    description: "Mẫu landing page salon phong cách premium, sang trọng, uốn nhuộm cao cấp.",
+  },
+  "salon-test-mau-04": {
+    slug: "salon-test-mau-04",
+    templateId: "04",
+    salon_name: "Salon Test Mẫu 04 - Spring Fresh",
+    status: "active",
+    themeName: "Spring Fresh",
+    phone: "0902 964 685",
+    zalo_url: "https://zalo.me/0902964685",
+    address: "The Hair Lab - Mẫu giao diện salon trẻ trung",
+    description: "Mẫu landing page salon phong cách tươi sáng, nữ tính, gần gũi với khách trẻ.",
+  },
+  "salon-test-mau-05": {
+    slug: "salon-test-mau-05",
+    templateId: "05",
+    salon_name: "Salon Test Mẫu 05 - Gold Luxury Professional",
+    status: "active",
+    themeName: "Gold Luxury Professional",
+    phone: "0902 964 685",
+    zalo_url: "https://zalo.me/0902964685",
+    address: "The Hair Lab - Mẫu giao diện salon chuyên nghiệp",
+    description: "Mẫu landing page salon phong cách gold sáng, chuyên nghiệp, phục hồi cao cấp.",
+  },
+};
+
 const DEFAULT_SALON = {
   salon_name: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].name,
   phone: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].phone,
@@ -758,6 +805,14 @@ async function loadSalon() {
   activeTemplateConfig = getTemplateConfig(slug);
   LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdFromSlug(slug));
   SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
+
+  const demoOverride = TEMPLATE_SALON_OVERRIDES[slug];
+  if (demoOverride) {
+    const demoSalon = mergeSalonData(demoOverride, activeTemplateConfig);
+    renderSalon(demoSalon, slug);
+    bindDemoForm(demoSalon);
+    return;
+  }
 
   const controller = new AbortController();
   const fetchTimeout = setTimeout(() => controller.abort(), 8000);
