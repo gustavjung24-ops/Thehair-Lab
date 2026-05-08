@@ -18,7 +18,7 @@ function corsHeaders(origin) {
   const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
   };
@@ -32,6 +32,63 @@ function jsonResponse(data, status = 200, origin = '') {
       ...corsHeaders(origin),
     },
   });
+}
+
+function errorResponse(message, status = 400, origin = '') {
+  return jsonResponse({ success: false, error: message }, status, origin);
+}
+
+async function readJson(request) {
+  try {
+    return await request.json();
+  } catch {
+    throw new Error('INVALID_JSON');
+  }
+}
+
+function validateSlug(slug) {
+  return /^[a-z0-9-]+$/.test(slug);
+}
+
+function normalizeSalonPayload(body) {
+  const safeBody = body && typeof body === 'object' ? body : {};
+  const text = (value) => (typeof value === 'string' ? value.trim() : '');
+  const nullableText = (value) => {
+    const v = text(value);
+    return v || null;
+  };
+
+  const statusRaw = text(safeBody.status).toLowerCase();
+  const status = statusRaw || 'inactive';
+
+  const themeColorRaw = text(safeBody.theme_color);
+  const googleSheetTabRaw = text(safeBody.google_sheet_tab);
+
+  return {
+    salon_name: text(safeBody.salon_name),
+    slug: text(safeBody.slug).toLowerCase(),
+    phone: nullableText(safeBody.phone),
+    zalo_url: nullableText(safeBody.zalo_url),
+    facebook_url: nullableText(safeBody.facebook_url),
+    address: nullableText(safeBody.address),
+    working_hours: nullableText(safeBody.working_hours),
+    logo_url: nullableText(safeBody.logo_url),
+    banner_url: nullableText(safeBody.banner_url),
+    theme_color: themeColorRaw || '#8b5cf6',
+    google_sheet_url: nullableText(safeBody.google_sheet_url),
+    google_sheet_id: nullableText(safeBody.google_sheet_id),
+    google_sheet_tab: googleSheetTabRaw || 'appointments',
+    telegram_chat_id: nullableText(safeBody.telegram_chat_id),
+    admin_email: nullableText(safeBody.admin_email),
+    status,
+  };
+}
+
+function parsePath(requestUrl) {
+  const url = new URL(requestUrl);
+  const pathname = url.pathname;
+  const segments = pathname.split('/').filter(Boolean);
+  return { pathname, segments };
 }
 
 // ─── Validation ────────────────────────────────────────────────────────────
@@ -213,34 +270,238 @@ async function appendToSheet(env, lead) {
   });
 }
 
+// ─── Admin/Public Salons API ──────────────────────────────────────────────
+
+async function getSalonById(env, id) {
+  return env.DB.prepare('SELECT * FROM salons WHERE id = ? LIMIT 1').bind(id).first();
+}
+
+async function findSalonBySlug(env, slug) {
+  return env.DB.prepare('SELECT id FROM salons WHERE slug = ? LIMIT 1').bind(slug).first();
+}
+
+async function listAdminSalons(env, origin) {
+  const result = await env.DB.prepare('SELECT * FROM salons ORDER BY created_at DESC').all();
+  return jsonResponse({ success: true, salons: result.results || [] }, 200, origin);
+}
+
+function validateSalonPayload(payload) {
+  if (!payload.salon_name) {
+    return 'Tên salon là bắt buộc';
+  }
+
+  if (!payload.slug) {
+    return 'Slug là bắt buộc';
+  }
+
+  if (!validateSlug(payload.slug)) {
+    return 'Slug chỉ được gồm chữ thường a-z, số 0-9 và dấu -';
+  }
+
+  if (payload.status !== 'active' && payload.status !== 'inactive') {
+    return 'Trạng thái không hợp lệ';
+  }
+
+  return null;
+}
+
+async function createAdminSalon(request, env, origin) {
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  const payload = normalizeSalonPayload(body);
+  const validationError = validateSalonPayload(payload);
+  if (validationError) {
+    return errorResponse(validationError, 422, origin);
+  }
+
+  const duplicated = await findSalonBySlug(env, payload.slug);
+  if (duplicated) {
+    return errorResponse('Slug đã tồn tại', 409, origin);
+  }
+
+  const insertResult = await env.DB.prepare(`
+    INSERT INTO salons (
+      slug,
+      salon_name,
+      phone,
+      zalo_url,
+      facebook_url,
+      address,
+      working_hours,
+      logo_url,
+      banner_url,
+      theme_color,
+      google_sheet_url,
+      google_sheet_id,
+      google_sheet_tab,
+      telegram_chat_id,
+      admin_email,
+      status,
+      updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+  `).bind(
+    payload.slug,
+    payload.salon_name,
+    payload.phone,
+    payload.zalo_url,
+    payload.facebook_url,
+    payload.address,
+    payload.working_hours,
+    payload.logo_url,
+    payload.banner_url,
+    payload.theme_color,
+    payload.google_sheet_url,
+    payload.google_sheet_id,
+    payload.google_sheet_tab,
+    payload.telegram_chat_id,
+    payload.admin_email,
+    payload.status,
+  ).run();
+
+  const salon = await getSalonById(env, insertResult.meta.last_row_id);
+  return jsonResponse({ success: true, salon }, 201, origin);
+}
+
+async function updateAdminSalon(request, env, origin, id) {
+  const salonId = Number.parseInt(id, 10);
+  if (!Number.isInteger(salonId) || salonId <= 0) {
+    return errorResponse('ID salon không hợp lệ', 400, origin);
+  }
+
+  const currentSalon = await getSalonById(env, salonId);
+  if (!currentSalon) {
+    return errorResponse('Salon không tồn tại', 404, origin);
+  }
+
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  const payload = normalizeSalonPayload(body);
+  const validationError = validateSalonPayload(payload);
+  if (validationError) {
+    return errorResponse(validationError, 422, origin);
+  }
+
+  const duplicated = await env.DB.prepare(
+    'SELECT id FROM salons WHERE slug = ? AND id != ? LIMIT 1',
+  ).bind(payload.slug, salonId).first();
+
+  if (duplicated) {
+    return errorResponse('Slug đã tồn tại', 409, origin);
+  }
+
+  await env.DB.prepare(`
+    UPDATE salons
+    SET
+      slug = ?,
+      salon_name = ?,
+      phone = ?,
+      zalo_url = ?,
+      facebook_url = ?,
+      address = ?,
+      working_hours = ?,
+      logo_url = ?,
+      banner_url = ?,
+      theme_color = ?,
+      google_sheet_url = ?,
+      google_sheet_id = ?,
+      google_sheet_tab = ?,
+      telegram_chat_id = ?,
+      admin_email = ?,
+      status = ?,
+      updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).bind(
+    payload.slug,
+    payload.salon_name,
+    payload.phone,
+    payload.zalo_url,
+    payload.facebook_url,
+    payload.address,
+    payload.working_hours,
+    payload.logo_url,
+    payload.banner_url,
+    payload.theme_color,
+    payload.google_sheet_url,
+    payload.google_sheet_id,
+    payload.google_sheet_tab,
+    payload.telegram_chat_id,
+    payload.admin_email,
+    payload.status,
+    salonId,
+  ).run();
+
+  const salon = await getSalonById(env, salonId);
+  return jsonResponse({ success: true, salon }, 200, origin);
+}
+
+async function getPublicSalonBySlug(env, origin, slug) {
+  const normalizedSlug = (slug || '').trim().toLowerCase();
+  const salon = await env.DB.prepare(
+    'SELECT * FROM salons WHERE slug = ? AND status = ? LIMIT 1',
+  ).bind(normalizedSlug, 'active').first();
+
+  if (!salon) {
+    return errorResponse('Salon không tồn tại hoặc đang tạm ngưng', 404, origin);
+  }
+
+  return jsonResponse({ success: true, salon }, 200, origin);
+}
+
 // ─── Main Handler ──────────────────────────────────────────────────────────
 
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
-    const url = new URL(request.url);
+    const { pathname, segments } = parsePath(request.url);
+    const method = request.method;
 
     // CORS preflight
-    if (request.method === 'OPTIONS') {
+    if (method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
-    if (url.pathname !== '/api/leads' || request.method !== 'POST') {
-      return jsonResponse({ error: 'Not found' }, 404, origin);
+    if (pathname === '/api/admin/salons' && method === 'GET') {
+      return listAdminSalons(env, origin);
+    }
+
+    if (pathname === '/api/admin/salons' && method === 'POST') {
+      return createAdminSalon(request, env, origin);
+    }
+
+    if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'admin' && segments[2] === 'salons' && method === 'PUT') {
+      return updateAdminSalon(request, env, origin, segments[3]);
+    }
+
+    if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'public' && segments[2] === 'salons' && method === 'GET') {
+      return getPublicSalonBySlug(env, origin, decodeURIComponent(segments[3] || ''));
+    }
+
+    if (pathname !== '/api/leads' || method !== 'POST') {
+      return errorResponse('Not found', 404, origin);
     }
 
     // Parse body
     let body;
     try {
-      body = await request.json();
+      body = await readJson(request);
     } catch {
-      return jsonResponse({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400, origin);
+      return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
     }
 
     // Validate
     const validationError = validateLead(body);
     if (validationError) {
-      return jsonResponse({ success: false, error: validationError }, 422, origin);
+      return errorResponse(validationError, 422, origin);
     }
 
     const lead = {
@@ -258,11 +519,10 @@ export default {
     try {
       await saveToD1(env, lead);
     } catch (err) {
-      return jsonResponse({ success: false, error: 'Lỗi lưu dữ liệu. Vui lòng thử lại.' }, 500, origin);
+      return errorResponse('Lỗi lưu dữ liệu. Vui lòng thử lại.', 500, origin);
     }
 
     // Fire-and-forget: Telegram + Google Sheets (không block response)
-    const ctx = { waitUntil: (p) => p }; // fallback nếu không có execution context
     Promise.allSettled([
       sendTelegram(env, lead),
       appendToSheet(env, lead),
