@@ -1,182 +1,81 @@
-# The Hair Lab - One-Page Landing Page + Cloudflare Worker
+# The Hair Lab - Roadmap va Trang Thai
 
-Website ban hang cho salon chuyen nghiep. Trang chinh la one-page landing page ban san pham + chuong trinh tang landing page rieng cho salon.
+Website phan phoi san pham cho salon, theo huong mo rong tu one-page ban hang sang he thong quan tri tong va landing page theo tung salon.
 
-## Kien truc hien tai
+## Phase Roadmap
 
-- **GitHub**: Luu ma nguon.
-- **Vercel** (root repo): Deploy website tinh (index.html + assets).
-- **Cloudflare Worker** (`worker/`): API nhan lead tu form trang chinh.
-- **Cloudflare D1**: Luu tru lead.
-- **Telegram Bot**: Thong bao lead ve nhom quan tri.
-- **Google Sheets API**: Luu lead vao sheet THEHAIRLAB_LEADS.
+- Phase 1 (done): One-page TheHairLab.top da hoan thanh va dang chay production.
+- Phase 2 (in progress): Cloudflare Worker + D1 cho API backend tap trung.
+- Phase 3 (in progress): Admin tong (khong dung Apps Script, khong dung Sanity Studio lam admin tong).
+- Phase 4 (planned): Trang con salon theo slug (`/[slug]`) sau khi backend/admin on dinh.
 
-## 1) Trang chinh (index.html)
-
-One-page landing page chuyen dung ban san pham + tang landing page salon.
-
-Cac section:
-- Hero: USP chinh + form dat lich thu nho (mockup)
-- Van de thuong gap cua salon
-- Uu dai salon (mua hang tu 2tr, tang landing page)
-- 5 nhom san pham chinh (anh thuc te)
-- Mau landing page tang kem (3 mau)
-- Cach form hoat dong
-- Admin rieng cho salon
-- Quy trinh trien khai
-- Form nhan bao gia (POST /api/leads)
-- FAQ
-
-## 2) Cau truc file
+## Cau truc hien tai
 
 ```
-index.html          # One-page landing chinh
-script.js           # Logic frontend: mobile nav, form submit, animations
-styles.css          # Style toan trang
-public/image/       # Anh san pham thuc te (PNG/JPG da duoc chup)
-worker/             # Cloudflare Worker cho /api/leads
-	src/index.js      # Entry point Worker
-	schema.sql        # D1 schema
-	wrangler.toml     # Config deploy
-cms/                # Lop ket noi Sanity (du phong, hien khong dung)
-studio/             # Sanity Studio doc lap (chua deploy)
+index.html          # Trang one-page chinh
+script.js           # Logic frontend
+styles.css          # Giao dien frontend
+admin/              # Admin tong local (UI tinh)
+worker/             # Cloudflare Worker + D1 schema
+cms/                # Lop ket noi Sanity (giu lai)
+studio/             # Sanity Studio (giu lai)
 ```
 
-## 3) API /api/leads (Cloudflare Worker)
+## API Worker (Phase 2)
 
-**Endpoint**: `POST /api/leads`
+Worker endpoint duoc thiet ke:
 
-**Fields**:
-- `salon_name` - Ten salon
-- `contact_name` - Nguoi lien he
-- `phone_zalo` - So dien thoai / Zalo (bat buoc)
-- `area` - Khu vuc
-- `product_interest` - Nhom san pham quan tam
-- `landing_page_sample` - Mau landing page muon nhan
-- `note` - Ghi chu
-- `source_url` - URL trang gui form
+- `POST /api/leads`
+- `POST /api/booking`
+- `POST /api/admin/login`
+- `GET /api/admin/me`
+- `POST /api/admin/logout`
+- `GET /api/admin/salons`
+- `POST /api/admin/salons`
+- `GET /api/admin/salons/:id`
+- `PUT /api/admin/salons/:id`
+- `POST /api/admin/salons/:id/test-telegram`
+- `POST /api/admin/salons/:id/test-sheet`
+- `GET /api/public/salons/:slug`
 
-**Xu ly**:
-1. Validate: `phone_zalo` hoac `contact_name` bat buoc
-2. Luu vao Cloudflare D1 bang `leads`
-3. Gui Telegram ve nhom lead tong
-4. Ghi vao Google Sheet `THEHAIRLAB_LEADS` tab `leads`
-5. Tra JSON `{ success: true }` hoac `{ success: false, error: "..." }`
+## D1 Schema (Phase 2)
 
-## 4) D1 Schema
+Bang du lieu backend:
 
-```sql
-CREATE TABLE IF NOT EXISTS leads (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	salon_name TEXT,
-	contact_name TEXT,
-	phone_zalo TEXT NOT NULL,
-	area TEXT,
-	product_interest TEXT,
-	landing_page_sample TEXT,
-	note TEXT,
-	source_url TEXT,
-	status TEXT DEFAULT 'new',
-	created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+- `leads`
+- `salons`
+- `salon_services`
+- `appointments`
+- `admin_users`
+
+## Local Development
+
+### 1) Chay website tinh
+
+```bash
+npx --yes http-server . -p 5200 -c-1
 ```
 
-## 5) Cloudflare Secrets can cau hinh
+### 2) Chay Worker local
 
-| Secret | Mo ta |
-|--------|-------|
-| `TELEGRAM_BOT_TOKEN` | Token bot Telegram |
-| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Email service account GCP |
-| `GOOGLE_PRIVATE_KEY` | Private key service account (PEM) |
-| `GOOGLE_PROJECT_ID` | Project ID GCP |
-| `GOOGLE_LEADS_SHEET_ID` | Sheet ID cua THEHAIRLAB_LEADS |
-
-## 6) Cloudflare Variables
-
-| Variable | Gia tri mac dinh |
-|----------|-----------------|
-| `TELEGRAM_LEADS_CHAT_ID` | ID nhom Telegram nhan lead |
-| `GOOGLE_LEADS_SHEET_TAB` | `leads` |
-
-## 7) Google Sheet THEHAIRLAB_LEADS
-
-Tab: `leads`
-
-Columns:
-1. Thoi gian
-2. Nguon trang
-3. Ten salon
-4. Nguoi lien he
-5. So dien thoai / Zalo
-6. Khu vuc
-7. Nhom san pham quan tam
-8. Mau landing page muon nhan
-9. Ghi chu
-10. Trang thai xu ly
-11. Nguoi phu trach
-12. Ngay hen goi lai
-13. Ghi chu cham soc
-
-## 8) Deploy
-
-### Website (Vercel)
-- Output Directory: `.` (root)
-- Framework: Other
-- Domain: thehairlab.top, www.thehairlab.top
-
-### Worker (Cloudflare)
 ```bash
 cd worker
 npm install
-wrangler d1 create thehairlab-leads
-wrangler d1 execute thehairlab-leads --file=schema.sql
-wrangler deploy
+npm run dev
 ```
 
-### Sau khi deploy Worker, cap nhat bien:
+### 3) Khoi tao D1 local schema
+
+```bash
+cd worker
+npx wrangler d1 execute thehairlab-main --local --file=schema.sql
 ```
-VITE_LEADS_API_URL=https://thehairlab-worker.YOUR_SUBDOMAIN.workers.dev/api/leads
-```
-hoac set trong script.js (window.THEHAIRLAB_CONFIG.lead.apiEndpoint).
 
-## 3) Cac file da them/sua (CMS + Studio)
+## Secrets va Deploy
 
-Sua:
-
-- `index.html`
-- `styles.css`
-- `README.md`
-
-Them:
-
-- `script.js`
-- `cms/sanityConfig.js`
-- `cms/client.js`
-- `cms/queries.js`
-- `cms/fallbackContent.js`
-- `cms/contentService.js`
-- `studio/package.json`
-- `studio/sanity.config.ts`
-- `studio/sanity.cli.ts`
-- `studio/tsconfig.json`
-- `studio/.env.example`
-- `studio/.gitignore`
-- `studio/vercel.json`
-- `studio/README.md`
-- `studio/schemaTypes/index.ts`
-- `studio/schemaTypes/documents/siteSettingsType.ts`
-- `studio/schemaTypes/documents/homepageHeroType.ts`
-- `studio/schemaTypes/documents/trustPointType.ts`
-- `studio/schemaTypes/documents/brandType.ts`
-- `studio/schemaTypes/documents/productCategoryType.ts`
-- `studio/schemaTypes/documents/testimonialType.ts`
-- `studio/schemaTypes/documents/contactBlockType.ts`
-
-## 4) Chay local
-
-### Website tinh (root)
-
-Tu root repo:
+- Khong deploy Worker khi chua co du secret that.
+- Chua xoa Sanity, chua xoa cac trang legacy.
+- Chi push sau khi test local day du.
 
 ```bash
 python3 -m http.server 8080

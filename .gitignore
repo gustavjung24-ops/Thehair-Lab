@@ -1,0 +1,21 @@
+# Runtime/build artifacts
+node_modules/
+**/node_modules/
+
+# Cloudflare Wrangler local state
+.wrangler/
+**/.wrangler/
+
+# SQLite runtime files (Wrangler/D1 local metadata)
+metadata.sqlite
+**/metadata.sqlite
+metadata.sqlite*
+**/metadata.sqlite*
+*.sqlite-wal
+**/*.sqlite-wal
+*.sqlite-shm
+**/*.sqlite-shm
+
+# Environment files
+.env
+**/.env
