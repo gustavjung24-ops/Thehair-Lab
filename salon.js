@@ -12,17 +12,26 @@ const DEFAULT_SALON = {
   logo_url: "",
 };
 
-const SALON_ASSETS = {
+function resolveAsset(key, fallback) {
+  if (typeof window.thlAsset === "function") {
+    return window.thlAsset(key, fallback);
+  }
+  return fallback;
+}
+
+const LOCAL_ASSETS = {
+  logo: "/public/image/logo.png",
   hero: "/public/image/salon-mau-01-hero.png",
+  hero02: "/public/image/salon-mau-01-hero-02.png",
   consultation: "/public/image/salon-mau-01-consultation.png",
   colorService: "/public/image/salon-mau-01-color-service.png",
   stylingService: "/public/image/salon-mau-01-styling-service.png",
   treatmentService: "/public/image/salon-mau-01-treatment-service.png",
-  space01: "/public/image/salon-mau-01-space-03.png",
+  space01: "/public/image/salon-mau-01-space-01.png",
   space02: "/public/image/salon-mau-01-space-02.png",
-  space03: "/public/image/dv-cham-soc-phuc-hoi.png",
-  experience: "/public/image/salon-mau-01-color-service.png",
-  productLineup: "/public/image/salon-mau-01-products.png",
+  space03: "/public/image/salon-mau-01-space-03.png",
+  experience: "/public/image/salon-mau-01-experience.png",
+  products: "/public/image/salon-mau-01-products.png",
   services: {
     cut: "/public/image/dv-cat-tao-kieu.png",
     color: "/public/image/dv-mau-toc.png",
@@ -33,10 +42,36 @@ const SALON_ASSETS = {
   },
 };
 
+const DEFAULT_BANNER = resolveAsset("salon.mau01.hero", LOCAL_ASSETS.hero);
+const DEFAULT_PRODUCT_IMAGE = resolveAsset(
+  "site.productLineup",
+  "/public/image/thehairlab-hero-product-lineup.png"
+);
+
+const SALON_ASSETS = {
+  hero: DEFAULT_BANNER,
+  hero02: resolveAsset("salon.mau01.hero02", LOCAL_ASSETS.hero02),
+  consultation: resolveAsset("salon.mau01.consultation", LOCAL_ASSETS.consultation),
+  colorService: resolveAsset("salon.mau01.colorService", LOCAL_ASSETS.colorService),
+  stylingService: resolveAsset("salon.mau01.stylingService", LOCAL_ASSETS.stylingService),
+  treatmentService: resolveAsset("salon.mau01.treatmentService", LOCAL_ASSETS.treatmentService),
+  space01: resolveAsset("salon.mau01.space01", LOCAL_ASSETS.space01),
+  space02: resolveAsset("salon.mau01.space02", LOCAL_ASSETS.space02),
+  space03: resolveAsset("salon.mau01.space03", LOCAL_ASSETS.space03),
+  experience: resolveAsset("salon.mau01.experience", LOCAL_ASSETS.experience),
+  productLineup: resolveAsset("salon.mau01.products", DEFAULT_PRODUCT_IMAGE),
+  services: {
+    cut: resolveAsset("salon.mau01.services.cut", LOCAL_ASSETS.services.cut),
+    color: resolveAsset("salon.mau01.services.color", LOCAL_ASSETS.services.color),
+    fashionColor: resolveAsset("salon.mau01.services.fashionColor", LOCAL_ASSETS.services.fashionColor),
+    perm: resolveAsset("salon.mau01.services.perm", LOCAL_ASSETS.services.perm),
+    straight: resolveAsset("salon.mau01.services.straight", LOCAL_ASSETS.services.straight),
+    treatment: resolveAsset("salon.mau01.services.treatment", LOCAL_ASSETS.services.treatment),
+  },
+};
+
 const PRODUCT_IMAGE_PATTERN =
   /thehairlab-hero-product-lineup|thehairlab-|care-oil|collagen|professional-hair-color|salon-technical-products/i;
-
-const assetAvailabilityCache = new Map();
 
 const els = {
   loadingState: document.getElementById("loading-state"),
@@ -276,32 +311,15 @@ function setupLogo(logoUrl) {
   els.navLogo.src = finalLogo;
 }
 
-async function canLoadAsset(src) {
-  if (!src) {
-    return false;
-  }
-
-  if (assetAvailabilityCache.has(src)) {
-    return assetAvailabilityCache.get(src);
-  }
-
-  const request = fetch(src, {
-    method: "GET",
-    cache: "no-store",
-  })
-    .then((response) => response.ok)
-    .catch(() => false);
-
-  assetAvailabilityCache.set(src, request);
-  return request;
-}
-
-async function setMediaWithFallback(img, card, src, allowCompanyImage) {
+async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyImage) {
   if (!img || !card) {
     return;
   }
 
-  const finalSrc = src && String(src).trim() ? String(src).trim() : "";
+  const preferredSrc = src && String(src).trim() ? String(src).trim() : "";
+  const finalFallback = fallbackSrc && String(fallbackSrc).trim() ? String(fallbackSrc).trim() : "";
+
+  let finalSrc = preferredSrc || finalFallback;
   if (!finalSrc) {
     img.hidden = true;
     img.removeAttribute("src");
@@ -310,23 +328,22 @@ async function setMediaWithFallback(img, card, src, allowCompanyImage) {
   }
 
   if (!allowCompanyImage && PRODUCT_IMAGE_PATTERN.test(finalSrc)) {
-    img.hidden = true;
-    img.removeAttribute("src");
-    card.classList.add("is-fallback");
-    return;
-  }
-
-  const isAvailable = await canLoadAsset(finalSrc);
-  if (!isAvailable) {
-    img.hidden = true;
-    img.removeAttribute("src");
-    card.classList.add("is-fallback");
-    return;
+    if (!finalFallback || PRODUCT_IMAGE_PATTERN.test(finalFallback)) {
+      img.hidden = true;
+      img.removeAttribute("src");
+      card.classList.add("is-fallback");
+      return;
+    }
+    finalSrc = finalFallback;
   }
 
   img.hidden = false;
   card.classList.remove("is-fallback");
   img.onerror = () => {
+    if (finalFallback && img.src !== new URL(finalFallback, window.location.origin).href) {
+      img.src = finalFallback;
+      return;
+    }
     img.hidden = true;
     img.removeAttribute("src");
     card.classList.add("is-fallback");
@@ -334,24 +351,73 @@ async function setMediaWithFallback(img, card, src, allowCompanyImage) {
   img.src = finalSrc;
 }
 
+function updateHeroBackdropImage() {
+  const backdrop = SALON_ASSETS.hero || LOCAL_ASSETS.hero;
+  document.documentElement.style.setProperty("--salon-hero-backdrop-image", `url('${backdrop}')`);
+}
+
 async function renderMediaBlocks() {
+  updateHeroBackdropImage();
+
   await Promise.all([
-    setMediaWithFallback(els.heroVisualImage, els.heroVisualCard, SALON_ASSETS.hero, false),
-    setMediaWithFallback(els.consultVisualImage, els.consultVisualCard, SALON_ASSETS.consultation, false),
+    setMediaWithFallback(els.heroVisualImage, els.heroVisualCard, SALON_ASSETS.hero, LOCAL_ASSETS.hero, false),
+    setMediaWithFallback(
+      els.consultVisualImage,
+      els.consultVisualCard,
+      SALON_ASSETS.consultation,
+      LOCAL_ASSETS.consultation,
+      false
+    ),
 
-    setMediaWithFallback(els.serviceVisualCut, els.serviceVisualCutCard, SALON_ASSETS.services.cut, false),
-    setMediaWithFallback(els.serviceVisualConsult, els.serviceVisualConsultCard, SALON_ASSETS.services.color, false),
-    setMediaWithFallback(els.serviceVisualColor, els.serviceVisualColorCard, SALON_ASSETS.services.fashionColor, false),
-    setMediaWithFallback(els.serviceVisualStyling, els.serviceVisualStylingCard, SALON_ASSETS.services.perm, false),
-    setMediaWithFallback(els.serviceVisualStraight, els.serviceVisualStraightCard, SALON_ASSETS.services.straight, false),
-    setMediaWithFallback(els.serviceVisualTreatment, els.serviceVisualTreatmentCard, SALON_ASSETS.services.treatment, false),
+    setMediaWithFallback(els.serviceVisualCut, els.serviceVisualCutCard, SALON_ASSETS.services.cut, LOCAL_ASSETS.services.cut, false),
+    setMediaWithFallback(
+      els.serviceVisualConsult,
+      els.serviceVisualConsultCard,
+      SALON_ASSETS.services.color,
+      LOCAL_ASSETS.services.color,
+      false
+    ),
+    setMediaWithFallback(
+      els.serviceVisualColor,
+      els.serviceVisualColorCard,
+      SALON_ASSETS.services.fashionColor,
+      LOCAL_ASSETS.services.fashionColor,
+      false
+    ),
+    setMediaWithFallback(
+      els.serviceVisualStyling,
+      els.serviceVisualStylingCard,
+      SALON_ASSETS.services.perm,
+      LOCAL_ASSETS.services.perm,
+      false
+    ),
+    setMediaWithFallback(
+      els.serviceVisualStraight,
+      els.serviceVisualStraightCard,
+      SALON_ASSETS.services.straight,
+      LOCAL_ASSETS.services.straight,
+      false
+    ),
+    setMediaWithFallback(
+      els.serviceVisualTreatment,
+      els.serviceVisualTreatmentCard,
+      SALON_ASSETS.services.treatment,
+      LOCAL_ASSETS.services.treatment,
+      false
+    ),
 
-    setMediaWithFallback(els.gallerySpace01, els.gallerySpace01Card, SALON_ASSETS.space01, false),
-    setMediaWithFallback(els.gallerySpace02, els.gallerySpace02Card, SALON_ASSETS.space02, false),
-    setMediaWithFallback(els.gallerySpace03, els.gallerySpace03Card, SALON_ASSETS.space03, false),
-    setMediaWithFallback(els.gallerySpace04, els.gallerySpace04Card, SALON_ASSETS.experience, false),
+    setMediaWithFallback(els.gallerySpace01, els.gallerySpace01Card, SALON_ASSETS.space01, LOCAL_ASSETS.space01, false),
+    setMediaWithFallback(els.gallerySpace02, els.gallerySpace02Card, SALON_ASSETS.space02, LOCAL_ASSETS.space02, false),
+    setMediaWithFallback(els.gallerySpace03, els.gallerySpace03Card, SALON_ASSETS.space03, LOCAL_ASSETS.space03, false),
+    setMediaWithFallback(els.gallerySpace04, els.gallerySpace04Card, SALON_ASSETS.experience, LOCAL_ASSETS.experience, false),
 
-    setMediaWithFallback(els.productLineupImage, els.productLineupCard, SALON_ASSETS.productLineup, true),
+    setMediaWithFallback(
+      els.productLineupImage,
+      els.productLineupCard,
+      SALON_ASSETS.productLineup,
+      LOCAL_ASSETS.products,
+      true
+    ),
   ]);
 }
 
@@ -487,7 +553,7 @@ function renderSalon(salon, slug) {
     els.infoFacebookRow.hidden = !setHref(els.salonFacebookLink, salon.facebook_url || "");
   }
 
-  setupLogo(salon.logo_url || "/public/image/logo.png");
+  setupLogo(salon.logo_url || LOCAL_ASSETS.logo);
   updateContactActions(salon);
   renderQuickActions(salon);
   renderMediaBlocks();
@@ -535,8 +601,14 @@ async function loadSalon() {
     return;
   }
 
+  const controller = new AbortController();
+  const fetchTimeout = setTimeout(() => controller.abort(), 8000);
+
   try {
-    const response = await fetch(`${API_BASE}/${encodeURIComponent(slug)}`);
+    const response = await fetch(`${API_BASE}/${encodeURIComponent(slug)}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(fetchTimeout);
     let data = null;
     try {
       data = await response.json();
@@ -556,6 +628,7 @@ async function loadSalon() {
     renderSalon(salon, slug);
     bindDemoForm(salon);
   } catch {
+    clearTimeout(fetchTimeout);
     const fallbackSalon = mergeSalonData(null);
     renderSalon(fallbackSalon, slug);
     bindDemoForm(fallbackSalon);
