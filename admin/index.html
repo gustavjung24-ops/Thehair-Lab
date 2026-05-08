@@ -1,0 +1,176 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TheHairLab Admin Tong</title>
+  <meta name="description" content="Admin tong TheHairLab de quan ly cac salon con." />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <div class="bg-shape bg-shape-1" aria-hidden="true"></div>
+  <div class="bg-shape bg-shape-2" aria-hidden="true"></div>
+
+  <main class="page-wrap">
+    <section id="login-view" class="view active" aria-label="Dang nhap admin">
+      <div class="panel login-panel">
+        <p class="eyebrow">TheHairLab Admin Tong</p>
+        <h1>Dang nhap he thong quan ly salon</h1>
+        <p class="muted">Tai khoan demo: admin@thehairlab.top / admin123</p>
+
+        <form id="login-form" class="stack" novalidate>
+          <label class="field">
+            <span>Email</span>
+            <input id="login-email" type="email" placeholder="admin@thehairlab.top" autocomplete="username" required />
+          </label>
+          <label class="field">
+            <span>Mat khau</span>
+            <input id="login-password" type="password" placeholder="Nhap mat khau" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="btn btn-primary">Dang nhap</button>
+          <p id="login-message" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard-view" class="view" aria-label="Dashboard admin">
+      <header class="topbar panel">
+        <div>
+          <p class="eyebrow">TheHairLab</p>
+          <h2>Dashboard Admin Tong</h2>
+          <p class="muted">Quan ly cau hinh salon con tai nhanh /s/{slug}</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="btn-seed" type="button" class="btn btn-ghost">Nap lai seed demo</button>
+          <button id="btn-logout" type="button" class="btn btn-danger">Dang xuat</button>
+        </div>
+      </header>
+
+      <section class="stats-grid" id="stats-grid" aria-label="Thong ke tong quan"></section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h3>Danh sach salon</h3>
+            <p class="muted">Copy link nhanh, test demo Telegram va Google Sheet, sua va xoa salon.</p>
+          </div>
+        </div>
+        <div id="salon-list" class="salon-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <h3 id="form-title">Tao salon moi</h3>
+          <button id="btn-reset-form" type="button" class="btn btn-ghost">Tao moi</button>
+        </div>
+
+        <form id="salon-form" class="salon-form" novalidate>
+          <input id="salon-id" type="hidden" />
+
+          <div class="grid two">
+            <label class="field">
+              <span>Ten salon *</span>
+              <input id="salon-name" name="salon_name" type="text" placeholder="Vi du: Salon Hung Sai Gon" required />
+            </label>
+            <label class="field">
+              <span>So dien thoai *</span>
+              <input id="salon-phone" name="phone" type="tel" placeholder="0901234567" required />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Slug / Duong danh salon *</span>
+              <input id="salon-slug" name="slug" type="text" placeholder="salon-hung-sai-gon" required />
+              <small class="muted">Link preview: <strong id="slug-preview">https://thehairlab.top/s/</strong></small>
+              <small id="slug-error" class="error"></small>
+            </label>
+            <label class="field">
+              <span>Trang thai *</span>
+              <select id="salon-status" name="status" required>
+                <option value="inactive">inactive</option>
+                <option value="active">active</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Zalo URL</span>
+              <input id="salon-zalo" name="zalo_url" type="url" placeholder="https://zalo.me/..." />
+            </label>
+            <label class="field">
+              <span>Facebook URL</span>
+              <input id="salon-facebook" name="facebook_url" type="url" placeholder="https://facebook.com/..." />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Dia chi</span>
+              <input id="salon-address" name="address" type="text" placeholder="Dia chi salon" />
+            </label>
+            <label class="field">
+              <span>Gio lam viec</span>
+              <input id="salon-working-hours" name="working_hours" type="text" placeholder="08:00 - 20:00" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Logo URL</span>
+              <input id="salon-logo" name="logo_url" type="url" placeholder="https://.../logo.png" />
+            </label>
+            <label class="field">
+              <span>Banner URL</span>
+              <input id="salon-banner" name="banner_url" type="url" placeholder="https://.../banner.png" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Mau giao dien</span>
+              <input id="salon-theme-color" name="theme_color" type="color" value="#8b5cf6" />
+            </label>
+            <label class="field">
+              <span>Admin email cua salon</span>
+              <input id="salon-admin-email" name="admin_email" type="email" placeholder="owner@salon.com" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Google Sheet URL</span>
+              <input id="salon-google-sheet-url" name="google_sheet_url" type="url" placeholder="https://docs.google.com/spreadsheets/d/1ABCxyz/edit" />
+              <small id="sheet-parse-message" class="error"></small>
+            </label>
+            <label class="field">
+              <span>Google Sheet ID</span>
+              <input id="salon-google-sheet-id" name="google_sheet_id" type="text" placeholder="1ABCxyz" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Google Sheet Tab</span>
+              <input id="salon-google-sheet-tab" name="google_sheet_tab" type="text" value="appointments" />
+            </label>
+            <label class="field">
+              <span>Telegram Chat ID</span>
+              <input id="salon-telegram-chat-id" name="telegram_chat_id" type="text" placeholder="-1001234567890" />
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Luu salon</button>
+            <button id="btn-clear-storage" type="button" class="btn btn-danger btn-outline">Xoa toan bo localStorage demo</button>
+          </div>
+          <p id="form-message" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script src="./admin.js"></script>
+</body>
+</html>
