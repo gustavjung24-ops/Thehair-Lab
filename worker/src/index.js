@@ -19,7 +19,7 @@ function corsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-token',
     'Access-Control-Max-Age': '86400',
   };
 }
@@ -89,6 +89,30 @@ function parsePath(requestUrl) {
   const pathname = url.pathname;
   const segments = pathname.split('/').filter(Boolean);
   return { pathname, segments };
+}
+
+function getAdminToken(request) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const bearerPrefix = 'Bearer ';
+  if (authHeader.startsWith(bearerPrefix)) {
+    return authHeader.slice(bearerPrefix.length).trim();
+  }
+
+  return (request.headers.get('x-admin-token') || '').trim();
+}
+
+function requireAdminAuth(request, env) {
+  const expectedToken = (env.ADMIN_API_TOKEN || '').trim();
+  if (!expectedToken) {
+    return false;
+  }
+
+  const providedToken = getAdminToken(request);
+  if (!providedToken || providedToken !== expectedToken) {
+    return false;
+  }
+
+  return true;
 }
 
 // ─── Validation ────────────────────────────────────────────────────────────
@@ -471,14 +495,23 @@ export default {
     }
 
     if (pathname === '/api/admin/salons' && method === 'GET') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
       return listAdminSalons(env, origin);
     }
 
     if (pathname === '/api/admin/salons' && method === 'POST') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
       return createAdminSalon(request, env, origin);
     }
 
     if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'admin' && segments[2] === 'salons' && method === 'PUT') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
       return updateAdminSalon(request, env, origin, segments[3]);
     }
 
