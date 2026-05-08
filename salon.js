@@ -1,6 +1,5 @@
 const API_BASE = "https://thehairlab-leads-worker.khuongbinh-thehairlab.workers.dev/api/public/salons";
 const DEFAULT_THEME = "#8b5cf6";
-const DEFAULT_PRODUCT_IMAGE = "/public/image/thehairlab-hero-product-lineup.png";
 
 const DEFAULT_SALON = {
   salon_name: "Salon Test Mẫu 01 - Lavender Beauty",
@@ -11,19 +10,33 @@ const DEFAULT_SALON = {
   working_hours: "08:00 - 20:00 mỗi ngày",
   theme_color: "#8b5cf6",
   logo_url: "",
-  banner_url: "",
 };
 
-const SALON_MEDIA = {
-  heroVisual: "/public/image/salon-mau-01-hero-visual.svg",
-  consultation: "/public/image/salon-mau-01-consultation.jpg",
-  colorService: "/public/image/salon-mau-01-color-service.jpg",
-  stylingService: "/public/image/salon-mau-01-styling-service.jpg",
-  treatmentService: "/public/image/salon-mau-01-treatment-service.jpg",
-  space01: "/public/image/salon-mau-01-space-01.jpg",
-  space02: "/public/image/salon-mau-01-space-02.jpg",
-  space03: "/public/image/salon-mau-01-space-03.jpg",
+const SALON_ASSETS = {
+  hero: "/public/image/salon-mau-01-hero.png",
+  consultation: "/public/image/salon-mau-01-consultation.png",
+  colorService: "/public/image/salon-mau-01-color-service.png",
+  stylingService: "/public/image/salon-mau-01-styling-service.png",
+  treatmentService: "/public/image/salon-mau-01-treatment-service.png",
+  space01: "/public/image/salon-mau-01-space-03.png",
+  space02: "/public/image/salon-mau-01-space-02.png",
+  space03: "/public/image/dv-cham-soc-phuc-hoi.png",
+  experience: "/public/image/salon-mau-01-color-service.png",
+  productLineup: "/public/image/salon-mau-01-products.png",
+  services: {
+    cut: "/public/image/dv-cat-tao-kieu.png",
+    color: "/public/image/dv-mau-toc.png",
+    fashionColor: "/public/image/dv-nhuom-thoi-trang.png",
+    perm: "/public/image/dv-uon-setting.png",
+    straight: "/public/image/dv-duoi-phuc-hoi.png",
+    treatment: "/public/image/dv-cham-soc-phuc-hoi.png",
+  },
 };
+
+const PRODUCT_IMAGE_PATTERN =
+  /thehairlab-hero-product-lineup|thehairlab-|care-oil|collagen|professional-hair-color|salon-technical-products/i;
+
+const assetAvailabilityCache = new Map();
 
 const els = {
   loadingState: document.getElementById("loading-state"),
@@ -63,6 +76,8 @@ const els = {
 
   heroVisualImage: document.getElementById("hero-visual-image"),
   heroVisualCard: document.getElementById("hero-visual-card"),
+  consultVisualImage: document.getElementById("consult-visual-image"),
+  consultVisualCard: document.getElementById("consult-visual-card"),
 
   serviceVisualCut: document.getElementById("service-visual-cut"),
   serviceVisualCutCard: document.getElementById("service-visual-cut-card"),
@@ -98,6 +113,8 @@ const els = {
   appointmentFeedback: document.getElementById("appointment-feedback"),
   appointmentQuickActions: document.getElementById("appointment-quick-actions"),
 };
+
+let heroVisualSyncBound = false;
 
 function getSlugFromUrl() {
   const parts = window.location.pathname.split("/").filter(Boolean);
@@ -205,16 +222,13 @@ function getBrandSubtitle(name) {
 }
 
 function updateSeo(salon) {
-  document.title = `${salon.salon_name} | The Hair Lab`;
+  const title = `${salon.salon_name} | Tư vấn kiểu tóc phù hợp`;
+  const description =
+    "Đặt lịch tư vấn miễn phí kiểu tóc phù hợp với gương mặt tại Salon Test Mẫu 01 - Lavender Beauty. Tư vấn màu tóc, uốn, duỗi, nhuộm và chăm sóc phục hồi tóc.";
+
+  document.title = title;
   if (els.metaDescription) {
-    els.metaDescription.setAttribute(
-      "content",
-      `Đặt lịch tư vấn miễn phí kiểu tóc và dịch vụ phù hợp tại ${salon.salon_name}.`
-    );
-  }
-  const canonical = document.querySelector("link[rel='canonical']");
-  if (canonical) {
-    canonical.setAttribute("href", window.location.href);
+    els.metaDescription.setAttribute("content", description);
   }
 }
 
@@ -262,22 +276,48 @@ function setupLogo(logoUrl) {
   els.navLogo.src = finalLogo;
 }
 
-function setMediaWithFallback(img, card, src, allowCompanyImage) {
+async function canLoadAsset(src) {
+  if (!src) {
+    return false;
+  }
+
+  if (assetAvailabilityCache.has(src)) {
+    return assetAvailabilityCache.get(src);
+  }
+
+  const request = fetch(src, {
+    method: "GET",
+    cache: "no-store",
+  })
+    .then((response) => response.ok)
+    .catch(() => false);
+
+  assetAvailabilityCache.set(src, request);
+  return request;
+}
+
+async function setMediaWithFallback(img, card, src, allowCompanyImage) {
   if (!img || !card) {
     return;
   }
 
-  if (!src || !String(src).trim()) {
+  const finalSrc = src && String(src).trim() ? String(src).trim() : "";
+  if (!finalSrc) {
     img.hidden = true;
     img.removeAttribute("src");
     card.classList.add("is-fallback");
     return;
   }
 
-  const path = String(src).trim();
-  const isCompanyProduct = /thehairlab-|hero-product-lineup|care-oil|collagen|professional-hair-color|salon-technical-products/i.test(path);
+  if (!allowCompanyImage && PRODUCT_IMAGE_PATTERN.test(finalSrc)) {
+    img.hidden = true;
+    img.removeAttribute("src");
+    card.classList.add("is-fallback");
+    return;
+  }
 
-  if (!allowCompanyImage && isCompanyProduct) {
+  const isAvailable = await canLoadAsset(finalSrc);
+  if (!isAvailable) {
     img.hidden = true;
     img.removeAttribute("src");
     card.classList.add("is-fallback");
@@ -286,14 +326,74 @@ function setMediaWithFallback(img, card, src, allowCompanyImage) {
 
   img.hidden = false;
   card.classList.remove("is-fallback");
-
   img.onerror = () => {
     img.hidden = true;
     img.removeAttribute("src");
     card.classList.add("is-fallback");
   };
+  img.src = finalSrc;
+}
 
-  img.src = path;
+async function renderMediaBlocks() {
+  await Promise.all([
+    setMediaWithFallback(els.heroVisualImage, els.heroVisualCard, SALON_ASSETS.hero, false),
+    setMediaWithFallback(els.consultVisualImage, els.consultVisualCard, SALON_ASSETS.consultation, false),
+
+    setMediaWithFallback(els.serviceVisualCut, els.serviceVisualCutCard, SALON_ASSETS.services.cut, false),
+    setMediaWithFallback(els.serviceVisualConsult, els.serviceVisualConsultCard, SALON_ASSETS.services.color, false),
+    setMediaWithFallback(els.serviceVisualColor, els.serviceVisualColorCard, SALON_ASSETS.services.fashionColor, false),
+    setMediaWithFallback(els.serviceVisualStyling, els.serviceVisualStylingCard, SALON_ASSETS.services.perm, false),
+    setMediaWithFallback(els.serviceVisualStraight, els.serviceVisualStraightCard, SALON_ASSETS.services.straight, false),
+    setMediaWithFallback(els.serviceVisualTreatment, els.serviceVisualTreatmentCard, SALON_ASSETS.services.treatment, false),
+
+    setMediaWithFallback(els.gallerySpace01, els.gallerySpace01Card, SALON_ASSETS.space01, false),
+    setMediaWithFallback(els.gallerySpace02, els.gallerySpace02Card, SALON_ASSETS.space02, false),
+    setMediaWithFallback(els.gallerySpace03, els.gallerySpace03Card, SALON_ASSETS.space03, false),
+    setMediaWithFallback(els.gallerySpace04, els.gallerySpace04Card, SALON_ASSETS.experience, false),
+
+    setMediaWithFallback(els.productLineupImage, els.productLineupCard, SALON_ASSETS.productLineup, true),
+  ]);
+}
+
+function syncHeroVisualCardHeight() {
+  if (!els.heroVisualCard) {
+    return;
+  }
+
+  if (window.matchMedia("(max-width: 1040px)").matches) {
+    els.heroVisualCard.style.removeProperty("height");
+    return;
+  }
+
+  const leftCard = document.querySelector(".hero-left");
+  const heroRight = document.querySelector(".hero-right");
+  const quickCard = document.querySelector(".hero-right .quick-card");
+  if (!leftCard || !heroRight || !quickCard) {
+    return;
+  }
+
+  const leftHeight = Math.round(leftCard.getBoundingClientRect().height);
+  const quickHeight = Math.round(quickCard.getBoundingClientRect().height);
+  const rowGap = parseFloat(getComputedStyle(heroRight).rowGap || "0") || 0;
+
+  // Keep left and quick cards unchanged; shrink/grow only the image card to balance total column height.
+  const targetImageHeight = Math.round(leftHeight - quickHeight - rowGap);
+  if (targetImageHeight > 0) {
+    els.heroVisualCard.style.height = `${targetImageHeight}px`;
+  }
+}
+
+function bindHeroVisualSync() {
+  if (heroVisualSyncBound) {
+    return;
+  }
+
+  const runSync = () => {
+    requestAnimationFrame(syncHeroVisualCardHeight);
+  };
+
+  window.addEventListener("resize", runSync, { passive: true });
+  heroVisualSyncBound = true;
 }
 
 function renderQuickActions(salon) {
@@ -333,24 +433,6 @@ function updateContactActions(salon) {
     }
     node.hidden = !setHref(node, zaloLink);
   });
-}
-
-function renderMediaBlocks() {
-  setMediaWithFallback(els.heroVisualImage, els.heroVisualCard, SALON_MEDIA.heroVisual, false);
-
-  setMediaWithFallback(els.serviceVisualCut, els.serviceVisualCutCard, SALON_MEDIA.consultation, false);
-  setMediaWithFallback(els.serviceVisualConsult, els.serviceVisualConsultCard, SALON_MEDIA.consultation, false);
-  setMediaWithFallback(els.serviceVisualColor, els.serviceVisualColorCard, SALON_MEDIA.colorService, false);
-  setMediaWithFallback(els.serviceVisualStyling, els.serviceVisualStylingCard, SALON_MEDIA.stylingService, false);
-  setMediaWithFallback(els.serviceVisualStraight, els.serviceVisualStraightCard, SALON_MEDIA.stylingService, false);
-  setMediaWithFallback(els.serviceVisualTreatment, els.serviceVisualTreatmentCard, SALON_MEDIA.treatmentService, false);
-
-  setMediaWithFallback(els.gallerySpace01, els.gallerySpace01Card, SALON_MEDIA.space01, false);
-  setMediaWithFallback(els.gallerySpace02, els.gallerySpace02Card, SALON_MEDIA.space02, false);
-  setMediaWithFallback(els.gallerySpace03, els.gallerySpace03Card, SALON_MEDIA.space03, false);
-  setMediaWithFallback(els.gallerySpace04, els.gallerySpace04Card, SALON_MEDIA.consultation, false);
-
-  setMediaWithFallback(els.productLineupImage, els.productLineupCard, DEFAULT_PRODUCT_IMAGE, true);
 }
 
 function mergeSalonData(apiSalon) {
@@ -405,11 +487,15 @@ function renderSalon(salon, slug) {
     els.infoFacebookRow.hidden = !setHref(els.salonFacebookLink, salon.facebook_url || "");
   }
 
-  setupLogo(salon.logo_url || "");
+  setupLogo(salon.logo_url || "/public/image/logo.png");
   updateContactActions(salon);
   renderQuickActions(salon);
   renderMediaBlocks();
   showState("ready");
+  bindHeroVisualSync();
+  syncHeroVisualCardHeight();
+  setTimeout(syncHeroVisualCardHeight, 300);
+  setTimeout(syncHeroVisualCardHeight, 900);
 }
 
 function showError(title, copy) {
@@ -452,7 +538,6 @@ async function loadSalon() {
   try {
     const response = await fetch(`${API_BASE}/${encodeURIComponent(slug)}`);
     let data = null;
-
     try {
       data = await response.json();
     } catch {
