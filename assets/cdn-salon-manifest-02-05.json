@@ -6,9 +6,9 @@
     "uploadSkipped":  true,
     "summary":  {
                     "uploaded":  0,
-                    "mapOnly":  67,
-                    "missing":  1,
-                    "totalMapped":  67
+                    "mapOnly":  68,
+                    "missing":  0,
+                    "totalMapped":  68
                 },
     "assets":  {
                    "salon.mau02.hero":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-hero.jpg",
@@ -30,6 +30,7 @@
                    "salon.mau02.products":  "https://cdn.thehairlab.top/thehairlab/salon/mau-02/salon-mau-02-products.png",
                    "salon.mau03.hero":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-hero.png",
                    "salon.mau03.hero02":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-hero-02.png",
+                   "salon.mau03.consultation":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-treatment-service.png",
                    "salon.mau03.colorService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-color-service.png",
                    "salon.mau03.stylingService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-styling-service.png",
                    "salon.mau03.treatmentService":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-treatment-service.png",
@@ -235,10 +236,11 @@
                    {
                        "template":  3,
                        "basename":  "consultation",
-                       "status":  "missing",
+                       "status":  "alias",
                        "source":  "",
+                       "sourceAlias":  "salon.mau03.treatmentService",
                        "key":  "salon.mau03.consultation",
-                       "url":  ""
+                       "url":  "https://cdn.thehairlab.top/thehairlab/salon/mau-03/salon-mau-03-treatment-service.png"
                    },
                    {
                        "template":  3,
