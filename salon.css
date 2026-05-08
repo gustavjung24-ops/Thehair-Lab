@@ -950,7 +950,12 @@ a {
     padding: 1rem;
   }
 
-  .hero-visual-card,
+  .hero-visual-card {
+    border-radius: var(--radius-lg);
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
   .gallery-card,
   .product-figure,
   .consult-visual-card {
