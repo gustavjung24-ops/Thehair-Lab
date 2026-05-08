@@ -1,5 +1,6 @@
 ﻿const SALONS_KEY = "thehairlab_admin_salons";
 const SESSION_KEY = "thehairlab_admin_session";
+const API_CONFIG_KEY = "thehairlab_admin_api_config";
 const DEMO_EMAIL = "admin@thehairlab.top";
 const DEMO_PASSWORD = "admin123";
 const RESERVED_SLUGS = new Set([
@@ -26,6 +27,10 @@ const els = {
 	loginMessage: document.getElementById("login-message"),
 	logoutBtn: document.getElementById("btn-logout"),
 	seedBtn: document.getElementById("btn-seed"),
+	apiBaseUrl: document.getElementById("api-base-url"),
+	apiToken: document.getElementById("api-token"),
+	saveApiConfigBtn: document.getElementById("btn-save-api-config"),
+	apiModeStatus: document.getElementById("api-mode-status"),
 	statsGrid: document.getElementById("stats-grid"),
 	salonList: document.getElementById("salon-list"),
 	salonForm: document.getElementById("salon-form"),
@@ -59,6 +64,7 @@ const els = {
 
 let salons = [];
 let slugWasManual = false;
+let apiConfig = null;
 
 function nowIso() {
 	return new Date().toISOString();
@@ -181,6 +187,109 @@ function persistSalons() {
 	localStorage.setItem(SALONS_KEY, JSON.stringify(salons));
 }
 
+function loadApiConfig() {
+	try {
+		const raw = localStorage.getItem(API_CONFIG_KEY);
+		apiConfig = raw ? JSON.parse(raw) : null;
+	} catch {
+		apiConfig = null;
+	}
+
+	if (!apiConfig || typeof apiConfig !== "object") {
+		apiConfig = null;
+		return;
+	}
+
+	apiConfig.baseUrl = (apiConfig.baseUrl || "").trim().replace(/\/+$/, "");
+	apiConfig.token = (apiConfig.token || "").trim();
+	if (!apiConfig.baseUrl || !apiConfig.token) {
+		apiConfig = null;
+	}
+}
+
+function hasApiConfig() {
+	return Boolean(apiConfig?.baseUrl && apiConfig?.token);
+}
+
+function saveApiConfig(baseUrl, token) {
+	const normalized = {
+		baseUrl: (baseUrl || "").trim().replace(/\/+$/, ""),
+		token: (token || "").trim(),
+	};
+	localStorage.setItem(API_CONFIG_KEY, JSON.stringify(normalized));
+	apiConfig = normalized;
+}
+
+function setApiModeStatus(message, isError = false) {
+	if (!els.apiModeStatus) {
+		return;
+	}
+	els.apiModeStatus.textContent = message;
+	els.apiModeStatus.style.color = isError ? "#b62439" : "#4e42a8";
+}
+
+function syncApiConfigInputs() {
+	if (!els.apiBaseUrl || !els.apiToken) {
+		return;
+	}
+	els.apiBaseUrl.value = apiConfig?.baseUrl || "";
+	els.apiToken.value = apiConfig?.token || "";
+
+	if (hasApiConfig()) {
+		setApiModeStatus("Che do API dang bat.");
+	} else {
+		setApiModeStatus("Chua cau hinh API, dang dung localStorage.");
+	}
+}
+
+async function requestApi(path, options = {}) {
+	if (!hasApiConfig()) {
+		throw new Error("NO_API_CONFIG");
+	}
+
+	const headers = {
+		Authorization: `Bearer ${apiConfig.token}`,
+		"Content-Type": "application/json",
+		...(options.headers || {}),
+	};
+
+	const response = await fetch(`${apiConfig.baseUrl}${path}`, {
+		...options,
+		headers,
+	});
+
+	let data = null;
+	try {
+		data = await response.json();
+	} catch {
+		data = null;
+	}
+
+	if (!response.ok || data?.success === false) {
+		const msg = data?.error || `HTTP ${response.status}`;
+		throw new Error(msg);
+	}
+
+	return data;
+}
+
+async function loadSalonsData() {
+	if (!hasApiConfig()) {
+		loadSalons();
+		return;
+	}
+
+	try {
+		const data = await requestApi("/api/admin/salons", { method: "GET" });
+		salons = Array.isArray(data.salons) ? data.salons : [];
+		setApiModeStatus("Da ket noi API Worker thanh cong.");
+	} catch {
+		loadSalons();
+		setApiModeStatus("Khong ket noi duoc API, dang dung du lieu local.", true);
+		showFormMessage("Khong ket noi duoc API, dang dung du lieu local.", true);
+	}
+}
+
 function showView(isLoggedIn) {
 	els.loginView.classList.toggle("active", !isLoggedIn);
 	els.dashboardView.classList.toggle("active", isLoggedIn);
@@ -211,7 +320,7 @@ function validateSlug(slug, editingId = "") {
 		return "Slug trung voi slug he thong, vui long chon slug khac.";
 	}
 
-	const duplicated = salons.find((item) => item.slug === slug && item.id !== editingId);
+	const duplicated = salons.find((item) => item.slug === slug && String(item.id) !== String(editingId));
 	if (duplicated) {
 		return "Slug da ton tai, vui long dung slug khac.";
 	}
@@ -222,8 +331,8 @@ function getStatusCounts() {
 	const total = salons.length;
 	const active = salons.filter((item) => item.status === "active").length;
 	const inactive = total - active;
-	const missingTelegram = salons.filter((item) => !item.telegram_chat_id.trim()).length;
-	const missingSheet = salons.filter((item) => !item.google_sheet_id.trim()).length;
+	const missingTelegram = salons.filter((item) => !(item.telegram_chat_id || "").trim()).length;
+	const missingSheet = salons.filter((item) => !(item.google_sheet_id || "").trim()).length;
 
 	return {
 		total,
@@ -359,7 +468,7 @@ function renderAll() {
 	renderSalonList();
 }
 
-function onLoginSubmit(event) {
+async function onLoginSubmit(event) {
 	event.preventDefault();
 	const email = els.loginEmail.value.trim().toLowerCase();
 	const password = els.loginPassword.value;
@@ -368,10 +477,26 @@ function onLoginSubmit(event) {
 		setSession({ email, logged_in_at: nowIso() });
 		showLoginMessage("Dang nhap thanh cong.", false);
 		showView(true);
+		await loadSalonsData();
 		renderAll();
 		return;
 	}
 	showLoginMessage("Sai email hoac mat khau demo.");
+}
+
+async function onSaveApiConfig() {
+	const baseUrl = (els.apiBaseUrl?.value || "").trim();
+	const token = (els.apiToken?.value || "").trim();
+
+	if (!baseUrl || !token) {
+		setApiModeStatus("Can nhap du API Base URL va Admin API Token.", true);
+		return;
+	}
+
+	saveApiConfig(baseUrl, token);
+	syncApiConfigInputs();
+	await loadSalonsData();
+	renderAll();
 }
 
 function onLogout() {
@@ -439,7 +564,24 @@ function buildSalonPayload() {
 	};
 }
 
-function onSalonSubmit(event) {
+function saveSalonToLocal(payload) {
+	const existing = salons.find((item) => item.id === payload.id);
+	if (existing) {
+		payload.created_at = existing.created_at || nowIso();
+		salons = salons.map((item) => (item.id === payload.id ? payload : item));
+		showFormMessage("Cap nhat salon thanh cong.");
+	} else {
+		payload.created_at = nowIso();
+		salons.unshift(payload);
+		showFormMessage("Tao salon moi thanh cong.");
+	}
+
+	persistSalons();
+	renderAll();
+	resetForm();
+}
+
+async function onSalonSubmit(event) {
 	event.preventDefault();
 	els.sheetParseMessage.textContent = "";
 
@@ -470,24 +612,57 @@ function onSalonSubmit(event) {
 		}
 	}
 
-	const existing = salons.find((item) => item.id === payload.id);
-	if (existing) {
-		payload.created_at = existing.created_at || nowIso();
-		salons = salons.map((item) => (item.id === payload.id ? payload : item));
-		showFormMessage("Cap nhat salon thanh cong.");
-	} else {
-		payload.created_at = nowIso();
-		salons.unshift(payload);
-		showFormMessage("Tao salon moi thanh cong.");
+	if (hasApiConfig()) {
+		try {
+			const isEdit = Boolean(payload.id && salons.find((item) => String(item.id) === String(payload.id)));
+			const apiPayload = {
+				salon_name: payload.salon_name,
+				slug: payload.slug,
+				phone: payload.phone,
+				zalo_url: payload.zalo_url,
+				facebook_url: payload.facebook_url,
+				address: payload.address,
+				working_hours: payload.working_hours,
+				logo_url: payload.logo_url,
+				banner_url: payload.banner_url,
+				theme_color: payload.theme_color,
+				google_sheet_url: payload.google_sheet_url,
+				google_sheet_id: payload.google_sheet_id,
+				google_sheet_tab: payload.google_sheet_tab,
+				telegram_chat_id: payload.telegram_chat_id,
+				admin_email: payload.admin_email,
+				status: payload.status,
+			};
+
+			if (isEdit) {
+				await requestApi(`/api/admin/salons/${payload.id}`, {
+					method: "PUT",
+					body: JSON.stringify(apiPayload),
+				});
+				showFormMessage("Cap nhat salon thanh cong (API).");
+			} else {
+				await requestApi("/api/admin/salons", {
+					method: "POST",
+					body: JSON.stringify(apiPayload),
+				});
+				showFormMessage("Tao salon moi thanh cong (API).");
+			}
+
+			await loadSalonsData();
+			renderAll();
+			resetForm();
+			return;
+		} catch {
+			setApiModeStatus("Khong ket noi duoc API, dang dung du lieu local.", true);
+			showFormMessage("Khong ket noi duoc API, dang dung du lieu local.", true);
+		}
 	}
 
-	persistSalons();
-	renderAll();
-	resetForm();
+	saveSalonToLocal(payload);
 }
 
 function findSalonById(id) {
-	return salons.find((item) => item.id === id);
+	return salons.find((item) => String(item.id) === String(id));
 }
 
 function onSalonListClick(event) {
@@ -521,7 +696,7 @@ function onSalonListClick(event) {
 		if (!ok) {
 			return;
 		}
-		salons = salons.filter((item) => item.id !== id);
+		salons = salons.filter((item) => String(item.id) !== String(id));
 		persistSalons();
 		renderAll();
 		showFormMessage("Da xoa salon demo.");
@@ -569,7 +744,14 @@ function onSalonListClick(event) {
 	}
 }
 
-function onSeedClick() {
+async function onSeedClick() {
+	if (hasApiConfig()) {
+		await loadSalonsData();
+		renderAll();
+		showFormMessage("Da tai danh sach salon tu API.");
+		return;
+	}
+
 	const ok = window.confirm("Nap lai 2 salon seed demo? Du lieu hien tai se bi thay the.");
 	if (!ok) {
 		return;
@@ -580,7 +762,12 @@ function onSeedClick() {
 	showFormMessage("Da nap lai du lieu seed demo.");
 }
 
-function onClearStorageClick() {
+async function onClearStorageClick() {
+	if (hasApiConfig()) {
+		showFormMessage("Dang o che do API, khong xoa localStorage de tranh mat cache.");
+		return;
+	}
+
 	const ok = window.confirm("Xoa toan bo du lieu salon demo trong localStorage?");
 	if (!ok) {
 		return;
@@ -592,8 +779,10 @@ function onClearStorageClick() {
 	showFormMessage("Da reset localStorage va tao lai seed demo.");
 }
 
-function init() {
-	loadSalons();
+async function init() {
+	loadApiConfig();
+	syncApiConfigInputs();
+	await loadSalonsData();
 
 	const session = getSession();
 	showView(Boolean(session?.email === DEMO_EMAIL));
@@ -604,6 +793,7 @@ function init() {
 	els.loginForm.addEventListener("submit", onLoginSubmit);
 	els.logoutBtn.addEventListener("click", onLogout);
 	els.seedBtn.addEventListener("click", onSeedClick);
+	els.saveApiConfigBtn.addEventListener("click", onSaveApiConfig);
 	els.resetFormBtn.addEventListener("click", resetForm);
 	els.clearStorageBtn.addEventListener("click", onClearStorageClick);
 

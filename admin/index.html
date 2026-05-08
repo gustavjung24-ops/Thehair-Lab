@@ -46,6 +46,29 @@
         </div>
       </header>
 
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h3>Cau hinh API Worker</h3>
+            <p class="muted">Neu co API Base URL + Token thi admin se goi API thay vi chi dung localStorage.</p>
+          </div>
+        </div>
+        <div class="grid two">
+          <label class="field">
+            <span>API Base URL</span>
+            <input id="api-base-url" type="text" placeholder="http://127.0.0.1:8788" />
+          </label>
+          <label class="field">
+            <span>Admin API Token</span>
+            <input id="api-token" type="password" placeholder="local-admin-token" />
+          </label>
+        </div>
+        <div class="form-actions">
+          <button id="btn-save-api-config" type="button" class="btn btn-primary">Luu cau hinh API</button>
+        </div>
+        <p id="api-mode-status" class="message" role="status" aria-live="polite"></p>
+      </section>
+
       <section class="stats-grid" id="stats-grid" aria-label="Thong ke tong quan"></section>
 
       <section class="panel">

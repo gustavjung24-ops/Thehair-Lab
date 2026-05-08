@@ -12,6 +12,8 @@ const ALLOWED_ORIGINS = [
   'https://www.thehairlab.top',
   'https://thehairlab.top',
   'https://thehair-lab.vercel.app',
+  'http://127.0.0.1:5200',
+  'http://localhost:5200',
 ];
 
 function corsHeaders(origin) {
