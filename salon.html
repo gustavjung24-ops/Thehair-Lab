@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Hair Lab | Salon</title>
+    <meta
+      id="salon-description"
+      name="description"
+      content="Đặt lịch và tư vấn kiểu tóc phù hợp tại salon cùng The Hair Lab."
+    />
+    <link rel="canonical" href="https://www.thehairlab.top/salon.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/salon.css" />
+  </head>
+  <body>
+    <main class="salon-shell">
+      <section id="loading-state" class="state-panel state-panel-active" aria-live="polite">
+        <p class="state-kicker">The Hair Lab</p>
+        <h1>Đang tải thông tin salon</h1>
+        <p>Vui lòng chờ trong giây lát để hệ thống lấy dữ liệu salon.</p>
+      </section>
+
+      <section id="error-state" class="state-panel" hidden>
+        <p class="state-kicker">Không khả dụng</p>
+        <h1 id="error-title">Salon không tồn tại hoặc đang tạm ngưng</h1>
+        <p id="error-copy">Vui lòng quay về trang chính The Hair Lab để xem thêm thông tin.</p>
+        <div class="state-actions">
+          <a class="btn btn-primary" href="/">Quay về The Hair Lab</a>
+        </div>
+      </section>
+
+      <section id="salon-page" class="salon-page" hidden>
+        <header class="top-nav">
+          <div class="container nav-inner">
+            <div class="nav-brand" aria-label="Thương hiệu salon">
+              <div class="nav-monogram">M01</div>
+              <div>
+                <strong id="nav-salon-name">Salon Test Mẫu 01</strong>
+                <p>Lavender Beauty</p>
+              </div>
+            </div>
+            <div class="nav-actions">
+              <a id="nav-call" class="btn btn-soft" href="#">Gọi ngay</a>
+              <a id="nav-zalo" class="btn btn-primary" href="#" target="_blank" rel="noreferrer">Nhắn Zalo</a>
+            </div>
+          </div>
+        </header>
+
+        <header class="hero">
+          <div class="hero-media" id="hero-media">
+            <img id="hero-banner" alt="Banner salon" loading="lazy" />
+          </div>
+          <div class="hero-layer"></div>
+          <div class="container hero-inner">
+            <div class="hero-left">
+              <p class="eyebrow">Mẫu 01 - Lavender Beauty</p>
+              <div class="logo-wrap">
+                <img id="salon-logo" class="salon-logo" alt="Logo salon" hidden />
+                <div id="salon-monogram" class="salon-monogram" aria-hidden="true">M01</div>
+              </div>
+              <h1 id="salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
+              <p class="hero-headline">Tư vấn miễn phí kiểu tóc phù hợp với gương mặt</p>
+              <p class="hero-subheadline">
+                Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.
+              </p>
+              <div class="hero-actions">
+                <a class="btn btn-primary" href="#appointment-demo">Đặt lịch tư vấn</a>
+                <a id="cta-call" class="btn btn-outline" href="#">Gọi salon</a>
+                <a id="cta-zalo" class="btn btn-outline" href="#" target="_blank" rel="noreferrer">Nhắn Zalo</a>
+              </div>
+            </div>
+            <aside class="hero-right">
+              <div class="quick-card">
+                <p class="quick-title">Thông tin nhanh</p>
+                <ul>
+                  <li><span>Điện thoại</span><strong id="salon-phone">Đang cập nhật</strong></li>
+                  <li><span>Địa chỉ</span><strong id="salon-address-chip">Đang cập nhật</strong></li>
+                  <li><span>Giờ làm việc</span><strong id="salon-hours-chip">Đang cập nhật</strong></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </header>
+
+        <section class="section trust-section">
+          <div class="container">
+            <div class="trust-grid">
+              <article class="trust-badge"><strong>Tư vấn 1:1</strong><span>Đề xuất kiểu tóc theo gương mặt</span></article>
+              <article class="trust-badge"><strong>Sản phẩm chuyên nghiệp</strong><span>Quy trình chăm sóc chuẩn salon</span></article>
+              <article class="trust-badge"><strong>Kỹ thuật salon</strong><span>Tóc uốn/duỗi/nhuộm an toàn</span></article>
+              <article class="trust-badge"><strong>Lịch hẹn nhanh</strong><span>Đăng ký trước để không chờ lâu</span></article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section service-section" id="services">
+          <div class="container">
+            <div class="section-head">
+              <p class="eyebrow">Dịch vụ nổi bật</p>
+              <h2>Gói dịch vụ phù hợp cho khách yêu thích phong cách Lavender Beauty.</h2>
+            </div>
+            <div class="service-grid">
+              <article class="service-card">
+                <h3>Cắt &amp; tạo kiểu nữ</h3>
+                <p>Điều chỉnh phom tóc theo dáng mặt và thói quen chăm sóc hằng ngày.</p>
+                <div class="service-foot"><strong>Từ 199K</strong><button type="button">Tư vấn dịch vụ này</button></div>
+              </article>
+              <article class="service-card">
+                <h3>Tư vấn màu tóc tôn da</h3>
+                <p>Chọn tông màu sáng da, hợp phong cách cá nhân và môi trường công việc.</p>
+                <div class="service-foot"><strong>Từ 499K</strong><button type="button">Tư vấn dịch vụ này</button></div>
+              </article>
+              <article class="service-card">
+                <h3>Nhuộm thời trang</h3>
+                <p>Kỹ thuật lên màu mềm mượt với quy trình bảo vệ nền tóc và giữ màu bền.</p>
+                <div class="service-foot"><strong>Từ 699K</strong><button type="button">Tư vấn dịch vụ này</button></div>
+              </article>
+              <article class="service-card">
+                <h3>Uốn setting</h3>
+                <p>Thiết kế nếp uốn bồng tự nhiên, giữ dáng tốt và dễ chăm sóc sau dịch vụ.</p>
+                <div class="service-foot"><strong>Từ 799K</strong><button type="button">Tư vấn dịch vụ này</button></div>
+              </article>
+              <article class="service-card">
+                <h3>Duỗi phục hồi</h3>
+                <p>Làm thẳng tóc đi kèm liệu trình phục hồi, giảm khô xơ và tăng độ bóng.</p>
+                <div class="service-foot"><strong>Từ 899K</strong><button type="button">Tư vấn dịch vụ này</button></div>
+              </article>
+              <article class="service-card">
+                <h3>Chăm sóc phục hồi tóc</h3>
+                <p>Kết hợp dưỡng chất chuyên sâu giúp tóc mềm mượt, chắc khỏe và dễ tạo kiểu.</p>
+                <div class="service-foot"><strong>Từ 349K</strong><button type="button">Tư vấn dịch vụ này</button></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section consult-section">
+          <div class="container">
+            <div class="section-head">
+              <p class="eyebrow">Tư vấn miễn phí kiểu tóc phù hợp</p>
+              <h2>Quy trình 4 bước giúp khách chọn đúng kiểu tóc trước khi làm.</h2>
+            </div>
+            <ol class="consult-steps">
+              <li><strong>Phân tích gương mặt</strong><p>Đánh giá tỉ lệ gương mặt để chọn phom tóc hài hòa.</p></li>
+              <li><strong>Xác định chất tóc</strong><p>Kiểm tra nền tóc hiện tại để chọn kỹ thuật phù hợp.</p></li>
+              <li><strong>Chọn màu tóc hợp da</strong><p>Đề xuất bảng màu giúp tôn da và phù hợp phong cách.</p></li>
+              <li><strong>Gợi ý kiểu tóc cá nhân</strong><p>Lên phương án cắt/uốn/duỗi/nhuộm theo mục tiêu thẩm mỹ.</p></li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="section gallery-section">
+          <div class="container">
+            <div class="section-head">
+              <p class="eyebrow">Hình ảnh / không gian salon</p>
+              <h2>Không gian tư vấn và trải nghiệm làm tóc theo phong cách Lavender Beauty.</h2>
+            </div>
+            <div class="gallery-grid">
+              <article class="gallery-card large">
+                <img id="gallery-main-image" alt="Mẫu 01 Lavender Beauty" loading="lazy" />
+                <div class="gallery-caption">Mẫu 01 Lavender Beauty</div>
+              </article>
+              <article class="gallery-card">
+                <img id="gallery-product-image" alt="Sản phẩm The Hair Lab" loading="lazy" />
+                <div class="gallery-caption">Sản phẩm sử dụng tại salon</div>
+              </article>
+              <article class="gallery-card placeholder">
+                <div class="placeholder-box">Không gian tư vấn riêng</div>
+              </article>
+              <article class="gallery-card placeholder">
+                <div class="placeholder-box">Khu vực tạo kiểu chuyên nghiệp</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section product-section">
+          <div class="container product-grid">
+            <div>
+              <p class="eyebrow">Sản phẩm sử dụng tại salon</p>
+              <h2>Chăm sóc tóc bằng sản phẩm chuyên nghiệp The Hair Lab.</h2>
+              <p>
+                Salon sử dụng sản phẩm chăm sóc tóc chuyên nghiệp, phù hợp quy trình tư vấn và phục hồi.
+              </p>
+            </div>
+            <figure class="product-figure">
+              <img id="product-lineup-image" alt="Sản phẩm The Hair Lab" loading="lazy" />
+            </figure>
+          </div>
+        </section>
+
+        <section class="section testimonial-section">
+          <div class="container">
+            <div class="section-head">
+              <p class="eyebrow">Khách hàng nói gì</p>
+              <h2>Phản hồi từ khách đã trải nghiệm tư vấn và dịch vụ tại salon.</h2>
+            </div>
+            <div class="testimonial-grid">
+              <article class="testimonial-card">“Tư vấn màu tóc rất kỹ, hợp da hơn.”</article>
+              <article class="testimonial-card">“Đặt lịch nhanh, đến salon không phải chờ lâu.”</article>
+              <article class="testimonial-card">“Kiểu tóc sau khi làm dễ chăm sóc hơn.”</article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section info-section" id="salon-info">
+          <div class="container info-grid">
+            <div class="info-panel">
+              <p class="eyebrow">Thông tin salon</p>
+              <h2>Liên hệ nhanh để đặt lịch tư vấn</h2>
+              <dl class="info-list">
+                <div class="info-item"><dt>Điện thoại</dt><dd id="salon-phone-detail">Đang cập nhật</dd></div>
+                <div id="info-zalo-row" class="info-item" hidden><dt>Zalo</dt><dd><a id="salon-zalo-link" href="#" target="_blank" rel="noreferrer">Mở Zalo salon</a></dd></div>
+                <div id="info-facebook-row" class="info-item" hidden><dt>Facebook</dt><dd><a id="salon-facebook-link" href="#" target="_blank" rel="noreferrer">Mở Facebook salon</a></dd></div>
+                <div class="info-item"><dt>Địa chỉ</dt><dd id="salon-address">Đang cập nhật</dd></div>
+                <div class="info-item"><dt>Giờ làm việc</dt><dd id="salon-hours">Đang cập nhật</dd></div>
+                <div class="info-item"><dt>Link public</dt><dd><a id="salon-public-link" href="#" target="_blank" rel="noreferrer">Mở trang salon</a></dd></div>
+              </dl>
+            </div>
+
+            <form id="appointment-form" class="appointment-form" novalidate>
+              <p class="eyebrow">Đặt lịch / tư vấn</p>
+              <h2>Đăng ký tư vấn nhanh</h2>
+              <label class="field">
+                <span>Họ tên</span>
+                <input id="customer-name" name="customer_name" type="text" placeholder="Ví dụ: Nguyễn Minh Anh" required />
+              </label>
+              <label class="field">
+                <span>Số điện thoại</span>
+                <input id="customer-phone" name="customer_phone" type="tel" placeholder="0901234567" required />
+              </label>
+              <label class="field">
+                <span>Dịch vụ quan tâm</span>
+                <input id="service-name" name="service_name" type="text" placeholder="Nhuộm, uốn, phục hồi..." />
+              </label>
+              <div class="field-row">
+                <label class="field">
+                  <span>Ngày muốn hẹn</span>
+                  <input id="appointment-date" name="appointment_date" type="date" />
+                </label>
+                <label class="field">
+                  <span>Giờ muốn hẹn</span>
+                  <input id="appointment-time" name="appointment_time" type="time" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Ghi chú</span>
+                <textarea id="customer-note" name="customer_note" rows="4" placeholder="Ví dụ: muốn tư vấn màu tôn da, tóc yếu cần phục hồi trước khi nhuộm"></textarea>
+              </label>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Gửi thông tin tư vấn</button>
+              </div>
+              <p id="appointment-feedback" class="feedback" role="status" aria-live="polite"></p>
+              <div id="appointment-quick-actions" class="quick-actions"></div>
+            </form>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="mobile-sticky" id="mobile-sticky" hidden>
+      <a id="sticky-call" href="#">Gọi</a>
+      <a id="sticky-zalo" href="#" target="_blank" rel="noreferrer">Zalo</a>
+      <a id="sticky-book" href="#salon-info">Đặt lịch</a>
+    </nav>
+
+    <script src="/salon.js"></script>
+  </body>
+</html>
