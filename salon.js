@@ -330,6 +330,99 @@ let activeTemplateConfig = TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
 let LOCAL_ASSETS = getLocalAssetsByTemplate(DEFAULT_TEMPLATE_ID);
 let SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 
+const CUSTOMER_IMAGE_MANIFEST_OVERRIDES = {
+  "salon-hung-saigon": {
+    missingKeys: ["consultation", "space-01", "experience", "dv-mau-toc"],
+    images: {
+      hero: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/hero.png",
+      hero02: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/hero-02.png",
+      colorService: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/color-service.png",
+      stylingService: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/styling-service.png",
+      treatmentService: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/treatment-service.jpg",
+      space02: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/space-02.png",
+      space03: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/space-03.png",
+      products: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/products.png",
+      services: {
+        cut: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-cat-tao-kieu.png",
+        fashionColor: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-nhuom-thoi-trang.png",
+        perm: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-uon-setting.png",
+        straight: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-duoi-phuc-hoi.jpg",
+        treatment: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-cham-soc-phuc-hoi.png",
+      },
+    },
+  },
+};
+
+function getCustomerImageOverride(slug) {
+  return CUSTOMER_IMAGE_MANIFEST_OVERRIDES[String(slug || "")] || null;
+}
+
+function applyCustomerImageOverrides(slug) {
+  const override = getCustomerImageOverride(slug);
+  if (!override || !override.images) {
+    return;
+  }
+
+  const images = override.images;
+  const services = images.services || {};
+
+  SALON_ASSETS = {
+    ...SALON_ASSETS,
+    hero: images.hero || SALON_ASSETS.hero,
+    hero02: images.hero02 || SALON_ASSETS.hero02,
+    consultation: images.consultation || SALON_ASSETS.consultation,
+    colorService: images.colorService || SALON_ASSETS.colorService,
+    stylingService: images.stylingService || SALON_ASSETS.stylingService,
+    treatmentService: images.treatmentService || SALON_ASSETS.treatmentService,
+    space01: images.space01 || SALON_ASSETS.space01,
+    space02: images.space02 || SALON_ASSETS.space02,
+    space03: images.space03 || SALON_ASSETS.space03,
+    experience: images.experience || SALON_ASSETS.experience,
+    productLineup: images.products || SALON_ASSETS.productLineup,
+    services: {
+      ...SALON_ASSETS.services,
+      cut: services.cut || SALON_ASSETS.services.cut,
+      color: services.color || SALON_ASSETS.services.color,
+      fashionColor: services.fashionColor || SALON_ASSETS.services.fashionColor,
+      perm: services.perm || SALON_ASSETS.services.perm,
+      straight: services.straight || SALON_ASSETS.services.straight,
+      treatment: services.treatment || SALON_ASSETS.services.treatment,
+    },
+  };
+
+  const missingKeys = new Set((override.missingKeys || []).map((item) => String(item)));
+  if (missingKeys.has("consultation")) {
+    SALON_ASSETS.consultation = "";
+  }
+  if (missingKeys.has("space-01")) {
+    SALON_ASSETS.space01 = "";
+  }
+  if (missingKeys.has("experience")) {
+    SALON_ASSETS.experience = "";
+  }
+  if (missingKeys.has("dv-mau-toc")) {
+    SALON_ASSETS.services.color = "";
+  }
+}
+
+function applyMissingCardVisibility(slug) {
+  const override = getCustomerImageOverride(slug);
+  const missingKeys = new Set(((override && override.missingKeys) || []).map((item) => String(item)));
+
+  if (els.consultVisualCard) {
+    els.consultVisualCard.hidden = missingKeys.has("consultation");
+  }
+  if (els.gallerySpace01Card) {
+    els.gallerySpace01Card.hidden = missingKeys.has("space-01");
+  }
+  if (els.gallerySpace04Card) {
+    els.gallerySpace04Card.hidden = missingKeys.has("experience");
+  }
+  if (els.serviceVisualConsultCard) {
+    els.serviceVisualConsultCard.hidden = missingKeys.has("dv-mau-toc");
+  }
+}
+
 const PRODUCT_IMAGE_PATTERN =
   /thehairlab-hero-product-lineup|thehairlab-|care-oil|collagen|professional-hair-color|salon-technical-products/i;
 
@@ -600,6 +693,7 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
   if (!finalSrc) {
     img.hidden = true;
     img.removeAttribute("src");
+    card.hidden = true;
     card.classList.add("is-fallback");
     return;
   }
@@ -614,18 +708,63 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
     finalSrc = finalFallback;
   }
 
-  img.hidden = false;
-  card.classList.remove("is-fallback");
-  img.onerror = () => {
-    if (finalFallback && img.src !== new URL(finalFallback, window.location.origin).href) {
-      img.src = finalFallback;
-      return;
-    }
+  const canLoadImage = (url) =>
+    new Promise((resolve) => {
+      if (!url) {
+        resolve(false);
+        return;
+      }
+
+      const testImage = new Image();
+      let settled = false;
+      const timer = window.setTimeout(() => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        resolve(false);
+      }, 6000);
+
+      testImage.onload = () => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        window.clearTimeout(timer);
+        resolve(true);
+      };
+
+      testImage.onerror = () => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        window.clearTimeout(timer);
+        resolve(false);
+      };
+
+      testImage.src = url;
+    });
+
+  let resolvedSrc = "";
+  if (await canLoadImage(finalSrc)) {
+    resolvedSrc = finalSrc;
+  } else if (finalFallback && finalFallback !== finalSrc && (await canLoadImage(finalFallback))) {
+    resolvedSrc = finalFallback;
+  }
+
+  if (!resolvedSrc) {
     img.hidden = true;
     img.removeAttribute("src");
+    card.hidden = true;
     card.classList.add("is-fallback");
-  };
-  img.src = finalSrc;
+    return;
+  }
+
+  img.src = resolvedSrc;
+  card.hidden = false;
+  img.hidden = false;
+  card.classList.remove("is-fallback");
 }
 
 function updateHeroBackdropImage() {
@@ -867,6 +1006,7 @@ function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme) {
   setupLogo(salon.logo_url || LOCAL_ASSETS.logo);
   updateContactActions(salon);
   renderQuickActions(salon);
+  applyMissingCardVisibility(slug);
   renderMediaBlocks();
   showState("ready");
   bindHeroVisualSync();
@@ -917,6 +1057,7 @@ async function loadSalon() {
   activeTemplateConfig = getTemplateConfigById(initialTemplateId);
   LOCAL_ASSETS = getLocalAssetsByTemplate(initialTemplateId);
   SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
+  applyCustomerImageOverrides(slug);
 
   // Try to fetch from D1 via Worker API first
   const controller = new AbortController();
@@ -944,6 +1085,7 @@ async function loadSalon() {
         activeTemplateConfig = getTemplateConfigById(resolvedTemplateId);
         LOCAL_ASSETS = getLocalAssetsByTemplate(resolvedTemplateId);
         SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
+        applyCustomerImageOverrides(slug);
         let salonToRender = null;
         const resolvedTheme = mergeThemeData(
           activeTemplateConfig.theme,

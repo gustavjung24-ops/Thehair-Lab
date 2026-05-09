@@ -8,7 +8,9 @@ param(
 
     [string]$CdnBase = "https://cdn.thehairlab.top/thehairlab",
 
-    [string]$OutputManifest = "content_exports/customer-image-manifest-{slug}.json"
+    [string]$OutputManifest = "content_exports/customer-image-manifest-{slug}.json",
+
+    [switch]$AllowMissing
 )
 
 $ErrorActionPreference = "Stop"
@@ -93,7 +95,9 @@ foreach ($key in $RequiredKeys) {
     }
 }
 
-$hasValidationError = ($missingKeys.Count -gt 0) -or ($extraFiles.Count -gt 0) -or ($duplicateKeys.Count -gt 0)
+$hasBlockingValidationError = ($extraFiles.Count -gt 0) -or ($duplicateKeys.Count -gt 0)
+$hasMissingValidationError = ($missingKeys.Count -gt 0) -and (-not $AllowMissing)
+$hasValidationError = $hasBlockingValidationError -or $hasMissingValidationError
 
 Write-Host ""
 Write-Host "=== Validation Summary ===" -ForegroundColor Cyan
@@ -131,6 +135,10 @@ if ($hasValidationError) {
     throw "Validation failed. Fix missing/duplicate/extra files before generating manifest."
 }
 
+if ($missingKeys.Count -gt 0 -and $AllowMissing) {
+    Write-Host "\n[ALLOW MISSING] Continue generating partial manifest." -ForegroundColor Yellow
+}
+
 function Get-CdnUrl {
     param(
         [Parameter(Mandatory = $true)][string]$FileName
@@ -148,31 +156,56 @@ function Get-KeyFileName {
     return $foundByKey[$Key][0].name
 }
 
-$images = [ordered]@{
-    hero = (Get-CdnUrl -FileName (Get-KeyFileName -Key "hero"))
-    hero02 = (Get-CdnUrl -FileName (Get-KeyFileName -Key "hero-02"))
-    consultation = (Get-CdnUrl -FileName (Get-KeyFileName -Key "consultation"))
-    colorService = (Get-CdnUrl -FileName (Get-KeyFileName -Key "color-service"))
-    stylingService = (Get-CdnUrl -FileName (Get-KeyFileName -Key "styling-service"))
-    treatmentService = (Get-CdnUrl -FileName (Get-KeyFileName -Key "treatment-service"))
-    space01 = (Get-CdnUrl -FileName (Get-KeyFileName -Key "space-01"))
-    space02 = (Get-CdnUrl -FileName (Get-KeyFileName -Key "space-02"))
-    space03 = (Get-CdnUrl -FileName (Get-KeyFileName -Key "space-03"))
-    experience = (Get-CdnUrl -FileName (Get-KeyFileName -Key "experience"))
-    products = (Get-CdnUrl -FileName (Get-KeyFileName -Key "products"))
-    services = [ordered]@{
-        cut = (Get-CdnUrl -FileName (Get-KeyFileName -Key "dv-cat-tao-kieu"))
-        color = (Get-CdnUrl -FileName (Get-KeyFileName -Key "dv-mau-toc"))
-        fashionColor = (Get-CdnUrl -FileName (Get-KeyFileName -Key "dv-nhuom-thoi-trang"))
-        perm = (Get-CdnUrl -FileName (Get-KeyFileName -Key "dv-uon-setting"))
-        straight = (Get-CdnUrl -FileName (Get-KeyFileName -Key "dv-duoi-phuc-hoi"))
-        treatment = (Get-CdnUrl -FileName (Get-KeyFileName -Key "dv-cham-soc-phuc-hoi"))
+function Has-KeyFile {
+    param(
+        [Parameter(Mandatory = $true)][string]$Key
+    )
+
+    return $foundByKey.ContainsKey($Key) -and $foundByKey[$Key].Count -gt 0
+}
+
+function Add-ImageIfPresent {
+    param(
+        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$Target,
+        [Parameter(Mandatory = $true)][string]$TargetKey,
+        [Parameter(Mandatory = $true)][string]$SourceKey
+    )
+
+    if (Has-KeyFile -Key $SourceKey) {
+        $Target[$TargetKey] = (Get-CdnUrl -FileName (Get-KeyFileName -Key $SourceKey))
     }
+}
+
+$images = [ordered]@{}
+
+Add-ImageIfPresent -Target $images -TargetKey "hero" -SourceKey "hero"
+Add-ImageIfPresent -Target $images -TargetKey "hero02" -SourceKey "hero-02"
+Add-ImageIfPresent -Target $images -TargetKey "consultation" -SourceKey "consultation"
+Add-ImageIfPresent -Target $images -TargetKey "colorService" -SourceKey "color-service"
+Add-ImageIfPresent -Target $images -TargetKey "stylingService" -SourceKey "styling-service"
+Add-ImageIfPresent -Target $images -TargetKey "treatmentService" -SourceKey "treatment-service"
+Add-ImageIfPresent -Target $images -TargetKey "space01" -SourceKey "space-01"
+Add-ImageIfPresent -Target $images -TargetKey "space02" -SourceKey "space-02"
+Add-ImageIfPresent -Target $images -TargetKey "space03" -SourceKey "space-03"
+Add-ImageIfPresent -Target $images -TargetKey "experience" -SourceKey "experience"
+Add-ImageIfPresent -Target $images -TargetKey "products" -SourceKey "products"
+
+$services = [ordered]@{}
+Add-ImageIfPresent -Target $services -TargetKey "cut" -SourceKey "dv-cat-tao-kieu"
+Add-ImageIfPresent -Target $services -TargetKey "color" -SourceKey "dv-mau-toc"
+Add-ImageIfPresent -Target $services -TargetKey "fashionColor" -SourceKey "dv-nhuom-thoi-trang"
+Add-ImageIfPresent -Target $services -TargetKey "perm" -SourceKey "dv-uon-setting"
+Add-ImageIfPresent -Target $services -TargetKey "straight" -SourceKey "dv-duoi-phuc-hoi"
+Add-ImageIfPresent -Target $services -TargetKey "treatment" -SourceKey "dv-cham-soc-phuc-hoi"
+
+if ($services.Count -gt 0) {
+    $images["services"] = $services
 }
 
 $manifest = [ordered]@{
     slug = $Slug
     cdnBase = $CdnBase
+    missingKeys = @($missingKeys)
     images = $images
 }
 
