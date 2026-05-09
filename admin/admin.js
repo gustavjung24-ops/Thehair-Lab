@@ -536,12 +536,12 @@ function renderSalonList() {
 					</div>
 
 					<div class="salon-actions">
-						<button class="btn btn-ghost" data-action="edit" data-id="${item.id}">Sua</button>
-						<button class="btn btn-danger" data-action="delete" data-id="${item.id}">Xoa demo</button>
-						<button class="btn btn-ghost" data-action="copy-landing" data-link="${escapeHtml(publicLink)}">Copy link landing page</button>
-						<button class="btn btn-ghost" data-action="copy-admin" data-link="${escapeHtml(customerAdminLink)}">Copy link admin khach</button>
-						<button class="btn btn-ghost" data-action="test-telegram" data-id="${item.id}">Test Telegram demo</button>
-						<button class="btn btn-ghost" data-action="test-sheet" data-id="${item.id}">Test Sheet demo</button>
+						<button type="button" class="btn btn-ghost" data-action="edit" data-id="${item.id}">Sua</button>
+						<button type="button" class="btn btn-danger" data-action="delete" data-id="${item.id}">Xoa demo</button>
+						<button type="button" class="btn btn-ghost" data-action="copy-landing" data-link="${escapeHtml(publicLink)}">Copy link landing page</button>
+						<button type="button" class="btn btn-ghost" data-action="copy-admin" data-link="${escapeHtml(customerAdminLink)}">Copy link admin khach</button>
+						<button type="button" class="btn btn-ghost" data-action="test-telegram" data-id="${item.id}">Test Telegram demo</button>
+						<button type="button" class="btn btn-ghost" data-action="test-sheet" data-id="${item.id}">Test Sheet demo</button>
 					</div>
 				</article>
 			`;
@@ -698,8 +698,58 @@ function buildSalonPayload() {
 	};
 }
 
-function saveSalonToLocal(payload) {
+async function syncSalonToWorkerBySlug(payload) {
+	const slug = String(payload?.slug || "").trim().toLowerCase();
+	if (!slug) {
+		return false;
+	}
+
+	for (const base of WORKER_BASES) {
+		try {
+			const getResponse = await fetch(`${base}/api/salons/${encodeURIComponent(slug)}`);
+			if (!getResponse.ok) {
+				continue;
+			}
+
+			const getData = await getResponse.json();
+			const currentAdminData =
+				(getData?.salon && getData.salon.admin_data && typeof getData.salon.admin_data === "object"
+					? getData.salon.admin_data
+					: null) || {};
+
+			const merged = JSON.parse(JSON.stringify(currentAdminData));
+			if (!merged.salon || typeof merged.salon !== "object") {
+				merged.salon = {};
+			}
+
+			merged.version = merged.version || 3;
+			merged.salon.name = payload.salon_name || merged.salon.name || "";
+			merged.salon.phone = payload.phone || merged.salon.phone || "";
+			merged.salon.zalo = payload.zalo_url || merged.salon.zalo || "";
+			merged.salon.address = payload.address || merged.salon.address || "";
+			merged.salon.status = payload.status || merged.salon.status || "inactive";
+
+			const putResponse = await fetch(`${base}/api/admin/salons/${encodeURIComponent(slug)}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(merged),
+			});
+
+			if (putResponse.ok) {
+				activeWorkerBase = base;
+				return true;
+			}
+		} catch {}
+	}
+
+	return false;
+}
+
+async function saveSalonToLocal(payload) {
 	const existing = salons.find((item) => item.id === payload.id);
+	const isEdit = Boolean(existing);
 	if (existing) {
 		payload.created_at = existing.created_at || nowIso();
 		salons = salons.map((item) => (item.id === payload.id ? payload : item));
@@ -713,6 +763,14 @@ function saveSalonToLocal(payload) {
 	persistSalons();
 	renderAll();
 	resetForm();
+
+	// Keep local-first behavior, then try Worker sync in background for edited salons.
+	if (isEdit) {
+		const synced = await syncSalonToWorkerBySlug(payload);
+		if (synced) {
+			showFormMessage("Cap nhat salon thanh cong. Da dong bo len Worker.");
+		}
+	}
 }
 
 async function onSalonSubmit(event) {
@@ -720,8 +778,13 @@ async function onSalonSubmit(event) {
 	els.sheetParseMessage.textContent = "";
 
 	const payload = buildSalonPayload();
-	if (!payload.salon_name || !payload.phone || !payload.slug) {
-		showFormMessage("Vui long nhap du Ten salon, Slug va So dien thoai.", true);
+	if (!payload.salon_name || !payload.phone || !payload.slug || !payload.status) {
+		showFormMessage("Vui long nhap du Ten salon, So dien thoai, Slug va Trang thai.", true);
+		return;
+	}
+
+	if (payload.status !== "active" && payload.status !== "inactive") {
+		showFormMessage("Trang thai khong hop le.", true);
 		return;
 	}
 
@@ -739,10 +802,8 @@ async function onSalonSubmit(event) {
 			payload.google_sheet_id = parsed;
 			els.fields.google_sheet_id.value = parsed;
 		} else {
-			els.sheetParseMessage.textContent =
-				"Khong nhan dien duoc Google Sheet ID. Vui long kiem tra lai link.";
-			showFormMessage("Link Google Sheet khong hop le.", true);
-			return;
+			// Google Sheet ID remains optional; warn only and still allow saving.
+			els.sheetParseMessage.textContent = "Khong nhan dien duoc Google Sheet ID, van co the luu salon.";
 		}
 	}
 
@@ -792,7 +853,7 @@ async function onSalonSubmit(event) {
 		}
 	}
 
-	saveSalonToLocal(payload);
+	await saveSalonToLocal(payload);
 }
 
 function findSalonById(id) {
