@@ -311,6 +311,35 @@ async function listAdminSalons(env, origin) {
   return jsonResponse({ success: true, salons: result.results || [] }, 200, origin);
 }
 
+async function listPublicSalons(env, origin) {
+  const result = await env.DB.prepare(`
+    SELECT
+      id,
+      slug,
+      salon_name,
+      phone,
+      zalo_url,
+      facebook_url,
+      address,
+      working_hours,
+      logo_url,
+      banner_url,
+      theme_color,
+      google_sheet_url,
+      google_sheet_id,
+      google_sheet_tab,
+      telegram_chat_id,
+      admin_email,
+      status,
+      created_at,
+      updated_at
+    FROM salons
+    ORDER BY updated_at DESC
+  `).all();
+
+  return jsonResponse({ success: true, salons: result.results || [] }, 200, origin);
+}
+
 function validateSalonPayload(payload) {
   if (!payload.salon_name) {
     return 'Tên salon là bắt buộc';
@@ -629,6 +658,10 @@ export default {
         return errorResponse('Unauthorized', 401, origin);
       }
       return listAdminSalons(env, origin);
+    }
+
+    if (pathname === '/api/public/salons' && method === 'GET') {
+      return listPublicSalons(env, origin);
     }
 
     if (pathname === '/api/admin/salons' && method === 'POST') {

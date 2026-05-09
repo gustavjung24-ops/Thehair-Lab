@@ -1,6 +1,10 @@
 ﻿const SALONS_KEY = "thehairlab_admin_salons";
 const SESSION_KEY = "thehairlab_admin_session";
 const API_CONFIG_KEY = "thehairlab_admin_api_config";
+const WORKER_BASES = [
+	"https://thehairlab-leads-worker.khuongbinh-info.workers.dev",
+	"https://thehairlab-leads-worker.khuongbinh-thehairlab.workers.dev",
+];
 const DEMO_EMAIL = "admin@thehairlab.top";
 const DEMO_PASSWORD = "admin123";
 const RESERVED_SLUGS = new Set([
@@ -65,6 +69,7 @@ const els = {
 let salons = [];
 let slugWasManual = false;
 let apiConfig = null;
+let activeWorkerBase = "";
 
 function nowIso() {
 	return new Date().toISOString();
@@ -124,43 +129,22 @@ function seedSalons() {
 	const seed = [
 		{
 			id: createId(),
-			salon_name: "Salon Hung Sai Gon",
-			slug: "salon-hung-sai-gon",
-			phone: "0909123456",
-			zalo_url: "",
+			salon_name: "Salon Hưng Saigon",
+			slug: "salon-hung-saigon",
+			phone: "0938212878",
+			zalo_url: "https://zalo.me/0938212878",
 			facebook_url: "",
-			address: "Quan 1, TP.HCM",
+			address: "Tân An, Long An",
 			working_hours: "08:30 - 20:00",
 			logo_url: "",
 			banner_url: "",
-			theme_color: "#8b5cf6",
-			google_sheet_url: "",
-			google_sheet_id: "",
-			google_sheet_tab: "appointments",
-			telegram_chat_id: "-1001234567890",
-			admin_email: "hung@salon.vn",
-			status: "active",
-			created_at: nowIso(),
-			updated_at: nowIso(),
-		},
-		{
-			id: createId(),
-			salon_name: "Minh Anh Hair",
-			slug: "minh-anh-hair",
-			phone: "0911222333",
-			zalo_url: "",
-			facebook_url: "",
-			address: "Quan 3, TP.HCM",
-			working_hours: "09:00 - 21:00",
-			logo_url: "",
-			banner_url: "",
-			theme_color: "#8b5cf6",
+			theme_color: "#6E8F62",
 			google_sheet_url: "",
 			google_sheet_id: "",
 			google_sheet_tab: "appointments",
 			telegram_chat_id: "",
-			admin_email: "minhanh@salon.vn",
-			status: "inactive",
+			admin_email: "hung@salon.vn",
+			status: "active",
 			created_at: nowIso(),
 			updated_at: nowIso(),
 		},
@@ -168,6 +152,54 @@ function seedSalons() {
 
 	salons = seed;
 	persistSalons();
+}
+
+function normalizeSalonRecord(item) {
+	const normalized = {
+		...item,
+		id: item?.id || createId(),
+		salon_name: String(item?.salon_name || "").trim(),
+		slug: String(item?.slug || "").trim().toLowerCase(),
+		phone: String(item?.phone || "").trim(),
+		zalo_url: String(item?.zalo_url || "").trim(),
+		facebook_url: String(item?.facebook_url || "").trim(),
+		address: String(item?.address || "").trim(),
+		working_hours: String(item?.working_hours || "").trim(),
+		logo_url: String(item?.logo_url || "").trim(),
+		banner_url: String(item?.banner_url || "").trim(),
+		theme_color: String(item?.theme_color || "#8b5cf6").trim() || "#8b5cf6",
+		google_sheet_url: String(item?.google_sheet_url || "").trim(),
+		google_sheet_id: String(item?.google_sheet_id || "").trim(),
+		google_sheet_tab: String(item?.google_sheet_tab || "appointments").trim() || "appointments",
+		telegram_chat_id: String(item?.telegram_chat_id || "").trim(),
+		admin_email: String(item?.admin_email || "").trim(),
+		status: item?.status === "active" ? "active" : "inactive",
+		created_at: item?.created_at || nowIso(),
+		updated_at: item?.updated_at || nowIso(),
+	};
+
+	if (normalized.slug === "salon-hung-sai-gon") {
+		normalized.slug = "salon-hung-saigon";
+		normalized.salon_name = "Salon Hưng Saigon";
+		normalized.phone = "0938212878";
+		normalized.address = "Tân An, Long An";
+		normalized.status = "active";
+		normalized.theme_color = "#6E8F62";
+		normalized.updated_at = nowIso();
+	}
+
+	return normalized;
+}
+
+function dedupeBySlug(list) {
+	const map = new Map();
+	list.forEach((item) => {
+		if (!item?.slug) {
+			return;
+		}
+		map.set(item.slug, item);
+	});
+	return Array.from(map.values());
 }
 
 function loadSalons() {
@@ -178,9 +210,18 @@ function loadSalons() {
 		salons = [];
 	}
 
+	if (!Array.isArray(salons)) {
+		salons = [];
+	}
+
+	salons = dedupeBySlug(salons.map(normalizeSalonRecord).filter((item) => Boolean(item.slug)));
+
 	if (!Array.isArray(salons) || salons.length === 0) {
 		seedSalons();
+		return;
 	}
+
+	persistSalons();
 }
 
 function persistSalons() {
@@ -273,21 +314,114 @@ async function requestApi(path, options = {}) {
 	return data;
 }
 
-async function loadSalonsData() {
-	if (!hasApiConfig()) {
-		loadSalons();
-		return;
+async function requestWorkerPublic(path) {
+	let lastError = null;
+
+	for (const base of WORKER_BASES) {
+		try {
+			const response = await fetch(`${base}${path}`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			let data = null;
+			try {
+				data = await response.json();
+			} catch {
+				data = null;
+			}
+
+			if (!response.ok || data?.success === false) {
+				lastError = new Error(data?.error || `HTTP ${response.status}`);
+				continue;
+			}
+
+			activeWorkerBase = base;
+			return data;
+		} catch (error) {
+			lastError = error;
+		}
 	}
 
-	try {
-		const data = await requestApi("/api/admin/salons", { method: "GET" });
-		salons = Array.isArray(data.salons) ? data.salons : [];
-		setApiModeStatus("Da ket noi API Worker thanh cong.");
-	} catch {
-		loadSalons();
-		setApiModeStatus("Khong ket noi duoc API, dang dung du lieu local.", true);
-		showFormMessage("Khong ket noi duoc API, dang dung du lieu local.", true);
+	throw lastError || new Error("WORKER_UNAVAILABLE");
+}
+
+function normalizeRemoteSalons(items) {
+	const list = Array.isArray(items) ? items : [];
+	return dedupeBySlug(
+		list
+			.map((item) => normalizeSalonRecord(item))
+			.filter((item) => Boolean(item.slug))
+			.filter((item) => item.slug !== "salon-hung-sai-gon"),
+	);
+}
+
+async function loadSalonsFromWorkerPublic() {
+	const data = await requestWorkerPublic("/api/public/salons");
+	const remoteSalons = normalizeRemoteSalons(data.salons);
+	if (!remoteSalons.length) {
+		throw new Error("NO_REMOTE_SALONS");
 	}
+	salons = remoteSalons;
+	persistSalons();
+	setApiModeStatus(`Dang dung du lieu Worker (${activeWorkerBase}).`);
+}
+
+async function loadSalonsFromWorkerBySlugFallback() {
+	loadSalons();
+	const slugSet = new Set(["salon-hung-saigon"]);
+	salons.forEach((item) => {
+		if (item?.slug) {
+			slugSet.add(String(item.slug).trim().toLowerCase());
+		}
+	});
+
+	const fetched = [];
+	for (const slug of slugSet) {
+		try {
+			const data = await requestWorkerPublic(`/api/salons/${encodeURIComponent(slug)}`);
+			if (data?.salon) {
+				fetched.push(normalizeSalonRecord(data.salon));
+			}
+		} catch {}
+	}
+
+	const normalized = normalizeRemoteSalons(fetched);
+	if (!normalized.length) {
+		throw new Error("NO_REMOTE_SLUG_DATA");
+	}
+
+	salons = normalized;
+	persistSalons();
+	setApiModeStatus(`Dang dung du lieu Worker theo slug (${activeWorkerBase}).`);
+}
+
+async function loadSalonsData() {
+	try {
+		await loadSalonsFromWorkerPublic();
+		return;
+	} catch {}
+
+	try {
+		await loadSalonsFromWorkerBySlugFallback();
+		return;
+	} catch {}
+
+	if (hasApiConfig()) {
+		try {
+			const data = await requestApi("/api/admin/salons", { method: "GET" });
+			salons = normalizeRemoteSalons(data.salons);
+			persistSalons();
+			setApiModeStatus("Dang dung du lieu API Worker (admin token).");
+			return;
+		} catch {}
+	}
+
+	loadSalons();
+	setApiModeStatus("Khong ket noi duoc Worker API. Dang fallback local cache/seed.", true);
+	showFormMessage("Khong ket noi duoc Worker API. Dang fallback local cache/seed.", true);
 }
 
 function showView(isLoggedIn) {
@@ -745,30 +879,25 @@ function onSalonListClick(event) {
 }
 
 async function onSeedClick() {
-	if (hasApiConfig()) {
-		await loadSalonsData();
-		renderAll();
-		showFormMessage("Da tai danh sach salon tu API.");
+	await loadSalonsData();
+	renderAll();
+	resetForm();
+
+	if (activeWorkerBase) {
+		showFormMessage("Da tai lai danh sach salon tu Worker.");
 		return;
 	}
 
-	const ok = window.confirm("Nap lai 2 salon seed demo? Du lieu hien tai se bi thay the.");
-	if (!ok) {
-		return;
-	}
-	seedSalons();
-	renderAll();
-	resetForm();
-	showFormMessage("Da nap lai du lieu seed demo.");
+	showFormMessage("Dang fallback local cache/seed vi Worker khong kha dung.", true);
 }
 
 async function onClearStorageClick() {
 	if (hasApiConfig()) {
-		showFormMessage("Dang o che do API, khong xoa localStorage de tranh mat cache.");
+		showFormMessage("Dang o che do API, khong xoa local cache de tranh mat cache.");
 		return;
 	}
 
-	const ok = window.confirm("Xoa toan bo du lieu salon demo trong localStorage?");
+	const ok = window.confirm("Xoa local cache salon tren trinh duyet nay?");
 	if (!ok) {
 		return;
 	}
@@ -776,7 +905,7 @@ async function onClearStorageClick() {
 	seedSalons();
 	renderAll();
 	resetForm();
-	showFormMessage("Da reset localStorage va tao lai seed demo.");
+	showFormMessage("Da xoa local cache va tao seed du phong.");
 }
 
 async function init() {

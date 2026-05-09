@@ -41,7 +41,7 @@
           <p class="muted">Quan ly cau hinh salon con tai nhanh /s/{slug}</p>
         </div>
         <div class="topbar-actions">
-          <button id="btn-seed" type="button" class="btn btn-ghost">Nap lai seed demo</button>
+          <button id="btn-seed" type="button" class="btn btn-ghost">Tai du lieu tu Worker</button>
           <button id="btn-logout" type="button" class="btn btn-danger">Dang xuat</button>
         </div>
       </header>
@@ -93,7 +93,7 @@
           <div class="grid two">
             <label class="field">
               <span>Ten salon *</span>
-              <input id="salon-name" name="salon_name" type="text" placeholder="Vi du: Salon Hung Sai Gon" required />
+              <input id="salon-name" name="salon_name" type="text" placeholder="Vi du: Salon Hung Saigon" required />
             </label>
             <label class="field">
               <span>So dien thoai *</span>
@@ -104,7 +104,7 @@
           <div class="grid two">
             <label class="field">
               <span>Slug / Duong danh salon *</span>
-              <input id="salon-slug" name="slug" type="text" placeholder="salon-hung-sai-gon" required />
+              <input id="salon-slug" name="slug" type="text" placeholder="salon-hung-saigon" required />
               <small class="muted">Link preview: <strong id="slug-preview">https://thehairlab.top/s/</strong></small>
               <small id="slug-error" class="error"></small>
             </label>
@@ -186,7 +186,7 @@
 
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Luu salon</button>
-            <button id="btn-clear-storage" type="button" class="btn btn-danger btn-outline">Xoa toan bo localStorage demo</button>
+            <button id="btn-clear-storage" type="button" class="btn btn-danger btn-outline">Xoa local cache</button>
           </div>
           <p id="form-message" class="message" role="status" aria-live="polite"></p>
         </form>
