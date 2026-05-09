@@ -1184,6 +1184,30 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    async function saveDataOnline() {
+      // Attempt to save to D1 via Worker API
+      const endpoint = `/api/admin/salons/${ADMIN_SLUG}`;
+      try {
+        const response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(state),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            return true; // Online save success
+          }
+        }
+      } catch (error) {
+        // Network error or API unavailable - will show fallback message
+      }
+      return false; // Online save failed
+    }
+
     function getSession() {
       const raw = localStorage.getItem(ADMIN_AUTH.sessionKey);
       if (!raw) return null;
@@ -1498,6 +1522,15 @@
       persistSilently();
       renderSections();
       showToast("Đã lưu trên thiết bị này");
+      
+      // Try to save online (fire-and-forget)
+      saveDataOnline().then((savedOnline) => {
+        if (savedOnline) {
+          showToast("Đã lưu online thành công");
+        }
+      }).catch(() => {
+        // Silent fail - user already has local save
+      });
     }
 
     function resetData() {

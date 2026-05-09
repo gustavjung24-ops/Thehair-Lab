@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin · Salon Test Mẫu 05 - Gold Luxury Professional</title>
+  <title>Admin · Salon Test Mẫu 01 - Lavender Beauty</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -846,10 +846,10 @@
 <body>
   <main id="login-screen" class="login-screen">
     <section class="login-card">
-      <div class="login-card__brand">M05</div>
+      <div class="login-card__brand">M01</div>
       <h1>Đăng nhập quản trị salon</h1>
       <p>Dùng số điện thoại salon được bàn giao để mở khu chỉnh sửa nội dung.</p>
-      <div id="login-salon-name" class="login-card__salon">Salon Test Mẫu 05 - Gold Luxury Professional</div>
+      <div id="login-salon-name" class="login-card__salon">Salon Test Mẫu 01 - Lavender Beauty</div>
       <form class="login-form" onsubmit="handleLogin(event)">
         <div class="field">
           <label for="login-phone">Số điện thoại</label>
@@ -872,10 +872,10 @@
   <div id="admin-app" class="admin-app">
     <header class="admin-header">
       <div class="admin-header__inner">
-        <div class="admin-badge">M05</div>
+        <div class="admin-badge">M01</div>
         <div class="admin-headline">
           <small>Admin con · The Hair Lab</small>
-          <strong>Admin · Salon Test Mẫu 05</strong>
+          <strong>Admin · Salon Test Mẫu 01</strong>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
@@ -890,8 +890,8 @@
         <div class="hero-card__top">
           <div class="hero-card__title">
             <small>Bản nháp lưu trên máy này</small>
-            <h1 id="summary-salon-name">Salon Test Mẫu 05 - Gold Luxury Professional</h1>
-            <p>Mẫu đang dùng: Gold Luxury Professional. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
+            <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
+            <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
           </div>
           <div class="status-chip" id="summary-status">Đang hiển thị</div>
         </div>
@@ -938,7 +938,7 @@
 
   <script>
     const ADMIN_SLUG_MATCH = window.location.pathname.match(/\/s\/([^/]+)\/admin\/?$/i);
-    const ADMIN_SLUG = (ADMIN_SLUG_MATCH && ADMIN_SLUG_MATCH[1]) ? ADMIN_SLUG_MATCH[1] : "salon-test-mau-05";
+    const ADMIN_SLUG = (ADMIN_SLUG_MATCH && ADMIN_SLUG_MATCH[1]) ? ADMIN_SLUG_MATCH[1] : "salon-test-mau-01";
     const STORAGE_KEY = `thehairlab.admin.${ADMIN_SLUG}`;
     const DATA_VERSION = 3;
     const CREDENTIAL_KEY = `thehairlab.admin.credentials.${ADMIN_SLUG}`;
@@ -951,24 +951,24 @@
     const DEFAULT_ADMIN_DATA = {
       version: 3,
       salon: {
-        name: "Salon Test Mẫu 05 - Gold Luxury Professional",
-        logoText: "M05",
+        name: "Salon Test Mẫu 01 - Lavender Beauty",
+        logoText: "M01",
         phone: "0902964685",
-        zalo: "0902964685",
-        address: "The Hair Lab - Mẫu giao diện salon chuyên nghiệp",
+        zalo: "0900000000",
+        address: "123 Lavender Beauty, Phường Salon, TP. Hồ Chí Minh",
         status: "active"
       },
       theme: {
-        templateName: "Gold Luxury Professional",
-        primary: "#B8924A",
-        secondary: "#E5D2A2",
-        accent: "#F7EED5",
-        background: "#FFFCF5",
-        textDark: "#4C3A1E"
+        templateName: "Lavender Beauty",
+        primary: "#8B5CF6",
+        secondary: "#6D28D9",
+        accent: "#EDE9FE",
+        background: "#FFFAF5",
+        textDark: "#221B35"
       },
       hero: {
-        title: "Tư vấn miễn phí kiểu tóc chuyên nghiệp với chuẩn phục hồi cao cấp",
-        description: "Đặt lịch để được soi nền tóc, chọn dịch vụ cắt - uốn - nhuộm - phục hồi theo quy trình chuyên nghiệp và sang trọng.",
+        title: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt",
+        description: "Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.",
         primaryButton: "Đặt lịch tư vấn",
         secondaryButton: "Gọi salon",
         zaloButton: "Nhắn Zalo",
@@ -983,17 +983,17 @@
       services: [
         {
           id: "cat-tao-kieu",
-          title: "Cắt & tạo kiểu",
+          title: "Cắt & tạo kiểu nữ",
           price: "Từ 199K",
-          description: "Cắt và tạo kiểu chuẩn phom để tóc gọn đẹp, sang trọng và giữ nếp ổn định.",
+          description: "Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.",
           visible: true,
           imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png"
         },
         {
           id: "mau-toc",
-          title: "Màu tóc",
+          title: "Tư vấn màu tóc tôn da",
           price: "Từ 499K",
-          description: "Tư vấn màu tóc phù hợp undertone da và định hình hình ảnh chuyên nghiệp.",
+          description: "Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.",
           visible: true,
           imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png"
         },
@@ -1001,7 +1001,7 @@
           id: "nhuom-thoi-trang",
           title: "Nhuộm thời trang",
           price: "Từ 699K",
-          description: "Nhuộm thời trang kỹ thuật cao, giữ độ bóng mượt và bền màu trong lịch làm việc dày.",
+          description: "Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.",
           visible: true,
           imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png"
         },
@@ -1009,7 +1009,7 @@
           id: "uon-setting",
           title: "Uốn setting",
           price: "Từ 799K",
-          description: "Uốn setting tạo độ bồng sang trọng, vào nếp nhanh và phù hợp nhiều phong cách cao cấp.",
+          description: "Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.",
           visible: true,
           imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png"
         },
@@ -1017,22 +1017,22 @@
           id: "duoi-phuc-hoi",
           title: "Duỗi phục hồi",
           price: "Từ 899K",
-          description: "Duỗi phục hồi giúp tóc suôn mượt, giảm gãy rối và giữ độ chắc khỏe dài lâu.",
+          description: "Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.",
           visible: true,
           imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png"
         },
         {
           id: "cham-soc-phuc-hoi",
-          title: "Chăm sóc phục hồi",
+          title: "Chăm sóc phục hồi tóc",
           price: "Từ 349K",
-          description: "Liệu trình phục hồi cao cấp giúp tóc yếu lấy lại độ bóng, độ đàn hồi và bề mặt mềm mượt.",
+          description: "Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.",
           visible: true,
           imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png"
         }
       ],
       consultation: {
-        title: "Quy trình 4 bước chuyên nghiệp rõ ràng để khách an tâm trước khi làm dịch vụ.",
-        description: "Tư vấn miễn phí theo nền tóc thực tế để xây lộ trình dịch vụ phù hợp, an toàn và tối ưu chi phí.",
+        title: "Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.",
+        description: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.",
         bullets: [
           { id: "consult-1", title: "Đọc tỷ lệ gương mặt", description: "Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.", visible: true },
           { id: "consult-2", title: "Kiểm tra nền tóc", description: "Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.", visible: true },
@@ -1096,7 +1096,7 @@
 
     const SECTION_DEFS = [
       { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo chữ, số gọi, Zalo, địa chỉ và các điểm tin cậy dưới hero." },
-      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Gold Luxury Professional đúng với landing Mẫu 05." },
+      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Lavender Beauty đúng với landing Mẫu 01." },
       { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Tiêu đề chính, mô tả, nút bấm và ảnh hero." },
       { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "6 card dịch vụ thực tế đang hiển thị trên landing page." },
       { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Section tư vấn miễn phí và 4 bước tư vấn cho khách." },
@@ -1182,6 +1182,30 @@
 
     function persistSilently() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    async function saveDataOnline() {
+      // Attempt to save to D1 via Worker API
+      const endpoint = `/api/admin/salons/${ADMIN_SLUG}`;
+      try {
+        const response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(state),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            return true; // Online save success
+          }
+        }
+      } catch (error) {
+        // Network error or API unavailable - will show fallback message
+      }
+      return false; // Online save failed
     }
 
     function getSession() {
@@ -1498,10 +1522,19 @@
       persistSilently();
       renderSections();
       showToast("Đã lưu trên thiết bị này");
+      
+      // Try to save online (fire-and-forget)
+      saveDataOnline().then((savedOnline) => {
+        if (savedOnline) {
+          showToast("Đã lưu online thành công");
+        }
+      }).catch(() => {
+        // Silent fail - user already has local save
+      });
     }
 
     function resetData() {
-      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc version 3?");
+      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Lavender Beauty version 3?");
       if (!confirmed) return;
       clearAllPreviewState();
       state = deepClone(DEFAULT_ADMIN_DATA);

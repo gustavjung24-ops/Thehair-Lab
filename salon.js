@@ -841,6 +841,7 @@ async function loadSalon() {
   LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdFromSlug(slug));
   SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 
+  // Check TEMPLATE_SALON_OVERRIDES first (template/customer slugs)
   const demoOverride = TEMPLATE_SALON_OVERRIDES[slug];
   if (demoOverride) {
     const demoSalon = mergeSalonData(demoOverride, activeTemplateConfig);
@@ -849,14 +850,88 @@ async function loadSalon() {
     return;
   }
 
+  // Try to fetch from D1 via Worker API first
   const controller = new AbortController();
   const fetchTimeout = setTimeout(() => controller.abort(), 8000);
 
   try {
-    const response = await fetch(`${API_BASE}/${encodeURIComponent(slug)}`, {
+    // Try new GET /api/salons/:slug endpoint (D1-backed)
+    const response = await fetch(`/api/salons/${encodeURIComponent(slug)}`, {
       signal: controller.signal,
     });
     clearTimeout(fetchTimeout);
+
+    if (response.ok) {
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (data?.success && data?.salon) {
+        // D1 has this salon - use it
+        const salonData = data.salon;
+        let salonToRender = null;
+
+        // If D1 has admin_data JSON, use it (includes theme, services, etc)
+        if (salonData.admin_data && typeof salonData.admin_data === 'object') {
+          // admin_data has full version 3 structure
+          salonToRender = {
+            salon_name: salonData.admin_data.salon?.name || salonData.salon_name,
+            phone: salonData.admin_data.salon?.phone || salonData.phone,
+            zalo_url: salonData.admin_data.salon?.zalo ? `https://zalo.me/${salonData.admin_data.salon.zalo}` : salonData.zalo_url,
+            address: salonData.admin_data.salon?.address || salonData.address,
+            working_hours: salonData.working_hours || DEFAULT_SALON.working_hours,
+            theme_color: salonData.admin_data.theme?.primary || activeTemplateConfig.theme.primary,
+            logo_url: salonData.logo_url || '',
+            facebook_url: salonData.facebook_url || DEFAULT_SALON.facebook_url,
+          };
+          // Merge and apply full admin data rendering
+          const mergedSalon = mergeSalonData(salonToRender, activeTemplateConfig);
+          // Store admin_data for theme override
+          if (salonData.admin_data.theme) {
+            Object.assign(activeTemplateConfig.theme, salonData.admin_data.theme);
+          }
+          renderSalon(mergedSalon, slug);
+          bindDemoForm(mergedSalon);
+          return;
+        } else {
+          // Only basic salon info in D1, no admin customization yet
+          salonToRender = mergeSalonData(
+            {
+              salon_name: salonData.salon_name,
+              phone: salonData.phone,
+              zalo_url: salonData.zalo_url,
+              address: salonData.address,
+              working_hours: salonData.working_hours,
+              theme_color: salonData.theme_color,
+              logo_url: salonData.logo_url,
+              facebook_url: salonData.facebook_url,
+            },
+            activeTemplateConfig
+          );
+          renderSalon(salonToRender, slug);
+          bindDemoForm(salonToRender);
+          return;
+        }
+      }
+    }
+  } catch (error) {
+    // /api/salons/:slug failed or timeout - will fallback below
+  }
+
+  clearTimeout(fetchTimeout);
+
+  // Fallback: try old API_BASE endpoint if available
+  const controller2 = new AbortController();
+  const fetchTimeout2 = setTimeout(() => controller2.abort(), 8000);
+
+  try {
+    const response = await fetch(`${API_BASE}/${encodeURIComponent(slug)}`, {
+      signal: controller2.signal,
+    });
+    clearTimeout(fetchTimeout2);
     let data = null;
     try {
       data = await response.json();
@@ -864,23 +939,22 @@ async function loadSalon() {
       data = null;
     }
 
-    if (!response.ok || !data?.success || !data?.salon) {
-      showError(
-        "Salon không tồn tại hoặc đang tạm ngưng",
-        "Salon không tồn tại hoặc đang tạm ngưng. Vui lòng quay về The Hair Lab để xem thêm thông tin."
-      );
+    if (response.ok && data?.success && data?.salon) {
+      const salon = mergeSalonData(data.salon, activeTemplateConfig);
+      renderSalon(salon, slug);
+      bindDemoForm(salon);
       return;
     }
-
-    const salon = mergeSalonData(data.salon, activeTemplateConfig);
-    renderSalon(salon, slug);
-    bindDemoForm(salon);
-  } catch {
-    clearTimeout(fetchTimeout);
-    const fallbackSalon = mergeSalonData(null, activeTemplateConfig);
-    renderSalon(fallbackSalon, slug);
-    bindDemoForm(fallbackSalon);
+  } catch (error) {
+    // Old API also failed
   }
+
+  clearTimeout(fetchTimeout2);
+
+  // Final fallback: use static config if any defined
+  const fallbackSalon = mergeSalonData(null, activeTemplateConfig);
+  renderSalon(fallbackSalon, slug);
+  bindDemoForm(fallbackSalon);
 }
 
 showState("loading");

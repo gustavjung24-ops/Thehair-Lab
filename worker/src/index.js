@@ -480,7 +480,73 @@ async function getPublicSalonBySlug(env, origin, slug) {
     return errorResponse('Salon không tồn tại hoặc đang tạm ngưng', 404, origin);
   }
 
-  return jsonResponse({ success: true, salon }, 200, origin);
+  // If admin_data_json exists, parse and merge with basic salon info
+  let adminData = null;
+  if (salon.admin_data_json) {
+    try {
+      adminData = JSON.parse(salon.admin_data_json);
+    } catch {
+      // If JSON parse fails, return basic salon info only
+      adminData = null;
+    }
+  }
+
+  const returnData = {
+    ...salon,
+    admin_data: adminData, // Include parsed admin data for public page rendering
+  };
+
+  return jsonResponse({ success: true, salon: returnData }, 200, origin);
+}
+
+async function saveAdminSalonBySlug(request, env, origin, slug) {
+  const normalizedSlug = (slug || '').trim().toLowerCase();
+  
+  if (!normalizedSlug || !/^[a-z0-9-]+$/.test(normalizedSlug)) {
+    return errorResponse('Slug không hợp lệ', 400, origin);
+  }
+
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  // body should contain full admin version 3 data:
+  // { salon, theme, hero, trustBadges, services, consultation, gallery, products, feedback, booking }
+  if (!body || typeof body !== 'object') {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  // Check if salon exists by slug
+  const existing = await env.DB.prepare(
+    'SELECT id AS salon_id FROM salons WHERE slug = ? LIMIT 1',
+  ).bind(normalizedSlug).first();
+
+  if (!existing) {
+    return errorResponse('Salon không tồn tại', 404, origin);
+  }
+
+  // Serialize admin data to JSON
+  let adminDataJson;
+  try {
+    adminDataJson = JSON.stringify(body);
+  } catch {
+    return errorResponse('Không thể serialize dữ liệu admin', 400, origin);
+  }
+
+  // Update salon's admin_data_json column
+  await env.DB.prepare(
+    'UPDATE salons SET admin_data_json = ?, updated_at = CURRENT_TIMESTAMP WHERE slug = ?',
+  ).bind(adminDataJson, normalizedSlug).run();
+
+  // Return updated salon
+  const updated = await env.DB.prepare(
+    'SELECT * FROM salons WHERE slug = ? LIMIT 1',
+  ).bind(normalizedSlug).first();
+
+  return jsonResponse({ success: true, salon: updated }, 200, origin);
 }
 
 // ─── Main Handler ──────────────────────────────────────────────────────────
@@ -494,6 +560,16 @@ export default {
     // CORS preflight
     if (method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
+    }
+
+    // GET /api/salons/:slug (public, trả admin data từ D1)
+    if (segments.length === 3 && segments[0] === 'api' && segments[1] === 'salons' && method === 'GET') {
+      return getPublicSalonBySlug(env, origin, decodeURIComponent(segments[2] || ''));
+    }
+
+    // PUT /api/admin/salons/:slug (admin saves to D1)
+    if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'admin' && segments[2] === 'salons' && method === 'PUT') {
+      return saveAdminSalonBySlug(request, env, origin, decodeURIComponent(segments[3] || ''));
     }
 
     if (pathname === '/api/admin/salons' && method === 'GET') {
