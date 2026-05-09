@@ -779,6 +779,37 @@
       display: block;
     }
 
+    .account-banner {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(146, 64, 14, 0.18);
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .account-message {
+      display: none;
+      margin-top: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .account-message.show {
+      display: block;
+    }
+
+    .account-message.error {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
     @media (max-width: 720px) {
       .grid-2,
       .grid-3,
@@ -866,7 +897,7 @@
         </div>
         <div class="hero-card__meta">
           <div class="meta-box">
-            <strong>9</strong>
+            <strong>10</strong>
             <span>Đề mục chính</span>
           </div>
           <div class="meta-box">
@@ -908,6 +939,7 @@
   <script>
     const STORAGE_KEY = "thehairlab.admin.salon-test-mau-01";
     const DATA_VERSION = 3;
+    const CREDENTIAL_KEY = "thehairlab.admin.credentials.salon-test-mau-01";
     const ADMIN_AUTH = {
       password: "admin123",
       sessionKey: "thehairlab.admin.session.salon-test-mau-01"
@@ -1068,12 +1100,13 @@
       { id: "gallery", icon: "📸", title: "Không gian salon", desc: "3 ảnh không gian thật để khách hình dung trải nghiệm." },
       { id: "products", icon: "⭐", title: "Sản phẩm sử dụng", desc: "Section sản phẩm chuyên nghiệp sử dụng tại salon." },
       { id: "feedback", icon: "💬", title: "Feedback khách hàng", desc: "Các đánh giá đang dùng để tăng độ tin cậy." },
-      { id: "booking", icon: "📅", title: "Form đặt lịch", desc: "Tiêu đề form, ghi chú, lời cảm ơn và các trường hiển thị." }
+      { id: "booking", icon: "📅", title: "Form đặt lịch", desc: "Tiêu đề form, ghi chú, lời cảm ơn và các trường hiển thị." },
+      { id: "account", icon: "🔐", title: "Tài khoản & mật khẩu", desc: "Đổi mật khẩu đăng nhập và kiểm tra trạng thái bảo mật tài khoản." }
     ];
 
     let state = deepClone(DEFAULT_ADMIN_DATA);
     let currentOpen = "basic";
-  let isAuthenticated = false;
+    let isAuthenticated = false;
     const previewState = {};
 
     function deepClone(value) {
@@ -1082,6 +1115,15 @@
 
     function normalizePhone(value) {
       return String(value || "").replace(/\D/g, "");
+    }
+
+    async function sha256(text) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
     }
 
     function esc(value) {
@@ -1162,6 +1204,46 @@
       localStorage.removeItem(ADMIN_AUTH.sessionKey);
     }
 
+    function getCredentials() {
+      const raw = localStorage.getItem(CREDENTIAL_KEY);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return null;
+        if (typeof parsed.passwordHash !== "string" || !parsed.passwordHash) return null;
+        return {
+          passwordHash: parsed.passwordHash,
+          updatedAt: parsed.updatedAt || "",
+          isDefaultPassword: parsed.isDefaultPassword !== false
+        };
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function setCredentials(passwordHash) {
+      localStorage.setItem(CREDENTIAL_KEY, JSON.stringify({
+        passwordHash,
+        updatedAt: new Date().toISOString(),
+        isDefaultPassword: false
+      }));
+    }
+
+    function isUsingDefaultPassword() {
+      const credentials = getCredentials();
+      if (!credentials) return true;
+      return credentials.isDefaultPassword !== false;
+    }
+
+    async function verifyPassword(inputPassword) {
+      const credentials = getCredentials();
+      if (!credentials || !credentials.passwordHash) {
+        return inputPassword === ADMIN_AUTH.password;
+      }
+      const inputHash = await sha256(inputPassword);
+      return inputHash === credentials.passwordHash;
+    }
+
     function loadState() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
@@ -1206,6 +1288,15 @@
       element.classList.toggle("show", Boolean(message));
     }
 
+    function setAccountError(message) {
+      const element = document.getElementById("account-error");
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.toggle("show", Boolean(message));
+      if (message) element.classList.add("error");
+      else element.classList.remove("error");
+    }
+
     function renderAuthView() {
       const loginScreen = document.getElementById("login-screen");
       const adminApp = document.getElementById("admin-app");
@@ -1231,14 +1322,15 @@
       renderSections();
     }
 
-    function handleLogin(event) {
+    async function handleLogin(event) {
       if (event) event.preventDefault();
       const phoneField = document.getElementById("login-phone");
       const passwordField = document.getElementById("login-password");
       const phone = normalizePhone(phoneField ? phoneField.value : "");
       const expectedPhone = normalizePhone(DEFAULT_ADMIN_DATA.salon.phone);
       const password = passwordField ? passwordField.value : "";
-      if (phone !== expectedPhone || password !== ADMIN_AUTH.password) {
+      const passwordValid = await verifyPassword(password);
+      if (phone !== expectedPhone || !passwordValid) {
         setLoginError("Số điện thoại hoặc mật khẩu chưa đúng.");
         if (passwordField) passwordField.value = "";
         return;
@@ -1254,6 +1346,43 @@
       isAuthenticated = false;
       renderAuthView();
       showToast("Đã đăng xuất");
+    }
+
+    async function changePassword(event) {
+      if (event) event.preventDefault();
+      setAccountError("");
+      const currentInput = document.getElementById("account-current-password");
+      const nextInput = document.getElementById("account-new-password");
+      const confirmInput = document.getElementById("account-confirm-password");
+      const currentPassword = currentInput ? currentInput.value : "";
+      const nextPassword = nextInput ? nextInput.value : "";
+      const confirmPassword = confirmInput ? confirmInput.value : "";
+
+      if (!await verifyPassword(currentPassword)) {
+        setAccountError("Mật khẩu hiện tại chưa đúng.");
+        if (currentInput) currentInput.value = "";
+        return;
+      }
+      if (nextPassword.length < 6) {
+        setAccountError("Mật khẩu mới phải có ít nhất 6 ký tự.");
+        return;
+      }
+      if (nextPassword === ADMIN_AUTH.password) {
+        setAccountError("Mật khẩu mới không được là admin123.");
+        return;
+      }
+      if (nextPassword !== confirmPassword) {
+        setAccountError("Nhập lại mật khẩu mới chưa khớp.");
+        return;
+      }
+
+      const nextHash = await sha256(nextPassword);
+      setCredentials(nextHash);
+      if (currentInput) currentInput.value = "";
+      if (nextInput) nextInput.value = "";
+      if (confirmInput) confirmInput.value = "";
+      renderSections();
+      showToast("Đã đổi mật khẩu. Lần sau hãy dùng mật khẩu mới.");
     }
 
     function updateSummary() {
@@ -1579,6 +1708,25 @@
         "<div class=\"subhead\">Các trường đang hiển thị</div>" + fields;
     }
 
+    function renderAccountSection() {
+      const session = getSession();
+      const displayPhone = session && session.username ? session.username : normalizePhone(state.salon.phone);
+      const banner = isUsingDefaultPassword()
+        ? "<div class=\"account-banner\">Bạn đang dùng mật khẩu bàn giao mặc định admin123. Nên đổi mật khẩu sau khi nhận web.</div>"
+        : "";
+      return "<div class=\"info-box\">Tài khoản đăng nhập là số điện thoại salon.</div>" +
+        "<div class=\"field\"><label>Số điện thoại đăng nhập hiện tại</label><input type=\"text\" value=\"" + esc(displayPhone) + "\" readonly /></div>" +
+        banner +
+        "<form onsubmit=\"changePassword(event)\">" +
+          "<div class=\"field\"><label for=\"account-current-password\">Mật khẩu hiện tại</label><input type=\"password\" id=\"account-current-password\" autocomplete=\"current-password\" /></div>" +
+          "<div class=\"field\"><label for=\"account-new-password\">Mật khẩu mới</label><input type=\"password\" id=\"account-new-password\" autocomplete=\"new-password\" /></div>" +
+          "<div class=\"field\"><label for=\"account-confirm-password\">Nhập lại mật khẩu mới</label><input type=\"password\" id=\"account-confirm-password\" autocomplete=\"new-password\" /></div>" +
+          "<div class=\"field-hint\">Mật khẩu mới tối thiểu 6 ký tự và không dùng admin123.</div>" +
+          "<div id=\"account-error\" class=\"account-message\" role=\"alert\"></div>" +
+          "<div class=\"login-actions\"><button class=\"btn btn-primary\" type=\"submit\">🔐 Đổi mật khẩu</button></div>" +
+        "</form>";
+    }
+
     function renderSectionBody(id) {
       if (id === "basic") return renderBasicSection();
       if (id === "theme") return renderThemeSection();
@@ -1589,6 +1737,7 @@
       if (id === "products") return renderProductsSection();
       if (id === "feedback") return renderFeedbackSection();
       if (id === "booking") return renderBookingSection();
+      if (id === "account") return renderAccountSection();
       return "";
     }
 
