@@ -680,6 +680,105 @@
       gap: 10px;
     }
 
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background:
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.16), transparent 40%),
+        linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+      border: 1px solid rgba(109, 40, 217, 0.12);
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(109, 40, 217, 0.12);
+      padding: 24px;
+    }
+
+    .login-card__brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 12px 26px rgba(109, 40, 217, 0.24);
+      margin-bottom: 14px;
+    }
+
+    .login-card h1 {
+      font-size: 28px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .login-card__salon {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #faf7ff;
+      border: 1px solid rgba(109, 40, 217, 0.08);
+      color: var(--primary-deep);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .login-form {
+      margin-top: 18px;
+    }
+
+    .login-error {
+      display: none;
+      margin-top: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .login-meta {
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .login-actions {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-app {
+      display: none;
+    }
+
+    .admin-app.is-authenticated {
+      display: block;
+    }
+
     @media (max-width: 720px) {
       .grid-2,
       .grid-3,
@@ -687,8 +786,18 @@
         grid-template-columns: 1fr;
       }
 
+      .admin-header__inner {
+        align-items: flex-start;
+      }
+
       .header-actions {
-        display: none;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .header-actions .btn {
+        padding: 8px 11px;
+        font-size: 12px;
       }
     }
 
@@ -704,80 +813,112 @@
   </style>
 </head>
 <body>
-  <header class="admin-header">
-    <div class="admin-header__inner">
-      <div class="admin-badge">M01</div>
-      <div class="admin-headline">
-        <small>Admin con · The Hair Lab</small>
-        <strong>Admin · Salon Test Mẫu 01</strong>
+  <main id="login-screen" class="login-screen">
+    <section class="login-card">
+      <div class="login-card__brand">M01</div>
+      <h1>Đăng nhập quản trị salon</h1>
+      <p>Dùng số điện thoại salon được bàn giao để mở khu chỉnh sửa nội dung.</p>
+      <div id="login-salon-name" class="login-card__salon">Salon Test Mẫu 01 - Lavender Beauty</div>
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="field">
+          <label for="login-phone">Số điện thoại</label>
+          <input type="text" id="login-phone" autocomplete="username" inputmode="tel" placeholder="Ví dụ: 0902 964 685" />
+          <div class="field-hint">Dùng số điện thoại salon được bàn giao.</div>
+        </div>
+        <div class="field">
+          <label for="login-password">Mật khẩu</label>
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="Nhập mật khẩu quản trị" />
+        </div>
+        <div id="login-error" class="login-error" role="alert">Số điện thoại hoặc mật khẩu chưa đúng.</div>
+        <div class="login-actions">
+          <button class="btn btn-primary" type="submit">🔐 Đăng nhập</button>
+        </div>
+      </form>
+      <div class="login-meta">Đây là đăng nhập demo trên trình duyệt. Khi bàn giao thật sẽ bật bảo mật online.</div>
+    </section>
+  </main>
+
+  <div id="admin-app" class="admin-app">
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <div class="admin-badge">M01</div>
+        <div class="admin-headline">
+          <small>Admin con · The Hair Lab</small>
+          <strong>Admin · Salon Test Mẫu 01</strong>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
+          <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
+          <button class="btn btn-danger" type="button" onclick="logoutAdmin()">↩ Đăng xuất</button>
+        </div>
       </div>
-      <div class="header-actions">
+    </header>
+
+    <div class="shell">
+      <section class="hero-card">
+        <div class="hero-card__top">
+          <div class="hero-card__title">
+            <small>Bản nháp lưu trên máy này</small>
+            <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
+            <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
+          </div>
+          <div class="status-chip" id="summary-status">Đang hiển thị</div>
+        </div>
+        <div class="hero-card__meta">
+          <div class="meta-box">
+            <strong>9</strong>
+            <span>Đề mục chính</span>
+          </div>
+          <div class="meta-box">
+            <strong id="summary-service-count">6</strong>
+            <span>Dịch vụ hiển thị</span>
+          </div>
+          <div class="meta-box">
+            <strong>Local</strong>
+            <span>Lưu trên máy này</span>
+          </div>
+        </div>
+        <div class="toolbar">
+          <span class="chip chip-draft">📋 Bản nháp lưu trên máy này</span>
+          <span class="chip chip-local">🖼 Ảnh mới chỉ xem thử tại thiết bị này</span>
+        </div>
+      </section>
+
+      <section class="notice-card">
+        ⚠️ <strong>Đây là đăng nhập demo trên trình duyệt.</strong> Khi bàn giao thật sẽ bật bảo mật online. Ảnh mới chọn từ điện thoại hiện chỉ xem thử trong admin, chưa cập nhật lên website.
+      </section>
+
+      <section id="sections" class="sections"></section>
+
+      <div class="reset-wrap">
+        <button class="btn btn-danger" type="button" onclick="resetData()">🔄 Reset về mẫu gốc</button>
+      </div>
+    </div>
+
+    <div class="sticky-bar">
+      <div class="sticky-bar__inner">
         <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
         <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
       </div>
-    </div>
-  </header>
-
-  <div class="shell">
-    <section class="hero-card">
-      <div class="hero-card__top">
-        <div class="hero-card__title">
-          <small>Bản nháp lưu trên máy này</small>
-          <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
-          <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
-        </div>
-        <div class="status-chip" id="summary-status">Đang hiển thị</div>
-      </div>
-      <div class="hero-card__meta">
-        <div class="meta-box">
-          <strong>9</strong>
-          <span>Đề mục chính</span>
-        </div>
-        <div class="meta-box">
-          <strong id="summary-service-count">6</strong>
-          <span>Dịch vụ hiển thị</span>
-        </div>
-        <div class="meta-box">
-          <strong>Local</strong>
-          <span>Lưu trên máy này</span>
-        </div>
-      </div>
-      <div class="toolbar">
-        <span class="chip chip-draft">📋 Bản nháp lưu trên máy này</span>
-        <span class="chip chip-local">🖼 Ảnh mới chỉ xem thử tại thiết bị này</span>
-      </div>
-    </section>
-
-    <section class="notice-card">
-      ⚠️ <strong>Bản demo admin chưa bật mật khẩu.</strong> Khi bàn giao khách sẽ kích hoạt đăng nhập. Ảnh mới chọn từ điện thoại hiện chỉ xem thử trong admin, chưa cập nhật lên website.
-    </section>
-
-    <section id="sections" class="sections"></section>
-
-    <div class="reset-wrap">
-      <button class="btn btn-danger" type="button" onclick="resetData()">🔄 Reset về mẫu gốc</button>
     </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
-  <div class="sticky-bar">
-    <div class="sticky-bar__inner">
-      <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
-      <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
-    </div>
-  </div>
-
   <script>
     const STORAGE_KEY = "thehairlab.admin.salon-test-mau-01";
     const DATA_VERSION = 3;
+    const ADMIN_AUTH = {
+      password: "admin123",
+      sessionKey: "thehairlab.admin.session.salon-test-mau-01"
+    };
 
     const DEFAULT_ADMIN_DATA = {
       version: 3,
       salon: {
         name: "Salon Test Mẫu 01 - Lavender Beauty",
         logoText: "M01",
-        phone: "0900000000",
+        phone: "0902964685",
         zalo: "0900000000",
         address: "123 Lavender Beauty, Phường Salon, TP. Hồ Chí Minh",
         status: "active"
@@ -932,10 +1073,15 @@
 
     let state = deepClone(DEFAULT_ADMIN_DATA);
     let currentOpen = "basic";
+  let isAuthenticated = false;
     const previewState = {};
 
     function deepClone(value) {
       return JSON.parse(JSON.stringify(value));
+    }
+
+    function normalizePhone(value) {
+      return String(value || "").replace(/\D/g, "");
     }
 
     function esc(value) {
@@ -993,6 +1139,29 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    function getSession() {
+      const raw = localStorage.getItem(ADMIN_AUTH.sessionKey);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed && parsed.loggedIn ? parsed : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function persistSession(username) {
+      localStorage.setItem(ADMIN_AUTH.sessionKey, JSON.stringify({
+        loggedIn: true,
+        username,
+        loginAt: new Date().toISOString()
+      }));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(ADMIN_AUTH.sessionKey);
+    }
+
     function loadState() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
@@ -1028,6 +1197,63 @@
 
     function previewSalon() {
       window.open("/s/salon-test-mau-01/", "_blank");
+    }
+
+    function setLoginError(message) {
+      const element = document.getElementById("login-error");
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.toggle("show", Boolean(message));
+    }
+
+    function renderAuthView() {
+      const loginScreen = document.getElementById("login-screen");
+      const adminApp = document.getElementById("admin-app");
+      const salonName = document.getElementById("login-salon-name");
+      if (salonName) salonName.textContent = state.salon.name;
+      if (loginScreen) loginScreen.style.display = isAuthenticated ? "none" : "flex";
+      if (adminApp) adminApp.classList.toggle("is-authenticated", isAuthenticated);
+      if (!isAuthenticated) {
+        setLoginError("");
+        const phoneField = document.getElementById("login-phone");
+        const passwordField = document.getElementById("login-password");
+        if (passwordField) passwordField.value = "";
+        if (phoneField) phoneField.focus();
+      }
+    }
+
+    function renderApp() {
+      const session = getSession();
+      isAuthenticated = Boolean(session && session.loggedIn);
+      renderAuthView();
+      if (!isAuthenticated) return;
+      loadState();
+      renderSections();
+    }
+
+    function handleLogin(event) {
+      if (event) event.preventDefault();
+      const phoneField = document.getElementById("login-phone");
+      const passwordField = document.getElementById("login-password");
+      const phone = normalizePhone(phoneField ? phoneField.value : "");
+      const expectedPhone = normalizePhone(DEFAULT_ADMIN_DATA.salon.phone);
+      const password = passwordField ? passwordField.value : "";
+      if (phone !== expectedPhone || password !== ADMIN_AUTH.password) {
+        setLoginError("Số điện thoại hoặc mật khẩu chưa đúng.");
+        if (passwordField) passwordField.value = "";
+        return;
+      }
+      persistSession(phone);
+      isAuthenticated = true;
+      renderApp();
+      showToast("Đăng nhập thành công");
+    }
+
+    function logoutAdmin() {
+      clearSession();
+      isAuthenticated = false;
+      renderAuthView();
+      showToast("Đã đăng xuất");
     }
 
     function updateSummary() {
@@ -1508,8 +1734,7 @@
       showToast("Đã hủy ảnh mới");
     }
 
-    loadState();
-    renderSections();
+    renderApp();
   </script>
 </body>
 </html>
