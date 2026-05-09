@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin · Salon Test Mẫu 01 - Lavender Beauty</title>
+  <title>Admin · Salon Hưng Saigon - Green Natural</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -846,10 +846,10 @@
 <body>
   <main id="login-screen" class="login-screen">
     <section class="login-card">
-      <div class="login-card__brand">M01</div>
+      <div class="login-card__brand">M02</div>
       <h1>Đăng nhập quản trị salon</h1>
       <p>Dùng số điện thoại salon được bàn giao để mở khu chỉnh sửa nội dung.</p>
-      <div id="login-salon-name" class="login-card__salon">Salon Test Mẫu 01 - Lavender Beauty</div>
+      <div id="login-salon-name" class="login-card__salon">Salon Hưng Saigon</div>
       <form class="login-form" onsubmit="handleLogin(event)">
         <div class="field">
           <label for="login-phone">Số điện thoại</label>
@@ -872,10 +872,10 @@
   <div id="admin-app" class="admin-app">
     <header class="admin-header">
       <div class="admin-header__inner">
-        <div class="admin-badge">M01</div>
+        <div class="admin-badge">M02</div>
         <div class="admin-headline">
           <small>Admin con · The Hair Lab</small>
-          <strong>Admin · Salon Test Mẫu 01</strong>
+          <strong>Admin · Salon Hưng Saigon</strong>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
@@ -890,8 +890,8 @@
         <div class="hero-card__top">
           <div class="hero-card__title">
             <small>Bản nháp lưu trên máy này</small>
-            <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
-            <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
+            <h1 id="summary-salon-name">Salon Hưng Saigon</h1>
+            <p>Mẫu đang dùng: Green Natural. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
           </div>
           <div class="status-chip" id="summary-status">Đang hiển thị</div>
         </div>
@@ -1097,7 +1097,7 @@
 
     const SECTION_DEFS = [
       { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo chữ, số gọi, Zalo, địa chỉ và các điểm tin cậy dưới hero." },
-      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Lavender Beauty đúng với landing Mẫu 01." },
+      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Green Natural đúng với landing Mẫu 02." },
       { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Tiêu đề chính, mô tả, nút bấm và ảnh hero." },
       { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "6 card dịch vụ thực tế đang hiển thị trên landing page." },
       { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Section tư vấn miễn phí và 4 bước tư vấn cho khách." },
@@ -1535,7 +1535,7 @@
     }
 
     function resetData() {
-      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Lavender Beauty version 3?");
+      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Green Natural version 3?");
       if (!confirmed) return;
       clearAllPreviewState();
       state = deepClone(DEFAULT_ADMIN_DATA);
