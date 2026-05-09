@@ -8,910 +8,1508 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --primary: #8b5cf6;
-      --primary-light: #ede9fe;
-      --primary-mid: #c4b5fd;
+      --primary-deep: #6d28d9;
+      --primary-soft: #ede9fe;
       --bg: #fbf7ff;
       --card: #ffffff;
-      --border: #ede9fe;
-      --text: #1e1b2e;
+      --line: #e9defd;
+      --text: #221b35;
       --muted: #6b7280;
-      --danger: #ef4444;
-      --danger-light: #fef2f2;
-      --radius: 16px;
-      --radius-sm: 10px;
+      --success: #0f766e;
+      --success-soft: #ccfbf1;
+      --warn: #92400e;
+      --warn-soft: #fef3c7;
+      --danger: #b91c1c;
+      --danger-soft: #fee2e2;
+      --shadow: 0 12px 36px rgba(109, 40, 217, 0.08);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-sm: 12px;
     }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139, 92, 246, 0.1), transparent 26%),
+        linear-gradient(180deg, #fff 0%, var(--bg) 100%);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: 90px;
+      padding-bottom: 96px;
     }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 16px 28px;
+    }
+
     .admin-header {
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 16px;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(139, 92, 246, 0.12);
+      padding: 10px 0;
     }
-    .header-inner {
-      max-width: 720px;
+
+    .admin-header__inner {
+      max-width: 780px;
       margin: 0 auto;
+      padding: 0 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
-    .header-badge {
-      flex-shrink: 0;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--primary);
+
+    .admin-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
       color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
       font-size: 13px;
+      font-weight: 900;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(109, 40, 217, 0.22);
     }
-    .header-title { flex: 1; min-width: 0; }
-    .header-title .sub {
+
+    .admin-headline {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .admin-headline small {
+      display: block;
       font-size: 11px;
       color: var(--primary);
-      font-weight: 600;
-    }
-    .header-title .main {
-      font-size: 15px;
       font-weight: 700;
+    }
+
+    .admin-headline strong {
+      display: block;
+      font-size: 15px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .header-actions { display: flex; gap: 8px; }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
     .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      padding: 8px 14px;
-      font-size: 14px;
-      transition: opacity 0.15s;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.16s ease, opacity 0.16s ease, background 0.16s ease;
+      text-decoration: none;
     }
-    .btn:active { opacity: 0.75; }
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid var(--primary);
-      color: var(--primary);
+
+    .btn:active {
+      transform: translateY(1px);
+      opacity: 0.92;
     }
+
     .btn-primary {
-      background: var(--primary);
+      background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
       color: #fff;
+      box-shadow: 0 12px 28px rgba(109, 40, 217, 0.2);
     }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--primary-deep);
+      border: 1px solid rgba(109, 40, 217, 0.18);
+    }
+
+    .btn-soft {
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+    }
+
     .btn-danger {
-      background: var(--danger-light);
+      background: var(--danger-soft);
       color: var(--danger);
-      border: 1.5px solid #fecaca;
     }
-    .btn-sm { padding: 6px 10px; font-size: 13px; }
-    .admin-main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 14px 16px;
+
+    .hero-card,
+    .notice-card,
+    .section-card {
+      background: var(--card);
+      border: 1px solid rgba(109, 40, 217, 0.1);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      margin-top: 14px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.18), transparent 38%),
+        linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+    }
+
+    .hero-card__top {
       display: flex;
-      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .hero-card__title small {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .hero-card__title h1 {
+      font-size: 24px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .hero-card__title p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .status-chip {
+      flex-shrink: 0;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--success-soft);
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hero-card__meta {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
     }
-    .top-badges {
+
+    .meta-box {
+      border-radius: var(--radius-lg);
+      background: #faf7ff;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid rgba(109, 40, 217, 0.08);
+    }
+
+    .meta-box strong {
+      display: block;
+      font-size: 18px;
+      color: var(--primary-deep);
+      margin-bottom: 4px;
+    }
+
+    .meta-box span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip-draft {
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+    }
+
+    .chip-local {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .notice-card {
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, #fff7e6 0%, var(--warn-soft) 100%);
+      color: var(--warn);
+      border-color: rgba(146, 64, 14, 0.16);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .sections {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-toggle {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .section-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .section-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .section-meta strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .section-meta span {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .section-arrow {
+      color: var(--muted);
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .section-card.open .section-arrow {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: none;
+      border-top: 1px solid rgba(109, 40, 217, 0.08);
+      padding: 16px;
+      background: linear-gradient(180deg, #fff 0%, #fcfbff 100%);
+    }
+
+    .section-card.open .section-body {
+      display: block;
+    }
+
+    .subhead {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--primary-deep);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid rgba(109, 40, 217, 0.14);
+      border-radius: var(--radius-sm);
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field input[type="text"]:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 86px;
+      line-height: 1.55;
+    }
+
+    .field-hint {
+      margin-top: 5px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .color-field {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-field input[type="color"] {
+      width: 46px;
+      height: 46px;
+      padding: 2px;
+      border-radius: 12px;
+      border: 1px solid rgba(109, 40, 217, 0.14);
+      background: #fff;
+    }
+
+    .color-field input[type="text"] {
+      flex: 1;
+    }
+
+    .item-card {
+      background: #fff;
+      border: 1px solid rgba(109, 40, 217, 0.12);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .item-head strong {
+      font-size: 13px;
+      color: var(--primary-deep);
+    }
+
+    .item-actions {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
-    .draft-badge {
+
+    .toggle-wrap {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      background: var(--primary-light);
-      color: var(--primary);
-      border-radius: 99px;
-      padding: 4px 12px;
+      gap: 7px;
       font-size: 12px;
+      color: var(--muted);
       font-weight: 700;
     }
-    .notice-box {
-      background: #fef3c7;
-      border: 1.5px solid #fcd34d;
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      font-size: 13px;
-      color: #92400e;
-      line-height: 1.5;
-    }
-    .section-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.06);
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-    }
-    .section-header:active { background: var(--primary-light); }
-    .section-icon {
-      flex-shrink: 0;
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: var(--primary-light);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-    }
-    .section-meta { flex: 1; min-width: 0; }
-    .section-title { font-size: 15px; font-weight: 700; }
-    .section-desc {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .section-chevron {
-      flex-shrink: 0;
-      color: var(--muted);
-      font-size: 16px;
-      transition: transform 0.25s;
-    }
-    .section-card.open .section-chevron { transform: rotate(180deg); }
-    .section-body {
-      display: none;
-      border-top: 1.5px solid var(--border);
-      padding: 16px;
-    }
-    .section-card.open .section-body { display: block; }
-    .field { margin-bottom: 14px; }
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .field input[type="text"],
-    .field textarea {
-      width: 100%;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      font-size: 14px;
-      font-family: inherit;
-      background: #fff;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .field input[type="text"]:focus,
-    .field textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-    }
-    .field textarea {
-      resize: vertical;
-      min-height: 72px;
-    }
-    .field-hint {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-    .color-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .color-row input[type="color"] {
-      width: 44px;
-      height: 44px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 2px;
-      cursor: pointer;
-      background: #fff;
-    }
-    .color-row input[type="text"] { flex: 1; }
-    .toggle-btn {
+
+    .toggle {
       position: relative;
-      width: 48px;
+      width: 50px;
       height: 28px;
       border: none;
-      border-radius: 99px;
-      cursor: pointer;
-      transition: background 0.2s;
+      border-radius: 999px;
+      background: #d1d5db;
+      transition: background 0.2s ease;
       flex-shrink: 0;
     }
-    .toggle-btn.on { background: var(--primary); }
-    .toggle-btn.off { background: #d1d5db; }
-    .toggle-btn::after {
+
+    .toggle::after {
       content: "";
       position: absolute;
       top: 4px;
+      left: 4px;
       width: 20px;
       height: 20px;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-      transition: left 0.2s;
+      transition: left 0.2s ease;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
     }
-    .toggle-btn.on::after { left: 24px; }
-    .toggle-btn.off::after { left: 4px; }
-    .item-card {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      margin-bottom: 12px;
-      background: var(--bg);
+
+    .toggle.on {
+      background: var(--primary);
     }
-    .item-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
+
+    .toggle.on::after {
+      left: 26px;
     }
-    .item-card-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
+
+    .mini-btn {
+      border: none;
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
     }
-    .item-card-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 460px) { .grid-2 { grid-template-columns: 1fr; } }
-    .btn-add {
+
+    .add-btn {
       width: 100%;
-      padding: 12px;
-      border: 2px dashed var(--primary-mid);
-      border-radius: var(--radius-sm);
-      background: transparent;
-      color: var(--primary);
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1.5px dashed rgba(109, 40, 217, 0.22);
+      background: rgba(237, 233, 254, 0.4);
+      color: var(--primary-deep);
       font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-family: inherit;
-      transition: background 0.15s;
+      font-weight: 800;
     }
-    .btn-add:hover { background: var(--primary-light); }
-    .swatches {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+
+    .info-box {
+      border-radius: 16px;
+      background: #faf7ff;
+      border: 1px solid rgba(109, 40, 217, 0.08);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .image-editor {
+      background: #fff;
+      border: 1px solid rgba(109, 40, 217, 0.12);
+      border-radius: 18px;
+      padding: 14px;
       margin-bottom: 14px;
     }
-    .swatch {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 3px solid #fff;
-      box-shadow: 0 0 0 1.5px var(--border);
+
+    .image-editor__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
-    .img-placeholder {
-      border: 2px dashed var(--primary-mid);
-      border-radius: var(--radius);
-      padding: 20px;
+
+    .image-editor__head strong {
+      font-size: 14px;
+    }
+
+    .image-editor__frame {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(109, 40, 217, 0.1);
+      background: linear-gradient(145deg, #f7f3ff 0%, #fff 100%);
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+    }
+
+    .image-editor__frame img {
+      width: 100%;
+      height: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-placeholder {
+      padding: 24px;
       text-align: center;
       color: var(--muted);
+      line-height: 1.6;
       font-size: 13px;
-      margin-bottom: 14px;
     }
-    .reset-area {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1.5px solid var(--border);
+
+    .image-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .image-actions input[type="file"] {
+      display: none;
+    }
+
+    .image-note {
+      margin-top: 9px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .warn-inline {
+      margin-top: 8px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .preview-inline {
+      margin-top: 8px;
+      background: #eefbf6;
+      color: #047857;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .rating-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .rating-row button {
+      border: none;
+      background: transparent;
+      font-size: 24px;
+      line-height: 1;
+      padding: 2px;
+    }
+
+    .reset-wrap {
+      margin-top: 12px;
       text-align: center;
     }
+
     .toast {
       position: fixed;
-      bottom: 90px;
       left: 50%;
-      transform: translateX(-50%) translateY(16px);
-      background: #1e1b2e;
+      bottom: 92px;
+      transform: translateX(-50%) translateY(14px);
+      background: #1f1930;
       color: #fff;
-      border-radius: 99px;
-      padding: 10px 22px;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
       opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 200;
+      pointer-events: none;
+      transition: opacity 0.26s ease, transform 0.26s ease;
+      z-index: 90;
       white-space: nowrap;
     }
+
     .toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-    .bottom-bar {
+
+    .sticky-bar {
       position: fixed;
-      bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.97);
-      border-top: 1.5px solid var(--border);
+      bottom: 0;
+      z-index: 50;
       padding: 10px 16px;
-      display: flex;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(109, 40, 217, 0.12);
+    }
+
+    .sticky-bar__inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      z-index: 100;
-      backdrop-filter: blur(8px);
     }
-    .bottom-bar .btn {
-      flex: 1;
-      justify-content: center;
-      padding: 12px;
+
+    @media (max-width: 720px) {
+      .grid-2,
+      .grid-3,
+      .hero-card__meta {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        display: none;
+      }
     }
-    @media (min-width: 640px) {
-      .bottom-bar {
-        max-width: 400px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: var(--radius) var(--radius) 0 0;
+
+    @media (min-width: 721px) {
+      body {
+        padding-bottom: 34px;
+      }
+
+      .sticky-bar {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
-<header class="admin-header">
-  <div class="header-inner">
-    <div class="header-badge">M01</div>
-    <div class="header-title">
-      <div class="sub">Admin con · The Hair Lab</div>
-      <div class="main">Admin · Salon Test Mẫu 01</div>
+  <header class="admin-header">
+    <div class="admin-header__inner">
+      <div class="admin-badge">M01</div>
+      <div class="admin-headline">
+        <small>Admin con · The Hair Lab</small>
+        <strong>Admin · Salon Test Mẫu 01</strong>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
+        <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
+      </div>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-outline btn-sm" onclick="previewSalon()">👁 Xem trước</button>
-      <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Lưu</button>
+  </header>
+
+  <div class="shell">
+    <section class="hero-card">
+      <div class="hero-card__top">
+        <div class="hero-card__title">
+          <small>Bản nháp lưu trên máy này</small>
+          <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
+          <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
+        </div>
+        <div class="status-chip" id="summary-status">Đang hiển thị</div>
+      </div>
+      <div class="hero-card__meta">
+        <div class="meta-box">
+          <strong>9</strong>
+          <span>Đề mục chính</span>
+        </div>
+        <div class="meta-box">
+          <strong id="summary-service-count">6</strong>
+          <span>Dịch vụ hiển thị</span>
+        </div>
+        <div class="meta-box">
+          <strong>Local</strong>
+          <span>Lưu trên máy này</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <span class="chip chip-draft">📋 Bản nháp lưu trên máy này</span>
+        <span class="chip chip-local">🖼 Ảnh mới chỉ xem thử tại thiết bị này</span>
+      </div>
+    </section>
+
+    <section class="notice-card">
+      ⚠️ <strong>Bản demo admin chưa bật mật khẩu.</strong> Khi bàn giao khách sẽ kích hoạt đăng nhập. Ảnh mới chọn từ điện thoại hiện chỉ xem thử trong admin, chưa cập nhật lên website.
+    </section>
+
+    <section id="sections" class="sections"></section>
+
+    <div class="reset-wrap">
+      <button class="btn btn-danger" type="button" onclick="resetData()">🔄 Reset về mẫu gốc</button>
     </div>
   </div>
-</header>
 
-<main class="admin-main">
-  <div class="top-badges">
-    <span class="draft-badge">📋 Bản nháp lưu trên máy này</span>
+  <div id="toast" class="toast"></div>
+
+  <div class="sticky-bar">
+    <div class="sticky-bar__inner">
+      <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
+      <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
+    </div>
   </div>
 
-  <div class="notice-box">
-    ⚠️ <strong>Bản demo admin chưa bật mật khẩu.</strong>
-    Khi bàn giao khách sẽ kích hoạt đăng nhập.
-  </div>
+  <script>
+    const STORAGE_KEY = "thehairlab.admin.salon-test-mau-01";
+    const DATA_VERSION = 3;
 
-  <div id="sections-container"></div>
+    const DEFAULT_ADMIN_DATA = {
+      version: 3,
+      salon: {
+        name: "Salon Test Mẫu 01 - Lavender Beauty",
+        logoText: "M01",
+        phone: "0900000000",
+        zalo: "0900000000",
+        address: "123 Lavender Beauty, Phường Salon, TP. Hồ Chí Minh",
+        status: "active"
+      },
+      theme: {
+        templateName: "Lavender Beauty",
+        primary: "#8B5CF6",
+        secondary: "#6D28D9",
+        accent: "#EDE9FE",
+        background: "#FFFAF5",
+        textDark: "#221B35"
+      },
+      hero: {
+        title: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt",
+        description: "Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.",
+        primaryButton: "Đặt lịch tư vấn",
+        secondaryButton: "Gọi salon",
+        zaloButton: "Nhắn Zalo",
+        imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-hero.png"
+      },
+      trustBadges: [
+        { id: "trust-1", title: "Tư vấn 1:1", description: "Lộ trình theo gương mặt và phong cách cá nhân.", visible: true },
+        { id: "trust-2", title: "Kỹ thuật salon chuyên nghiệp", description: "Quy trình cắt, nhuộm, uốn, duỗi chuẩn kỹ thuật.", visible: true },
+        { id: "trust-3", title: "Lịch hẹn nhanh", description: "Đặt lịch trước để đến là phục vụ ngay.", visible: true },
+        { id: "trust-4", title: "Sản phẩm chuyên nghiệp", description: "Dùng sản phẩm phù hợp từng nền tóc tại salon.", visible: true }
+      ],
+      services: [
+        {
+          id: "cat-tao-kieu",
+          title: "Cắt & tạo kiểu nữ",
+          price: "Từ 199K",
+          description: "Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png"
+        },
+        {
+          id: "mau-toc",
+          title: "Tư vấn màu tóc tôn da",
+          price: "Từ 499K",
+          description: "Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png"
+        },
+        {
+          id: "nhuom-thoi-trang",
+          title: "Nhuộm thời trang",
+          price: "Từ 699K",
+          description: "Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png"
+        },
+        {
+          id: "uon-setting",
+          title: "Uốn setting",
+          price: "Từ 799K",
+          description: "Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png"
+        },
+        {
+          id: "duoi-phuc-hoi",
+          title: "Duỗi phục hồi",
+          price: "Từ 899K",
+          description: "Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png"
+        },
+        {
+          id: "cham-soc-phuc-hoi",
+          title: "Chăm sóc phục hồi tóc",
+          price: "Từ 349K",
+          description: "Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png"
+        }
+      ],
+      consultation: {
+        title: "Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.",
+        description: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.",
+        bullets: [
+          { id: "consult-1", title: "Đọc tỷ lệ gương mặt", description: "Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.", visible: true },
+          { id: "consult-2", title: "Kiểm tra nền tóc", description: "Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.", visible: true },
+          { id: "consult-3", title: "Chốt màu và phong cách", description: "Lựa màu tóc hài hoà tông da và thống nhất phong cách theo mục tiêu.", visible: true },
+          { id: "consult-4", title: "Lên lịch thực hiện", description: "Chốt khung giờ, dịch vụ và dặn dò chăm sóc trước và sau khi làm tóc.", visible: true }
+        ],
+        buttonText: "Đặt lịch tư vấn",
+        imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-consultation.png"
+      },
+      gallery: [
+        {
+          id: "space-01",
+          title: "Khu tư vấn riêng",
+          description: "Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png"
+        },
+        {
+          id: "space-02",
+          title: "Góc tạo kiểu",
+          description: "Khu làm tóc có ánh sáng đẹp để dễ kiểm tra phom tóc và màu tóc sau khi hoàn thiện.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-02.png"
+        },
+        {
+          id: "space-03",
+          title: "Khu chăm sóc và phục hồi",
+          description: "Khu vực chuyên cho các liệu trình phục hồi, dưỡng và chăm sóc chuyên sâu.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-03.png"
+        }
+      ],
+      products: [
+        {
+          id: "product-lineup",
+          title: "Sản phẩm chuyên nghiệp sử dụng tại salon",
+          description: "Đây là section duy nhất hiển thị ảnh sản phẩm. Tất cả các section dịch vụ, tư vấn và không gian salon không dùng ảnh sản phẩm công ty.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-products.png"
+        }
+      ],
+      feedback: [
+        { id: "fb-1", name: "Khách hàng Minh Anh", content: "Mình được tư vấn kỹ theo gương mặt nên cắt xong nhìn thanh hơn hẳn.", rating: 5, visible: true },
+        { id: "fb-2", name: "Khách hàng Bảo Trân", content: "Màu tóc lên đúng tone, nhìn sáng da và đi làm vẫn rất sang.", rating: 5, visible: true },
+        { id: "fb-3", name: "Khách hàng Thu Hà", content: "Đặt lịch nhanh, salon làm đúng giờ, không phải chờ đợi lâu.", rating: 5, visible: true }
+      ],
+      booking: {
+        title: "Đăng ký tư vấn nhanh",
+        note: "Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.",
+        successMessage: "Cảm ơn bạn, salon sẽ liên hệ lại sớm.",
+        fields: [
+          { id: "customer-name", label: "Họ tên", visible: true },
+          { id: "customer-phone", label: "Số điện thoại", visible: true },
+          { id: "service-name", label: "Dịch vụ quan tâm", visible: true },
+          { id: "appointment-date", label: "Ngày muốn hẹn", visible: true },
+          { id: "appointment-time", label: "Giờ muốn hẹn", visible: true },
+          { id: "customer-note", label: "Ghi chú", visible: true }
+        ]
+      }
+    };
 
-  <div class="reset-area">
-    <button class="btn btn-danger" style="margin: 0 auto;" onclick="resetData()">🔄 Đặt lại về mẫu gốc</button>
-    <p class="field-hint" style="margin-top: 8px;">Xóa toàn bộ nội dung đã chỉnh và quay về dữ liệu mẫu ban đầu.</p>
-  </div>
-</main>
+    const SECTION_DEFS = [
+      { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo chữ, số gọi, Zalo, địa chỉ và các điểm tin cậy dưới hero." },
+      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Lavender Beauty đúng với landing Mẫu 01." },
+      { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Tiêu đề chính, mô tả, nút bấm và ảnh hero." },
+      { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "6 card dịch vụ thực tế đang hiển thị trên landing page." },
+      { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Section tư vấn miễn phí và 4 bước tư vấn cho khách." },
+      { id: "gallery", icon: "📸", title: "Không gian salon", desc: "3 ảnh không gian thật để khách hình dung trải nghiệm." },
+      { id: "products", icon: "⭐", title: "Sản phẩm sử dụng", desc: "Section sản phẩm chuyên nghiệp sử dụng tại salon." },
+      { id: "feedback", icon: "💬", title: "Feedback khách hàng", desc: "Các đánh giá đang dùng để tăng độ tin cậy." },
+      { id: "booking", icon: "📅", title: "Form đặt lịch", desc: "Tiêu đề form, ghi chú, lời cảm ơn và các trường hiển thị." }
+    ];
 
-<div class="toast" id="toast"></div>
+    let state = deepClone(DEFAULT_ADMIN_DATA);
+    let currentOpen = "basic";
+    const previewState = {};
 
-<div class="bottom-bar">
-  <button class="btn btn-outline" onclick="previewSalon()">👁 Xem trước</button>
-  <button class="btn btn-primary" onclick="saveData()">💾 Lưu thay đổi</button>
-</div>
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
 
-<script>
-const STORAGE_KEY = "thehairlab.admin.salon-test-mau-01";
+    function esc(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
 
-const DEFAULT_ADMIN_DATA = {
-  salon: {
-    name: "Salon Test Mẫu 01 - Lavender Beauty",
-    logoText: "HS",
-    phone: "0902 964 685",
-    zalo: "0902 964 685",
-    address: "Tân An, Long An",
-    status: "active"
-  },
-  theme: {
-    templateName: "Lavender Beauty",
-    primary: "#8B5CF6",
-    secondary: "#C4B5FD",
-    accent: "#F3E8FF",
-    background: "#FBF7FF",
-    textDark: "#2E1A47"
-  },
-  hero: {
-    title: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt",
-    description: "Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.",
-    primaryButton: "Đặt lịch tư vấn",
-    secondaryButton: "Gọi salon",
-    zaloButton: "Nhắn Zalo"
-  },
-  services: [
-    { id: "cat-tao-kieu", title: "Cắt & tạo kiểu", price: "Từ 150.000đ", description: "Tư vấn kiểu tóc phù hợp gương mặt.", visible: true },
-    { id: "mau-toc", title: "Màu tóc", price: "Từ 650.000đ", description: "Nâng tông, phủ bạc, màu nâu thanh lịch.", visible: true },
-    { id: "nhuom-thoi-trang", title: "Nhuộm thời trang", price: "Từ 850.000đ", description: "Màu nổi bật theo xu hướng.", visible: true },
-    { id: "uon-setting", title: "Uốn setting", price: "Từ 800.000đ", description: "Uốn mềm, giữ form tự nhiên.", visible: true },
-    { id: "duoi-phuc-hoi", title: "Duỗi phục hồi", price: "Từ 750.000đ", description: "Duỗi mượt, giảm khô xơ.", visible: true },
-    { id: "cham-soc-phuc-hoi", title: "Chăm sóc phục hồi", price: "Từ 350.000đ", description: "Phục hồi tóc yếu, tóc hư tổn.", visible: true }
-  ],
-  consultation: {
-    title: "Tư vấn miễn phí kiểu tóc phù hợp",
-    description: "Đội ngũ salon giúp khách chọn kiểu tóc, màu tóc và dịch vụ phù hợp với gương mặt, chất tóc và phong cách."
-  },
-  gallery: [
-    { title: "Không gian tiếp khách", description: "Không gian nhẹ nhàng, nữ tính.", visible: true },
-    { title: "Khu vực làm tóc", description: "Ghế ngồi thoải mái, ánh sáng đẹp.", visible: true },
-    { title: "Góc chăm sóc tóc", description: "Khu vực phục hồi và chăm sóc chuyên sâu.", visible: true }
-  ],
-  products: [
-    { title: "Sản phẩm chăm sóc tóc", description: "Sử dụng sản phẩm phù hợp với tình trạng tóc.", visible: true }
-  ],
-  feedback: [
-    { name: "Khách hàng 01", content: "Tóc mềm hơn, màu lên đẹp và được tư vấn rất kỹ.", rating: 5, visible: true },
-    { name: "Khách hàng 02", content: "Không gian dễ chịu, nhân viên nhiệt tình.", rating: 5, visible: true }
-  ],
-  booking: {
-    title: "Đặt lịch tư vấn",
-    note: "Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.",
-    successMessage: "Cảm ơn bạn, salon sẽ liên hệ lại sớm."
-  }
-};
+    function deepMerge(base, source) {
+      if (Array.isArray(base)) {
+        if (!Array.isArray(source)) return deepClone(base);
+        return source.map((item, index) => {
+          const template = base[index] !== undefined ? base[index] : {};
+          return deepMerge(template, item);
+        });
+      }
+      if (base && typeof base === "object") {
+        const out = deepClone(base);
+        if (!source || typeof source !== "object") return out;
+        Object.keys(source).forEach((key) => {
+          if (base[key] !== undefined) out[key] = deepMerge(base[key], source[key]);
+          else out[key] = source[key];
+        });
+        return out;
+      }
+      return source !== undefined ? source : base;
+    }
 
-function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
+    function normalizeLoadedData(raw) {
+      const merged = deepMerge(DEFAULT_ADMIN_DATA, raw || {});
+      merged.version = DATA_VERSION;
+      if (!Array.isArray(merged.trustBadges)) merged.trustBadges = deepClone(DEFAULT_ADMIN_DATA.trustBadges);
+      if (!Array.isArray(merged.services)) merged.services = deepClone(DEFAULT_ADMIN_DATA.services);
+      if (!Array.isArray(merged.gallery)) merged.gallery = deepClone(DEFAULT_ADMIN_DATA.gallery);
+      if (!Array.isArray(merged.products)) merged.products = deepClone(DEFAULT_ADMIN_DATA.products);
+      if (!Array.isArray(merged.feedback)) merged.feedback = deepClone(DEFAULT_ADMIN_DATA.feedback);
+      if (!Array.isArray(merged.consultation.bullets)) merged.consultation.bullets = deepClone(DEFAULT_ADMIN_DATA.consultation.bullets);
+      if (!Array.isArray(merged.booking.fields)) merged.booking.fields = deepClone(DEFAULT_ADMIN_DATA.booking.fields);
+      return merged;
+    }
 
-function esc(value) {
-  return String(value || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
+    function revokePreview(key) {
+      if (previewState[key] && previewState[key].url) URL.revokeObjectURL(previewState[key].url);
+      delete previewState[key];
+    }
 
-let state = deepClone(DEFAULT_ADMIN_DATA);
-let currentOpen = null;
+    function clearAllPreviewState() {
+      Object.keys(previewState).forEach((key) => revokePreview(key));
+    }
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      state = JSON.parse(raw);
-      ["gallery", "products", "feedback"].forEach((k) => {
-        (state[k] || []).forEach((item) => {
-          if (item.visible === undefined) item.visible = true;
+    function persistSilently() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        state = deepClone(DEFAULT_ADMIN_DATA);
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.version !== DATA_VERSION) {
+          const shouldReset = window.confirm("Admin đã có dữ liệu cũ trên máy này. Bạn muốn cập nhật về mẫu mới đầy đủ nội dung không?");
+          if (shouldReset) {
+            state = deepClone(DEFAULT_ADMIN_DATA);
+            persistSilently();
+            return;
+          }
+          state = normalizeLoadedData(parsed);
+          persistSilently();
+          return;
+        }
+        state = normalizeLoadedData(parsed);
+      } catch (error) {
+        state = deepClone(DEFAULT_ADMIN_DATA);
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function previewSalon() {
+      window.open("/s/salon-test-mau-01/", "_blank");
+    }
+
+    function updateSummary() {
+      document.getElementById("summary-salon-name").textContent = state.salon.name;
+      document.getElementById("summary-status").textContent = state.salon.status === "active" ? "Đang hiển thị" : "Tạm ẩn";
+      document.getElementById("summary-service-count").textContent = String(state.services.filter((item) => item.visible).length);
+      document.documentElement.style.setProperty("--primary", state.theme.primary || DEFAULT_ADMIN_DATA.theme.primary);
+      document.documentElement.style.setProperty("--primary-deep", state.theme.secondary || DEFAULT_ADMIN_DATA.theme.secondary);
+      document.documentElement.style.setProperty("--primary-soft", state.theme.accent || DEFAULT_ADMIN_DATA.theme.accent);
+      document.documentElement.style.setProperty("--bg", state.theme.background || DEFAULT_ADMIN_DATA.theme.background);
+      document.documentElement.style.setProperty("--text", state.theme.textDark || DEFAULT_ADMIN_DATA.theme.textDark);
+    }
+
+    function renderSections() {
+      const container = document.getElementById("sections");
+      container.innerHTML = SECTION_DEFS.map((section) => {
+        return "<article class=\"section-card" + (currentOpen === section.id ? " open" : "") + "\" data-id=\"" + section.id + "\">" +
+          "<button class=\"section-toggle\" type=\"button\" onclick=\"toggleSection('" + section.id + "')\">" +
+            "<span class=\"section-icon\">" + section.icon + "</span>" +
+            "<span class=\"section-meta\"><strong>" + esc(section.title) + "</strong><span>" + esc(section.desc) + "</span></span>" +
+            "<span class=\"section-arrow\">▾</span>" +
+          "</button>" +
+          "<div class=\"section-body\">" + (currentOpen === section.id ? renderSectionBody(section.id) : "") + "</div>" +
+        "</article>";
+      }).join("");
+      updateSummary();
+    }
+
+    function toggleSection(id) {
+      collectInputs();
+      currentOpen = currentOpen === id ? "" : id;
+      renderSections();
+    }
+
+    function collectInputs() {
+      const objectFields = {
+        salon: ["name", "logoText", "phone", "zalo", "address", "status"],
+        theme: ["templateName", "primary", "secondary", "accent", "background", "textDark"],
+        hero: ["title", "description", "primaryButton", "secondaryButton", "zaloButton"]
+      };
+
+      Object.keys(objectFields).forEach((group) => {
+        objectFields[group].forEach((field) => {
+          const element = document.getElementById(group + "-" + field);
+          if (element) state[group][field] = element.value;
         });
       });
+
+      state.trustBadges.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("trust-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.services.forEach((item, index) => {
+        ["title", "price", "description"].forEach((field) => {
+          const element = document.getElementById("service-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      ["title", "description", "buttonText"].forEach((field) => {
+        const element = document.getElementById("consultation-" + field);
+        if (element) state.consultation[field] = element.value;
+      });
+
+      state.consultation.bullets.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("consultation-bullet-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.gallery.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("gallery-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.products.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("product-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.feedback.forEach((item, index) => {
+        ["name", "content"].forEach((field) => {
+          const element = document.getElementById("feedback-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      ["title", "note", "successMessage"].forEach((field) => {
+        const element = document.getElementById("booking-" + field);
+        if (element) state.booking[field] = element.value;
+      });
+
+      state.booking.fields.forEach((item, index) => {
+        const element = document.getElementById("booking-field-" + index + "-label");
+        if (element) item.label = element.value;
+      });
     }
-  } catch (error) {
-    state = deepClone(DEFAULT_ADMIN_DATA);
-  }
-}
 
-function saveData() {
-  collectInputs();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  showToast("Đã lưu trên thiết bị này");
-}
+    function saveData() {
+      collectInputs();
+      state.version = DATA_VERSION;
+      persistSilently();
+      renderSections();
+      showToast("Đã lưu trên thiết bị này");
+    }
 
-function resetData() {
-  if (!confirm("Đặt lại về mẫu gốc? Toàn bộ nội dung đã chỉnh sẽ bị xóa.")) return;
-  state = deepClone(DEFAULT_ADMIN_DATA);
-  localStorage.removeItem(STORAGE_KEY);
-  renderSections();
-  openSection("basic");
-  showToast("Đã đặt lại về mẫu gốc");
-}
+    function resetData() {
+      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Lavender Beauty version 3?");
+      if (!confirmed) return;
+      clearAllPreviewState();
+      state = deepClone(DEFAULT_ADMIN_DATA);
+      currentOpen = "basic";
+      persistSilently();
+      renderSections();
+      showToast("Đã reset về mẫu gốc version 3");
+    }
 
-function previewSalon() {
-  window.open("/s/salon-test-mau-01/", "_blank");
-}
-
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2600);
-}
-
-function collectInputs() {
-  ["name", "logoText", "phone", "zalo", "address"].forEach((k) => {
-    const el = document.getElementById("salon-" + k);
-    if (el) state.salon[k] = el.value;
-  });
-
-  ["primary", "secondary", "accent", "background", "textDark"].forEach((k) => {
-    const el = document.getElementById("theme-" + k);
-    if (el) state.theme[k] = el.value;
-  });
-
-  ["title", "description", "primaryButton", "secondaryButton", "zaloButton"].forEach((k) => {
-    const el = document.getElementById("hero-" + k);
-    if (el) state.hero[k] = el.value;
-  });
-
-  state.services.forEach((service, i) => {
-    ["title", "price", "description"].forEach((k) => {
-      const el = document.getElementById("svc-" + i + "-" + k);
-      if (el) service[k] = el.value;
-    });
-  });
-
-  ["title", "description"].forEach((k) => {
-    const el = document.getElementById("consult-" + k);
-    if (el) state.consultation[k] = el.value;
-  });
-
-  state.gallery.forEach((item, i) => {
-    ["title", "description"].forEach((k) => {
-      const el = document.getElementById("gallery-" + i + "-" + k);
-      if (el) item[k] = el.value;
-    });
-  });
-
-  state.products.forEach((item, i) => {
-    ["title", "description"].forEach((k) => {
-      const el = document.getElementById("product-" + i + "-" + k);
-      if (el) item[k] = el.value;
-    });
-  });
-
-  state.feedback.forEach((item, i) => {
-    ["name", "content"].forEach((k) => {
-      const el = document.getElementById("fb-" + i + "-" + k);
-      if (el) item[k] = el.value;
-    });
-  });
-
-  ["title", "note", "successMessage"].forEach((k) => {
-    const el = document.getElementById("booking-" + k);
-    if (el) state.booking[k] = el.value;
-  });
-}
-
-function field(id, label, value, hint, isTextarea) {
-  const input = isTextarea
-    ? "<textarea id=\"" + id + "\">" + esc(value) + "</textarea>"
-    : "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" />";
-
-  return "<div class=\"field\">" +
-    "<label for=\"" + id + "\">" + esc(label) + "</label>" +
-    input +
-    (hint ? "<div class=\"field-hint\">" + esc(hint) + "</div>" : "") +
-    "</div>";
-}
-
-function colorField(id, label, value) {
-  return "<div class=\"field\">" +
-    "<label>" + esc(label) + "</label>" +
-    "<div class=\"color-row\">" +
-    "<input type=\"color\" id=\"" + id + "-clr\" value=\"" + esc(value) + "\" oninput=\"syncColor('" + id + "')\" />" +
-    "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" oninput=\"syncColorText('" + id + "')\" />" +
-    "</div></div>";
-}
-
-function toggleBtn(id, checked) {
-  return "<button class=\"toggle-btn " + (checked ? "on" : "off") + "\" id=\"tgl-" + id + "\" onclick=\"doToggle('" + id + "')\"></button>";
-}
-
-function bodyBasic() {
-  const s = state.salon;
-  return "<div class=\"field\" style=\"margin-bottom:14px;\">" +
-    "<label>Chữ viết tắt logo (2–3 ký tự)</label>" +
-    "<div style=\"display:flex;align-items:center;gap:12px;margin-top:6px;\">" +
-    "<div style=\"width:52px;height:52px;border-radius:14px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;\" id=\"logo-preview\">" + esc(s.logoText) + "</div>" +
-    "<input type=\"text\" id=\"salon-logoText\" value=\"" + esc(s.logoText) + "\" style=\"width:80px;\" maxlength=\"3\" oninput=\"document.getElementById('logo-preview').textContent=this.value\" />" +
-    "</div></div>" +
-    field("salon-name", "Tên salon", s.name) +
-    field("salon-phone", "Số điện thoại", s.phone, "Khách bấm nút Gọi sẽ dùng số này.") +
-    field("salon-zalo", "Số Zalo", s.zalo, "Khách bấm nút Zalo sẽ mở số này.") +
-    field("salon-address", "Địa chỉ", s.address);
-}
-
-function bodyTheme() {
-  const t = state.theme;
-  const swatches = [t.primary, t.secondary, t.accent, t.background, t.textDark]
-    .map((color) => "<span class=\"swatch\" style=\"background:" + esc(color) + ";\"></span>")
-    .join("");
-
-  return "<div style=\"background:linear-gradient(135deg," + esc(t.accent) + "," + esc(t.secondary) + "," + esc(t.primary) + ");border-radius:12px;padding:14px;margin-bottom:16px;\">" +
-    "<div style=\"font-size:12px;opacity:.7;\">Mẫu đang dùng</div>" +
-    "<div style=\"font-size:19px;font-weight:800;color:" + esc(t.textDark) + ";\">" + esc(t.templateName) + "</div>" +
-    "<div class=\"swatches\" style=\"margin-top:10px;margin-bottom:0;\">" + swatches + "</div></div>" +
-    colorField("theme-primary", "Màu chính", t.primary) +
-    colorField("theme-secondary", "Màu phụ", t.secondary) +
-    colorField("theme-accent", "Màu nền nhạt", t.accent) +
-    colorField("theme-background", "Màu nền trang", t.background) +
-    colorField("theme-textDark", "Màu chữ đậm", t.textDark);
-}
-
-function bodyHero() {
-  const h = state.hero;
-  return "<div class=\"img-placeholder\">🖼️<br/>Ảnh hero đang dùng từ CDN.<br/><em style=\"font-size:11px;\">Upload ảnh mới sẽ có ở phiên bản sau.</em></div>" +
-    field("hero-title", "Tiêu đề chính", h.title, "", true) +
-    field("hero-description", "Mô tả dưới tiêu đề", h.description, "", true) +
-    field("hero-primaryButton", "Nút đặt lịch", h.primaryButton) +
-    field("hero-secondaryButton", "Nút gọi điện", h.secondaryButton) +
-    field("hero-zaloButton", "Nút Zalo", h.zaloButton);
-}
-
-function bodyServices() {
-  return state.services.map((s, i) =>
-    "<div class=\"item-card\">" +
-      "<div class=\"item-card-head\"><div class=\"item-card-label\">Dịch vụ " + (i + 1) + "</div>" +
-      "<div class=\"item-card-actions\">" +
-      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
-      toggleBtn("svc-" + i, s.visible) +
-      "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteSvc(" + i + ")\">🗑</button></div></div>" +
-      "<div class=\"grid-2\">" +
-      field("svc-" + i + "-title", "Tên dịch vụ", s.title) +
-      field("svc-" + i + "-price", "Giá hiển thị", s.price) +
-      "</div>" +
-      field("svc-" + i + "-description", "Mô tả ngắn", s.description, "", true) +
-      "</div>"
-  ).join("") +
-  "<button class=\"btn-add\" onclick=\"addSvc()\">＋ Thêm dịch vụ mới</button>";
-}
-
-function bodyConsultation() {
-  const c = state.consultation;
-  return field("consult-title", "Tiêu đề section", c.title) +
-    field("consult-description", "Nội dung mô tả", c.description, "", true);
-}
-
-function bodyGallery() {
-  return state.gallery.map((g, i) =>
-    "<div class=\"item-card\">" +
-      "<div class=\"item-card-head\"><div class=\"item-card-label\">Ảnh không gian " + (i + 1) + "</div>" +
-      "<div class=\"item-card-actions\">" +
-      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
-      toggleBtn("gal-" + i, g.visible) +
-      "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteGal(" + i + ")\">🗑</button></div></div>" +
-      "<div class=\"img-placeholder\" style=\"padding:12px;font-size:12px;\">📷 Ảnh CDN · Upload thật ở phiên bản sau.</div>" +
-      field("gallery-" + i + "-title", "Tiêu đề ảnh", g.title) +
-      field("gallery-" + i + "-description", "Mô tả", g.description) +
-      "</div>"
-  ).join("") +
-  "<button class=\"btn-add\" onclick=\"addGal()\">＋ Thêm ảnh không gian</button>";
-}
-
-function bodyProducts() {
-  return state.products.map((p, i) =>
-    "<div class=\"item-card\">" +
-      "<div class=\"item-card-head\"><div class=\"item-card-label\">Sản phẩm " + (i + 1) + "</div>" +
-      "<div class=\"item-card-actions\">" +
-      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
-      toggleBtn("prd-" + i, p.visible) +
-      "<button class=\"btn btn-danger btn-sm\" onclick=\"deletePrd(" + i + ")\">🗑</button></div></div>" +
-      field("product-" + i + "-title", "Tên sản phẩm / nhóm", p.title) +
-      field("product-" + i + "-description", "Mô tả ngắn", p.description, "", true) +
-      "</div>"
-  ).join("") +
-  "<button class=\"btn-add\" onclick=\"addPrd()\">＋ Thêm sản phẩm</button>";
-}
-
-function bodyFeedback() {
-  return state.feedback.map((f, i) => {
-    const stars = [1, 2, 3, 4, 5].map((n) =>
-      "<button onclick=\"setRating(" + i + "," + n + ")\" style=\"background:none;border:none;cursor:pointer;font-size:26px;padding:2px;\">" +
-      (f.rating >= n ? "⭐" : "☆") +
-      "</button>"
-    ).join("");
-
-    return "<div class=\"item-card\">" +
-      "<div class=\"item-card-head\"><div class=\"item-card-label\">Feedback " + (i + 1) + "</div>" +
-      "<div class=\"item-card-actions\">" +
-      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
-      toggleBtn("fb-" + i, f.visible) +
-      "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteFb(" + i + ")\">🗑</button></div></div>" +
-      field("fb-" + i + "-name", "Tên khách hàng", f.name) +
-      field("fb-" + i + "-content", "Nội dung đánh giá", f.content, "", true) +
-      "<div class=\"field\"><label>Số sao</label><div style=\"margin-top:4px;\">" + stars + "</div></div>" +
+    function field(id, label, value, hint, textarea) {
+      const inputHtml = textarea
+        ? "<textarea id=\"" + id + "\">" + esc(value) + "</textarea>"
+        : "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" />";
+      return "<div class=\"field\">" +
+        "<label for=\"" + id + "\">" + esc(label) + "</label>" +
+        inputHtml +
+        (hint ? "<div class=\"field-hint\">" + esc(hint) + "</div>" : "") +
       "</div>";
-  }).join("") +
-  "<button class=\"btn-add\" onclick=\"addFb()\">＋ Thêm đánh giá</button>";
-}
-
-function bodyBooking() {
-  const b = state.booking;
-  return field("booking-title", "Tiêu đề form đặt lịch", b.title) +
-    field("booking-note", "Ghi chú cho khách", b.note, "Hiển thị phía trên form.") +
-    field("booking-successMessage", "Lời cảm ơn sau khi gửi", b.successMessage, "Xuất hiện khi khách gửi form thành công.");
-}
-
-const SECTIONS = [
-  { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo, hotline, địa chỉ, Zalo." },
-  { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Màu chủ đạo theo mẫu Lavender Beauty." },
-  { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Hero, tiêu đề, mô tả và nút đặt lịch." },
-  { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "Thêm, sửa, ẩn/hiện card dịch vụ." },
-  { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Nội dung section tư vấn miễn phí." },
-  { id: "gallery", icon: "📸", title: "Không gian salon", desc: "Gallery ảnh không gian và trải nghiệm." },
-  { id: "products", icon: "⭐", title: "Sản phẩm sử dụng", desc: "Sản phẩm nổi bật tại salon." },
-  { id: "feedback", icon: "💬", title: "Feedback khách hàng", desc: "Lời chứng thực, đánh giá, ảnh khách." },
-  { id: "booking", icon: "📅", title: "Form đặt lịch", desc: "Tiêu đề form, lời nhắn sau khi gửi." }
-];
-
-function getBodyHTML(id) {
-  if (id === "basic") return bodyBasic();
-  if (id === "theme") return bodyTheme();
-  if (id === "hero") return bodyHero();
-  if (id === "services") return bodyServices();
-  if (id === "consultation") return bodyConsultation();
-  if (id === "gallery") return bodyGallery();
-  if (id === "products") return bodyProducts();
-  if (id === "feedback") return bodyFeedback();
-  if (id === "booking") return bodyBooking();
-  return "";
-}
-
-function renderSections() {
-  document.getElementById("sections-container").innerHTML = SECTIONS.map((sec) =>
-    "<div class=\"section-card\" data-id=\"" + sec.id + "\">" +
-    "<div class=\"section-header\" onclick=\"openSection('" + sec.id + "')\">" +
-    "<div class=\"section-icon\">" + sec.icon + "</div>" +
-    "<div class=\"section-meta\">" +
-    "<div class=\"section-title\">" + esc(sec.title) + "</div>" +
-    "<div class=\"section-desc\">" + esc(sec.desc) + "</div></div>" +
-    "<div class=\"section-chevron\">▾</div></div>" +
-    "<div class=\"section-body\"></div></div>"
-  ).join("");
-}
-
-function openSection(id) {
-  collectInputs();
-  document.querySelectorAll(".section-card").forEach((card) => {
-    if (card.dataset.id === id) {
-      const wasOpen = card.classList.contains("open");
-      if (!wasOpen) {
-        card.classList.add("open");
-        card.querySelector(".section-body").innerHTML = getBodyHTML(id);
-        currentOpen = id;
-      } else {
-        card.classList.remove("open");
-        currentOpen = null;
-      }
-    } else {
-      card.classList.remove("open");
     }
-  });
-}
 
-function refreshOpen() {
-  if (!currentOpen) return;
-  const card = document.querySelector(".section-card[data-id='" + currentOpen + "']");
-  if (card && card.classList.contains("open")) {
-    card.querySelector(".section-body").innerHTML = getBodyHTML(currentOpen);
-  }
-}
+    function colorField(id, label, value) {
+      return "<div class=\"field\">" +
+        "<label>" + esc(label) + "</label>" +
+        "<div class=\"color-field\">" +
+          "<input type=\"color\" id=\"" + id + "-picker\" value=\"" + esc(value) + "\" oninput=\"syncColorFromPicker('" + id + "')\" />" +
+          "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" oninput=\"syncColorFromText('" + id + "')\" />" +
+        "</div>" +
+      "</div>";
+    }
 
-function doToggle(id) {
-  collectInputs();
-  const parts = id.split("-");
-  if (id.startsWith("svc-")) state.services[parseInt(parts[1], 10)].visible = !state.services[parseInt(parts[1], 10)].visible;
-  else if (id.startsWith("gal-")) state.gallery[parseInt(parts[1], 10)].visible = !state.gallery[parseInt(parts[1], 10)].visible;
-  else if (id.startsWith("prd-")) state.products[parseInt(parts[1], 10)].visible = !state.products[parseInt(parts[1], 10)].visible;
-  else if (id.startsWith("fb-")) state.feedback[parseInt(parts[1], 10)].visible = !state.feedback[parseInt(parts[1], 10)].visible;
-  refreshOpen();
-}
+    function renderImageEditor(key, label, currentUrl) {
+      const preview = previewState[key];
+      const imageUrl = preview && preview.url ? preview.url : currentUrl;
+      const note = preview
+        ? "<div class=\"preview-inline\">Ảnh mới chỉ đang xem thử trên thiết bị này. Khi bật lưu online, ảnh sẽ được cập nhật lên website.</div>"
+        : "";
+      const warning = preview && preview.warning
+        ? "<div class=\"warn-inline\">" + esc(preview.warning) + "</div>"
+        : "";
+      return "<div class=\"image-editor\">" +
+        "<div class=\"image-editor__head\"><strong>" + esc(label) + "</strong><span class=\"field-hint\">Ảnh hiện tại hoặc ảnh đang xem thử</span></div>" +
+        "<div class=\"image-editor__frame\">" +
+          (imageUrl
+            ? "<img src=\"" + esc(imageUrl) + "\" alt=\"" + esc(label) + "\" />"
+            : "<div class=\"image-placeholder\">Chưa có ảnh hiển thị.<br />Bạn có thể chọn ảnh từ điện thoại để xem thử ngay.</div>") +
+        "</div>" +
+        "<div class=\"image-actions\">" +
+          "<label class=\"btn btn-soft\" for=\"file-" + esc(key) + "\">📱 Đổi ảnh từ điện thoại</label>" +
+          "<input id=\"file-" + esc(key) + "\" type=\"file\" accept=\"image/*\" onchange=\"handleImagePick(event, '" + esc(key) + "')\" />" +
+          (preview ? "<button class=\"btn btn-outline\" type=\"button\" onclick=\"cancelPreview('" + esc(key) + "')\">↩ Hủy ảnh mới</button>" : "") +
+        "</div>" +
+        "<div class=\"image-note\">Nên chọn ảnh ngang, rõ mặt hoặc rõ tóc, dung lượng dưới 5MB.</div>" +
+        note + warning +
+      "</div>";
+    }
 
-function addSvc() {
-  collectInputs();
-  state.services.push({
-    id: "dv-" + Date.now(),
-    title: "Dịch vụ mới",
-    price: "Liên hệ",
-    description: "Mô tả dịch vụ.",
-    visible: true
-  });
-  refreshOpen();
-}
+    function renderBasicSection() {
+      const trustCards = state.trustBadges.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Điểm tin cậy " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("trust-" + index, item.visible) + "</span>" +
+            "</div>" +
+          "</div>" +
+          field("trust-" + index + "-title", "Tiêu đề card", item.title) +
+          field("trust-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("");
 
-function deleteSvc(i) {
-  if (!confirm("Xóa dịch vụ này?")) return;
-  collectInputs();
-  state.services.splice(i, 1);
-  refreshOpen();
-}
+      return "<div class=\"subhead\">Thông tin salon</div>" +
+        "<div class=\"grid-2\">" +
+          field("salon-name", "Tên salon", state.salon.name) +
+          field("salon-status", "Trạng thái", state.salon.status === "active" ? "active" : "inactive", "Dùng active nếu landing đang hiển thị.") +
+        "</div>" +
+        "<div class=\"grid-3\">" +
+          field("salon-logoText", "Logo chữ", state.salon.logoText, "Gợi ý: 2 đến 3 ký tự in hoa.") +
+          field("salon-phone", "Số điện thoại", state.salon.phone) +
+          field("salon-zalo", "Số Zalo", state.salon.zalo) +
+        "</div>" +
+        field("salon-address", "Địa chỉ", state.salon.address, "Hiển thị ở khu thông tin cuối landing page.") +
+        "<div class=\"subhead\">Điểm tin cậy dưới hero</div>" +
+        "<div class=\"info-box\">Các card này đang nằm ngay dưới hero và giúp khách yên tâm hơn trước khi bấm đặt lịch.</div>" +
+        trustCards;
+    }
 
-function addGal() {
-  collectInputs();
-  state.gallery.push({
-    title: "Ảnh mới",
-    description: "Mô tả ảnh.",
-    visible: true
-  });
-  refreshOpen();
-}
+    function renderThemeSection() {
+      return "<div class=\"info-box\">Tone màu này lấy đúng từ Mẫu 01 hiện tại để chủ salon chỉ cần tinh chỉnh nếu muốn đổi sắc tím đậm hoặc nền sáng.</div>" +
+        field("theme-templateName", "Tên mẫu đang dùng", state.theme.templateName) +
+        colorField("theme-primary", "Màu chính", state.theme.primary) +
+        colorField("theme-secondary", "Màu phụ đậm", state.theme.secondary) +
+        colorField("theme-accent", "Màu nền nhạt", state.theme.accent) +
+        colorField("theme-background", "Màu nền trang", state.theme.background) +
+        colorField("theme-textDark", "Màu chữ đậm", state.theme.textDark);
+    }
 
-function deleteGal(i) {
-  if (!confirm("Xóa ảnh này?")) return;
-  collectInputs();
-  state.gallery.splice(i, 1);
-  refreshOpen();
-}
+    function renderHeroSection() {
+      return renderImageEditor("hero", "Ảnh đầu trang hiện tại", state.hero.imageUrl) +
+        field("hero-title", "Tiêu đề chính", state.hero.title, "", true) +
+        field("hero-description", "Mô tả ngắn", state.hero.description, "", true) +
+        "<div class=\"grid-3\">" +
+          field("hero-primaryButton", "Text nút chính", state.hero.primaryButton) +
+          field("hero-secondaryButton", "Text nút gọi", state.hero.secondaryButton) +
+          field("hero-zaloButton", "Text nút Zalo", state.hero.zaloButton) +
+        "</div>";
+    }
 
-function addPrd() {
-  collectInputs();
-  state.products.push({
-    title: "Sản phẩm mới",
-    description: "Mô tả.",
-    visible: true
-  });
-  refreshOpen();
-}
+    function renderServicesSection() {
+      return state.services.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Dịch vụ " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("service-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteService(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          renderImageEditor("service-" + item.id, item.title, item.imageUrl) +
+          field("service-" + index + "-title", "Tên dịch vụ", item.title) +
+          field("service-" + index + "-price", "Giá hiển thị", item.price) +
+          field("service-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addService()\">＋ Thêm card dịch vụ</button>";
+    }
 
-function deletePrd(i) {
-  if (!confirm("Xóa sản phẩm này?")) return;
-  collectInputs();
-  state.products.splice(i, 1);
-  refreshOpen();
-}
+    function renderConsultationSection() {
+      const bullets = state.consultation.bullets.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\"><strong>Bước tư vấn " + (index + 1) + "</strong><div class=\"item-actions\"><span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("consult-" + index, item.visible) + "</span></div></div>" +
+          field("consultation-bullet-" + index + "-title", "Tiêu đề bước", item.title) +
+          field("consultation-bullet-" + index + "-description", "Mô tả bước", item.description, "", true) +
+        "</div>";
+      }).join("");
 
-function addFb() {
-  collectInputs();
-  state.feedback.push({
-    name: "Khách hàng mới",
-    content: "Nội dung đánh giá.",
-    rating: 5,
-    visible: true
-  });
-  refreshOpen();
-}
+      return renderImageEditor("consultation", "Ảnh section tư vấn", state.consultation.imageUrl) +
+        field("consultation-title", "Tiêu đề section", state.consultation.title, "", true) +
+        field("consultation-description", "Mô tả ngắn", state.consultation.description, "", true) +
+        field("consultation-buttonText", "Text nút chính", state.consultation.buttonText) +
+        bullets;
+    }
 
-function deleteFb(i) {
-  if (!confirm("Xóa đánh giá này?")) return;
-  collectInputs();
-  state.feedback.splice(i, 1);
-  refreshOpen();
-}
+    function renderGallerySection() {
+      return state.gallery.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Ảnh không gian " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("gallery-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteGalleryItem(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          renderImageEditor("gallery-" + item.id, item.title, item.imageUrl) +
+          field("gallery-" + index + "-title", "Tiêu đề ảnh", item.title) +
+          field("gallery-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addGalleryItem()\">＋ Thêm ảnh không gian</button>";
+    }
 
-function setRating(i, stars) {
-  collectInputs();
-  state.feedback[i].rating = stars;
-  refreshOpen();
-}
+    function renderProductsSection() {
+      return state.products.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Sản phẩm " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("product-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteProductItem(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          renderImageEditor("product-" + item.id, item.title, item.imageUrl) +
+          field("product-" + index + "-title", "Tên section / nhóm sản phẩm", item.title) +
+          field("product-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addProductItem()\">＋ Thêm block sản phẩm</button>";
+    }
 
-function syncColor(id) {
-  const clr = document.getElementById(id + "-clr");
-  const txt = document.getElementById(id);
-  if (clr && txt) txt.value = clr.value;
-}
+    function renderFeedbackSection() {
+      return state.feedback.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Feedback " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("feedback-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteFeedbackItem(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          field("feedback-" + index + "-name", "Tên khách hàng", item.name) +
+          field("feedback-" + index + "-content", "Nội dung feedback", item.content, "", true) +
+          renderRating(index, item.rating) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addFeedbackItem()\">＋ Thêm feedback</button>";
+    }
 
-function syncColorText(id) {
-  const txt = document.getElementById(id);
-  const clr = document.getElementById(id + "-clr");
-  if (txt && clr && /^#[0-9a-fA-F]{6}$/.test(txt.value)) {
-    clr.value = txt.value;
-  }
-}
+    function renderBookingSection() {
+      const fields = state.booking.fields.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Trường form " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\"><span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("booking-" + index, item.visible) + "</span></div>" +
+          "</div>" +
+          field("booking-field-" + index + "-label", "Tên trường hiển thị", item.label) +
+        "</div>";
+      }).join("");
 
-loadState();
-renderSections();
-openSection("basic");
-</script>
+      return field("booking-title", "Tiêu đề form", state.booking.title) +
+        field("booking-note", "Ghi chú cho khách", state.booking.note, "", true) +
+        field("booking-successMessage", "Lời cảm ơn sau khi gửi", state.booking.successMessage, "", true) +
+        "<div class=\"subhead\">Các trường đang hiển thị</div>" + fields;
+    }
+
+    function renderSectionBody(id) {
+      if (id === "basic") return renderBasicSection();
+      if (id === "theme") return renderThemeSection();
+      if (id === "hero") return renderHeroSection();
+      if (id === "services") return renderServicesSection();
+      if (id === "consultation") return renderConsultationSection();
+      if (id === "gallery") return renderGallerySection();
+      if (id === "products") return renderProductsSection();
+      if (id === "feedback") return renderFeedbackSection();
+      if (id === "booking") return renderBookingSection();
+      return "";
+    }
+
+    function renderToggle(key, active) {
+      return "<button class=\"toggle " + (active ? "on" : "off") + "\" type=\"button\" onclick=\"toggleVisible('" + key + "')\"></button>";
+    }
+
+    function renderRating(index, rating) {
+      const stars = [1, 2, 3, 4, 5].map((value) => {
+        return "<button type=\"button\" onclick=\"setFeedbackRating(" + index + ", " + value + ")\">" + (rating >= value ? "⭐" : "☆") + "</button>";
+      }).join("");
+      return "<div class=\"field\"><label>Số sao</label><div class=\"rating-row\">" + stars + "</div></div>";
+    }
+
+    function toggleVisible(key) {
+      collectInputs();
+      const [group, indexRaw] = key.split("-");
+      const index = parseInt(indexRaw, 10);
+      if (group === "trust") state.trustBadges[index].visible = !state.trustBadges[index].visible;
+      if (group === "service") state.services[index].visible = !state.services[index].visible;
+      if (group === "consult") state.consultation.bullets[index].visible = !state.consultation.bullets[index].visible;
+      if (group === "gallery") state.gallery[index].visible = !state.gallery[index].visible;
+      if (group === "product") state.products[index].visible = !state.products[index].visible;
+      if (group === "feedback") state.feedback[index].visible = !state.feedback[index].visible;
+      if (group === "booking") state.booking.fields[index].visible = !state.booking.fields[index].visible;
+      renderSections();
+    }
+
+    function syncColorFromPicker(id) {
+      const picker = document.getElementById(id + "-picker");
+      const text = document.getElementById(id);
+      if (picker && text) text.value = picker.value.toUpperCase();
+    }
+
+    function syncColorFromText(id) {
+      const text = document.getElementById(id);
+      const picker = document.getElementById(id + "-picker");
+      if (text && picker && /^#[0-9a-fA-F]{6}$/.test(text.value)) picker.value = text.value;
+    }
+
+    function makeId(prefix) {
+      return prefix + "-" + Date.now() + "-" + Math.random().toString(16).slice(2, 6);
+    }
+
+    function addService() {
+      collectInputs();
+      state.services.push({ id: makeId("service"), title: "Dịch vụ mới", price: "Liên hệ", description: "Mô tả ngắn cho dịch vụ này.", visible: true, imageUrl: "" });
+      renderSections();
+    }
+
+    function deleteService(index) {
+      const item = state.services[index];
+      if (!window.confirm("Xóa card dịch vụ này?")) return;
+      revokePreview("service-" + item.id);
+      collectInputs();
+      state.services.splice(index, 1);
+      renderSections();
+    }
+
+    function addGalleryItem() {
+      collectInputs();
+      state.gallery.push({ id: makeId("gallery"), title: "Ảnh không gian mới", description: "Mô tả ngắn cho ảnh này.", visible: true, imageUrl: "" });
+      renderSections();
+    }
+
+    function deleteGalleryItem(index) {
+      const item = state.gallery[index];
+      if (!window.confirm("Xóa ảnh không gian này?")) return;
+      revokePreview("gallery-" + item.id);
+      collectInputs();
+      state.gallery.splice(index, 1);
+      renderSections();
+    }
+
+    function addProductItem() {
+      collectInputs();
+      state.products.push({ id: makeId("product"), title: "Block sản phẩm mới", description: "Mô tả ngắn cho block sản phẩm này.", visible: true, imageUrl: "" });
+      renderSections();
+    }
+
+    function deleteProductItem(index) {
+      const item = state.products[index];
+      if (!window.confirm("Xóa block sản phẩm này?")) return;
+      revokePreview("product-" + item.id);
+      collectInputs();
+      state.products.splice(index, 1);
+      renderSections();
+    }
+
+    function addFeedbackItem() {
+      collectInputs();
+      state.feedback.push({ id: makeId("feedback"), name: "Khách hàng mới", content: "Feedback mới từ khách hàng.", rating: 5, visible: true });
+      renderSections();
+    }
+
+    function deleteFeedbackItem(index) {
+      if (!window.confirm("Xóa feedback này?")) return;
+      collectInputs();
+      state.feedback.splice(index, 1);
+      renderSections();
+    }
+
+    function setFeedbackRating(index, rating) {
+      collectInputs();
+      state.feedback[index].rating = rating;
+      renderSections();
+    }
+
+    function handleImagePick(event, key) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type || !file.type.startsWith("image/")) {
+        showToast("Vui lòng chọn đúng file ảnh.");
+        event.target.value = "";
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("Ảnh quá nặng, vui lòng chọn ảnh dưới 5MB.");
+        event.target.value = "";
+        return;
+      }
+      revokePreview(key);
+      const objectUrl = URL.createObjectURL(file);
+      previewState[key] = { url: objectUrl, name: file.name, size: file.size, warning: "" };
+      const img = new Image();
+      img.onload = function () {
+        if (img.height > img.width) previewState[key].warning = "Ảnh này hơi dọc, khi lên web có thể bị cắt. Nên chọn ảnh ngang.";
+        renderSections();
+      };
+      img.onerror = function () {
+        previewState[key].warning = "Không đọc được ảnh này. Bạn thử chọn ảnh khác rõ hơn.";
+        renderSections();
+      };
+      img.src = objectUrl;
+      renderSections();
+      showToast("Đã xem thử ảnh mới trên thiết bị này");
+      event.target.value = "";
+    }
+
+    function cancelPreview(key) {
+      revokePreview(key);
+      renderSections();
+      showToast("Đã hủy ảnh mới");
+    }
+
+    loadState();
+    renderSections();
+  </script>
 </body>
 </html>
