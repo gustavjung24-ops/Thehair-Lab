@@ -332,18 +332,21 @@ let SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 
 const CUSTOMER_IMAGE_MANIFEST_OVERRIDES = {
   "salon-hung-saigon": {
-    missingKeys: ["consultation", "space-01", "experience", "dv-mau-toc"],
+    missingKeys: ["space-01"],
     images: {
       hero: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/hero.png",
       hero02: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/hero-02.png",
+      consultation: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/consultation.png",
       colorService: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/color-service.png",
       stylingService: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/styling-service.png",
       treatmentService: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/treatment-service.jpg",
       space02: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/space-02.png",
       space03: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/space-03.png",
+      experience: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/experience.png",
       products: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/products.png",
       services: {
         cut: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-cat-tao-kieu.png",
+        color: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-mau-toc.png",
         fashionColor: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-nhuom-thoi-trang.png",
         perm: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-uon-setting.png",
         straight: "https://cdn.thehairlab.top/thehairlab/salon/customers/salon-hung-saigon/dv-duoi-phuc-hoi.jpg",
