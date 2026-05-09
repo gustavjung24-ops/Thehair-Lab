@@ -1,0 +1,1926 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Salon Test Mẫu 01 - Lavender Beauty</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #8b5cf6;
+      --primary-deep: #6d28d9;
+      --primary-soft: #ede9fe;
+      --bg: #fbf7ff;
+      --card: #ffffff;
+      --line: #e9defd;
+      --text: #221b35;
+      --muted: #6b7280;
+      --success: #0f766e;
+      --success-soft: #ccfbf1;
+      --warn: #92400e;
+      --warn-soft: #fef3c7;
+      --danger: #b91c1c;
+      --danger-soft: #fee2e2;
+      --shadow: 0 12px 36px rgba(109, 40, 217, 0.08);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-sm: 12px;
+    }
+
+    body {
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139, 92, 246, 0.1), transparent 26%),
+        linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 96px;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 16px 28px;
+    }
+
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(139, 92, 246, 0.12);
+      padding: 10px 0;
+    }
+
+    .admin-header__inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(109, 40, 217, 0.22);
+    }
+
+    .admin-headline {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .admin-headline small {
+      display: block;
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .admin-headline strong {
+      display: block;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.16s ease, opacity 0.16s ease, background 0.16s ease;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      opacity: 0.92;
+    }
+
+    .btn-primary {
+      background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(109, 40, 217, 0.2);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--primary-deep);
+      border: 1px solid rgba(109, 40, 217, 0.18);
+    }
+
+    .btn-soft {
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .hero-card,
+    .notice-card,
+    .section-card {
+      background: var(--card);
+      border: 1px solid rgba(109, 40, 217, 0.1);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      margin-top: 14px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.18), transparent 38%),
+        linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+    }
+
+    .hero-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .hero-card__title small {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .hero-card__title h1 {
+      font-size: 24px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .hero-card__title p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .status-chip {
+      flex-shrink: 0;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--success-soft);
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hero-card__meta {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .meta-box {
+      border-radius: var(--radius-lg);
+      background: #faf7ff;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid rgba(109, 40, 217, 0.08);
+    }
+
+    .meta-box strong {
+      display: block;
+      font-size: 18px;
+      color: var(--primary-deep);
+      margin-bottom: 4px;
+    }
+
+    .meta-box span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip-draft {
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+    }
+
+    .chip-local {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .notice-card {
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, #fff7e6 0%, var(--warn-soft) 100%);
+      color: var(--warn);
+      border-color: rgba(146, 64, 14, 0.16);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .sections {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-toggle {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .section-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .section-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .section-meta strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .section-meta span {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .section-arrow {
+      color: var(--muted);
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .section-card.open .section-arrow {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: none;
+      border-top: 1px solid rgba(109, 40, 217, 0.08);
+      padding: 16px;
+      background: linear-gradient(180deg, #fff 0%, #fcfbff 100%);
+    }
+
+    .section-card.open .section-body {
+      display: block;
+    }
+
+    .subhead {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--primary-deep);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid rgba(109, 40, 217, 0.14);
+      border-radius: var(--radius-sm);
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field input[type="text"]:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 86px;
+      line-height: 1.55;
+    }
+
+    .field-hint {
+      margin-top: 5px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .color-field {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-field input[type="color"] {
+      width: 46px;
+      height: 46px;
+      padding: 2px;
+      border-radius: 12px;
+      border: 1px solid rgba(109, 40, 217, 0.14);
+      background: #fff;
+    }
+
+    .color-field input[type="text"] {
+      flex: 1;
+    }
+
+    .item-card {
+      background: #fff;
+      border: 1px solid rgba(109, 40, 217, 0.12);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .item-head strong {
+      font-size: 13px;
+      color: var(--primary-deep);
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .toggle-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      border: none;
+      border-radius: 999px;
+      background: #d1d5db;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: left 0.2s ease;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    }
+
+    .toggle.on {
+      background: var(--primary);
+    }
+
+    .toggle.on::after {
+      left: 26px;
+    }
+
+    .mini-btn {
+      border: none;
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1.5px dashed rgba(109, 40, 217, 0.22);
+      background: rgba(237, 233, 254, 0.4);
+      color: var(--primary-deep);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .info-box {
+      border-radius: 16px;
+      background: #faf7ff;
+      border: 1px solid rgba(109, 40, 217, 0.08);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .image-editor {
+      background: #fff;
+      border: 1px solid rgba(109, 40, 217, 0.12);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .image-editor__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .image-editor__head strong {
+      font-size: 14px;
+    }
+
+    .image-editor__frame {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(109, 40, 217, 0.1);
+      background: linear-gradient(145deg, #f7f3ff 0%, #fff 100%);
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+    }
+
+    .image-editor__frame img {
+      width: 100%;
+      height: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-placeholder {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .image-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .image-actions input[type="file"] {
+      display: none;
+    }
+
+    .image-note {
+      margin-top: 9px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .warn-inline {
+      margin-top: 8px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .preview-inline {
+      margin-top: 8px;
+      background: #eefbf6;
+      color: #047857;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .rating-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .rating-row button {
+      border: none;
+      background: transparent;
+      font-size: 24px;
+      line-height: 1;
+      padding: 2px;
+    }
+
+    .reset-wrap {
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%) translateY(14px);
+      background: #1f1930;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.26s ease, transform 0.26s ease;
+      z-index: 90;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sticky-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(109, 40, 217, 0.12);
+    }
+
+    .sticky-bar__inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background:
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.16), transparent 40%),
+        linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+      border: 1px solid rgba(109, 40, 217, 0.12);
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(109, 40, 217, 0.12);
+      padding: 24px;
+    }
+
+    .login-card__brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 12px 26px rgba(109, 40, 217, 0.24);
+      margin-bottom: 14px;
+    }
+
+    .login-card h1 {
+      font-size: 28px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .login-card__salon {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #faf7ff;
+      border: 1px solid rgba(109, 40, 217, 0.08);
+      color: var(--primary-deep);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .login-form {
+      margin-top: 18px;
+    }
+
+    .login-error {
+      display: none;
+      margin-top: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .login-meta {
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .login-actions {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-app {
+      display: none;
+    }
+
+    .admin-app.is-authenticated {
+      display: block;
+    }
+
+    .account-banner {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(146, 64, 14, 0.18);
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .account-message {
+      display: none;
+      margin-top: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .account-message.show {
+      display: block;
+    }
+
+    .account-message.error {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    @media (max-width: 720px) {
+      .grid-2,
+      .grid-3,
+      .hero-card__meta {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-header__inner {
+        align-items: flex-start;
+      }
+
+      .header-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .header-actions .btn {
+        padding: 8px 11px;
+        font-size: 12px;
+      }
+    }
+
+    @media (min-width: 721px) {
+      body {
+        padding-bottom: 34px;
+      }
+
+      .sticky-bar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="login-screen" class="login-screen">
+    <section class="login-card">
+      <div class="login-card__brand">M01</div>
+      <h1>Đăng nhập quản trị salon</h1>
+      <p>Dùng số điện thoại salon được bàn giao để mở khu chỉnh sửa nội dung.</p>
+      <div id="login-salon-name" class="login-card__salon">Salon Test Mẫu 01 - Lavender Beauty</div>
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="field">
+          <label for="login-phone">Số điện thoại</label>
+          <input type="text" id="login-phone" autocomplete="username" inputmode="tel" placeholder="Ví dụ: 0902 964 685" />
+          <div class="field-hint">Dùng số điện thoại salon được bàn giao.</div>
+        </div>
+        <div class="field">
+          <label for="login-password">Mật khẩu</label>
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="Nhập mật khẩu quản trị" />
+        </div>
+        <div id="login-error" class="login-error" role="alert">Số điện thoại hoặc mật khẩu chưa đúng.</div>
+        <div class="login-actions">
+          <button class="btn btn-primary" type="submit">🔐 Đăng nhập</button>
+        </div>
+      </form>
+      <div class="login-meta">Đây là đăng nhập demo trên trình duyệt. Khi bàn giao thật sẽ bật bảo mật online.</div>
+    </section>
+  </main>
+
+  <div id="admin-app" class="admin-app">
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <div class="admin-badge">M01</div>
+        <div class="admin-headline">
+          <small>Admin con · The Hair Lab</small>
+          <strong>Admin · Salon Test Mẫu 01</strong>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
+          <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
+          <button class="btn btn-danger" type="button" onclick="logoutAdmin()">↩ Đăng xuất</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell">
+      <section class="hero-card">
+        <div class="hero-card__top">
+          <div class="hero-card__title">
+            <small>Bản nháp lưu trên máy này</small>
+            <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
+            <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
+          </div>
+          <div class="status-chip" id="summary-status">Đang hiển thị</div>
+        </div>
+        <div class="hero-card__meta">
+          <div class="meta-box">
+            <strong>10</strong>
+            <span>Đề mục chính</span>
+          </div>
+          <div class="meta-box">
+            <strong id="summary-service-count">6</strong>
+            <span>Dịch vụ hiển thị</span>
+          </div>
+          <div class="meta-box">
+            <strong>Local</strong>
+            <span>Lưu trên máy này</span>
+          </div>
+        </div>
+        <div class="toolbar">
+          <span class="chip chip-draft">📋 Bản nháp lưu trên máy này</span>
+          <span class="chip chip-local">🖼 Ảnh mới chỉ xem thử tại thiết bị này</span>
+        </div>
+      </section>
+
+      <section class="notice-card">
+        ⚠️ <strong>Đây là đăng nhập demo trên trình duyệt.</strong> Khi bàn giao thật sẽ bật bảo mật online. Ảnh mới chọn từ điện thoại hiện chỉ xem thử trong admin, chưa cập nhật lên website.
+      </section>
+
+      <section id="sections" class="sections"></section>
+
+      <div class="reset-wrap">
+        <button class="btn btn-danger" type="button" onclick="resetData()">🔄 Reset về mẫu gốc</button>
+      </div>
+    </div>
+
+    <div class="sticky-bar">
+      <div class="sticky-bar__inner">
+        <button class="btn btn-outline" type="button" onclick="previewSalon()">👁 Xem trước</button>
+        <button class="btn btn-primary" type="button" onclick="saveData()">💾 Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const ADMIN_SLUG_MATCH = window.location.pathname.match(/\/s\/([^/]+)\/admin\/?$/i);
+    const ADMIN_SLUG = (ADMIN_SLUG_MATCH && ADMIN_SLUG_MATCH[1]) ? ADMIN_SLUG_MATCH[1] : "salon-test-mau-01";
+    const STORAGE_KEY = `thehairlab.admin.${ADMIN_SLUG}`;
+    const DATA_VERSION = 3;
+    const CREDENTIAL_KEY = `thehairlab.admin.credentials.${ADMIN_SLUG}`;
+    const PREVIEW_URL = `/s/${ADMIN_SLUG}/`;
+    const THL_WORKER_API_BASE = "https://thehairlab-leads-worker.khuongbinh-info.workers.dev";
+    const ADMIN_AUTH = {
+      password: "admin123",
+      sessionKey: `thehairlab.admin.session.${ADMIN_SLUG}`
+    };
+
+    const DEFAULT_ADMIN_DATA = {
+      version: 3,
+      salon: {
+        name: "Salon Hưng Saigon",
+        logoText: "M01",
+        phone: "0902964685",
+        zalo: "0902964685",
+        address: "Tân An, Long An",
+        status: "active"
+      },
+      theme: {
+        templateName: "Lavender Beauty",
+        primary: "#8B5CF6",
+        secondary: "#6D28D9",
+        accent: "#EDE9FE",
+        background: "#FFFAF5",
+        textDark: "#221B35"
+      },
+      hero: {
+        title: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt",
+        description: "Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.",
+        primaryButton: "Đặt lịch tư vấn",
+        secondaryButton: "Gọi salon",
+        zaloButton: "Nhắn Zalo",
+        imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-hero.png"
+      },
+      trustBadges: [
+        { id: "trust-1", title: "Tư vấn 1:1", description: "Lộ trình theo gương mặt và phong cách cá nhân.", visible: true },
+        { id: "trust-2", title: "Kỹ thuật salon chuyên nghiệp", description: "Quy trình cắt, nhuộm, uốn, duỗi chuẩn kỹ thuật.", visible: true },
+        { id: "trust-3", title: "Lịch hẹn nhanh", description: "Đặt lịch trước để đến là phục vụ ngay.", visible: true },
+        { id: "trust-4", title: "Sản phẩm chuyên nghiệp", description: "Dùng sản phẩm phù hợp từng nền tóc tại salon.", visible: true }
+      ],
+      services: [
+        {
+          id: "cat-tao-kieu",
+          title: "Cắt & tạo kiểu nữ",
+          price: "Từ 199K",
+          description: "Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png"
+        },
+        {
+          id: "mau-toc",
+          title: "Tư vấn màu tóc tôn da",
+          price: "Từ 499K",
+          description: "Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png"
+        },
+        {
+          id: "nhuom-thoi-trang",
+          title: "Nhuộm thời trang",
+          price: "Từ 699K",
+          description: "Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png"
+        },
+        {
+          id: "uon-setting",
+          title: "Uốn setting",
+          price: "Từ 799K",
+          description: "Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png"
+        },
+        {
+          id: "duoi-phuc-hoi",
+          title: "Duỗi phục hồi",
+          price: "Từ 899K",
+          description: "Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png"
+        },
+        {
+          id: "cham-soc-phuc-hoi",
+          title: "Chăm sóc phục hồi tóc",
+          price: "Từ 349K",
+          description: "Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png"
+        }
+      ],
+      consultation: {
+        title: "Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.",
+        description: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.",
+        bullets: [
+          { id: "consult-1", title: "Đọc tỷ lệ gương mặt", description: "Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.", visible: true },
+          { id: "consult-2", title: "Kiểm tra nền tóc", description: "Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.", visible: true },
+          { id: "consult-3", title: "Chốt màu và phong cách", description: "Lựa màu tóc hài hoà tông da và thống nhất phong cách theo mục tiêu.", visible: true },
+          { id: "consult-4", title: "Lên lịch thực hiện", description: "Chốt khung giờ, dịch vụ và dặn dò chăm sóc trước và sau khi làm tóc.", visible: true }
+        ],
+        buttonText: "Đặt lịch tư vấn",
+        imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-consultation.png"
+      },
+      gallery: [
+        {
+          id: "space-01",
+          title: "Khu tư vấn riêng",
+          description: "Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png"
+        },
+        {
+          id: "space-02",
+          title: "Góc tạo kiểu",
+          description: "Khu làm tóc có ánh sáng đẹp để dễ kiểm tra phom tóc và màu tóc sau khi hoàn thiện.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-02.png"
+        },
+        {
+          id: "space-03",
+          title: "Khu chăm sóc và phục hồi",
+          description: "Khu vực chuyên cho các liệu trình phục hồi, dưỡng và chăm sóc chuyên sâu.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-03.png"
+        }
+      ],
+      products: [
+        {
+          id: "product-lineup",
+          title: "Sản phẩm chuyên nghiệp sử dụng tại salon",
+          description: "Đây là section duy nhất hiển thị ảnh sản phẩm. Tất cả các section dịch vụ, tư vấn và không gian salon không dùng ảnh sản phẩm công ty.",
+          visible: true,
+          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-products.png"
+        }
+      ],
+      feedback: [
+        { id: "fb-1", name: "Khách hàng Minh Anh", content: "Mình được tư vấn kỹ theo gương mặt nên cắt xong nhìn thanh hơn hẳn.", rating: 5, visible: true },
+        { id: "fb-2", name: "Khách hàng Bảo Trân", content: "Màu tóc lên đúng tone, nhìn sáng da và đi làm vẫn rất sang.", rating: 5, visible: true },
+        { id: "fb-3", name: "Khách hàng Thu Hà", content: "Đặt lịch nhanh, salon làm đúng giờ, không phải chờ đợi lâu.", rating: 5, visible: true }
+      ],
+      booking: {
+        title: "Đăng ký tư vấn nhanh",
+        note: "Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.",
+        successMessage: "Cảm ơn bạn, salon sẽ liên hệ lại sớm.",
+        fields: [
+          { id: "customer-name", label: "Họ tên", visible: true },
+          { id: "customer-phone", label: "Số điện thoại", visible: true },
+          { id: "service-name", label: "Dịch vụ quan tâm", visible: true },
+          { id: "appointment-date", label: "Ngày muốn hẹn", visible: true },
+          { id: "appointment-time", label: "Giờ muốn hẹn", visible: true },
+          { id: "customer-note", label: "Ghi chú", visible: true }
+        ]
+      }
+    };
+
+    const SECTION_DEFS = [
+      { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo chữ, số gọi, Zalo, địa chỉ và các điểm tin cậy dưới hero." },
+      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Lavender Beauty đúng với landing Mẫu 01." },
+      { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Tiêu đề chính, mô tả, nút bấm và ảnh hero." },
+      { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "6 card dịch vụ thực tế đang hiển thị trên landing page." },
+      { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Section tư vấn miễn phí và 4 bước tư vấn cho khách." },
+      { id: "gallery", icon: "📸", title: "Không gian salon", desc: "3 ảnh không gian thật để khách hình dung trải nghiệm." },
+      { id: "products", icon: "⭐", title: "Sản phẩm sử dụng", desc: "Section sản phẩm chuyên nghiệp sử dụng tại salon." },
+      { id: "feedback", icon: "💬", title: "Feedback khách hàng", desc: "Các đánh giá đang dùng để tăng độ tin cậy." },
+      { id: "booking", icon: "📅", title: "Form đặt lịch", desc: "Tiêu đề form, ghi chú, lời cảm ơn và các trường hiển thị." },
+      { id: "account", icon: "🔐", title: "Tài khoản & mật khẩu", desc: "Đổi mật khẩu đăng nhập và kiểm tra trạng thái bảo mật tài khoản." }
+    ];
+
+    let state = deepClone(DEFAULT_ADMIN_DATA);
+    let currentOpen = "basic";
+    let isAuthenticated = false;
+    const previewState = {};
+
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function normalizePhone(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
+
+    async function sha256(text) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    function esc(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function deepMerge(base, source) {
+      if (Array.isArray(base)) {
+        if (!Array.isArray(source)) return deepClone(base);
+        return source.map((item, index) => {
+          const template = base[index] !== undefined ? base[index] : {};
+          return deepMerge(template, item);
+        });
+      }
+      if (base && typeof base === "object") {
+        const out = deepClone(base);
+        if (!source || typeof source !== "object") return out;
+        Object.keys(source).forEach((key) => {
+          if (base[key] !== undefined) out[key] = deepMerge(base[key], source[key]);
+          else out[key] = source[key];
+        });
+        return out;
+      }
+      return source !== undefined ? source : base;
+    }
+
+    function normalizeLoadedData(raw) {
+      const merged = deepMerge(DEFAULT_ADMIN_DATA, raw || {});
+      merged.version = DATA_VERSION;
+      if (!Array.isArray(merged.trustBadges)) merged.trustBadges = deepClone(DEFAULT_ADMIN_DATA.trustBadges);
+      if (!Array.isArray(merged.services)) merged.services = deepClone(DEFAULT_ADMIN_DATA.services);
+      if (!Array.isArray(merged.gallery)) merged.gallery = deepClone(DEFAULT_ADMIN_DATA.gallery);
+      if (!Array.isArray(merged.products)) merged.products = deepClone(DEFAULT_ADMIN_DATA.products);
+      if (!Array.isArray(merged.feedback)) merged.feedback = deepClone(DEFAULT_ADMIN_DATA.feedback);
+      if (!Array.isArray(merged.consultation.bullets)) merged.consultation.bullets = deepClone(DEFAULT_ADMIN_DATA.consultation.bullets);
+      if (!Array.isArray(merged.booking.fields)) merged.booking.fields = deepClone(DEFAULT_ADMIN_DATA.booking.fields);
+      return merged;
+    }
+
+    function revokePreview(key) {
+      if (previewState[key] && previewState[key].url) URL.revokeObjectURL(previewState[key].url);
+      delete previewState[key];
+    }
+
+    function clearAllPreviewState() {
+      Object.keys(previewState).forEach((key) => revokePreview(key));
+    }
+
+    function persistSilently() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    async function saveDataOnline() {
+      // Attempt to save to D1 via Worker API
+      const endpoint = `${THL_WORKER_API_BASE}/api/admin/salons/${ADMIN_SLUG}`;
+      try {
+        const response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(state),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            return true; // Online save success
+          }
+        }
+      } catch (error) {
+        // Network error or API unavailable - will show fallback message
+      }
+      return false; // Online save failed
+    }
+
+    function getSession() {
+      const raw = localStorage.getItem(ADMIN_AUTH.sessionKey);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed && parsed.loggedIn ? parsed : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function persistSession(username) {
+      localStorage.setItem(ADMIN_AUTH.sessionKey, JSON.stringify({
+        loggedIn: true,
+        username,
+        loginAt: new Date().toISOString()
+      }));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(ADMIN_AUTH.sessionKey);
+    }
+
+    function getCredentials() {
+      const raw = localStorage.getItem(CREDENTIAL_KEY);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return null;
+        if (typeof parsed.passwordHash !== "string" || !parsed.passwordHash) return null;
+        return {
+          passwordHash: parsed.passwordHash,
+          updatedAt: parsed.updatedAt || "",
+          isDefaultPassword: parsed.isDefaultPassword !== false
+        };
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function setCredentials(passwordHash) {
+      localStorage.setItem(CREDENTIAL_KEY, JSON.stringify({
+        passwordHash,
+        updatedAt: new Date().toISOString(),
+        isDefaultPassword: false
+      }));
+    }
+
+    function isUsingDefaultPassword() {
+      const credentials = getCredentials();
+      if (!credentials) return true;
+      return credentials.isDefaultPassword !== false;
+    }
+
+    async function verifyPassword(inputPassword) {
+      const credentials = getCredentials();
+      if (!credentials || !credentials.passwordHash) {
+        return inputPassword === ADMIN_AUTH.password;
+      }
+      const inputHash = await sha256(inputPassword);
+      return inputHash === credentials.passwordHash;
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        state = deepClone(DEFAULT_ADMIN_DATA);
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.version !== DATA_VERSION) {
+          const shouldReset = window.confirm("Admin đã có dữ liệu cũ trên máy này. Bạn muốn cập nhật về mẫu mới đầy đủ nội dung không?");
+          if (shouldReset) {
+            state = deepClone(DEFAULT_ADMIN_DATA);
+            persistSilently();
+            return;
+          }
+          state = normalizeLoadedData(parsed);
+          persistSilently();
+          return;
+        }
+        state = normalizeLoadedData(parsed);
+      } catch (error) {
+        state = deepClone(DEFAULT_ADMIN_DATA);
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function previewSalon() {
+      window.open(PREVIEW_URL, "_blank");
+    }
+
+    function setLoginError(message) {
+      const element = document.getElementById("login-error");
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.toggle("show", Boolean(message));
+    }
+
+    function setAccountError(message) {
+      const element = document.getElementById("account-error");
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.toggle("show", Boolean(message));
+      if (message) element.classList.add("error");
+      else element.classList.remove("error");
+    }
+
+    function renderAuthView() {
+      const loginScreen = document.getElementById("login-screen");
+      const adminApp = document.getElementById("admin-app");
+      const salonName = document.getElementById("login-salon-name");
+      if (salonName) salonName.textContent = state.salon.name;
+      if (loginScreen) loginScreen.style.display = isAuthenticated ? "none" : "flex";
+      if (adminApp) adminApp.classList.toggle("is-authenticated", isAuthenticated);
+      if (!isAuthenticated) {
+        setLoginError("");
+        const phoneField = document.getElementById("login-phone");
+        const passwordField = document.getElementById("login-password");
+        if (passwordField) passwordField.value = "";
+        if (phoneField) phoneField.focus();
+      }
+    }
+
+    function renderApp() {
+      const session = getSession();
+      isAuthenticated = Boolean(session && session.loggedIn);
+      renderAuthView();
+      if (!isAuthenticated) return;
+      loadState();
+      renderSections();
+    }
+
+    async function handleLogin(event) {
+      if (event) event.preventDefault();
+      const phoneField = document.getElementById("login-phone");
+      const passwordField = document.getElementById("login-password");
+      const phone = normalizePhone(phoneField ? phoneField.value : "");
+      const expectedPhone = normalizePhone(DEFAULT_ADMIN_DATA.salon.phone);
+      const password = passwordField ? passwordField.value : "";
+      const passwordValid = await verifyPassword(password);
+      if (phone !== expectedPhone || !passwordValid) {
+        setLoginError("Số điện thoại hoặc mật khẩu chưa đúng.");
+        if (passwordField) passwordField.value = "";
+        return;
+      }
+      persistSession(phone);
+      isAuthenticated = true;
+      renderApp();
+      showToast("Đăng nhập thành công");
+    }
+
+    function logoutAdmin() {
+      clearSession();
+      isAuthenticated = false;
+      renderAuthView();
+      showToast("Đã đăng xuất");
+    }
+
+    async function changePassword(event) {
+      if (event) event.preventDefault();
+      setAccountError("");
+      const currentInput = document.getElementById("account-current-password");
+      const nextInput = document.getElementById("account-new-password");
+      const confirmInput = document.getElementById("account-confirm-password");
+      const currentPassword = currentInput ? currentInput.value : "";
+      const nextPassword = nextInput ? nextInput.value : "";
+      const confirmPassword = confirmInput ? confirmInput.value : "";
+
+      if (!await verifyPassword(currentPassword)) {
+        setAccountError("Mật khẩu hiện tại chưa đúng.");
+        if (currentInput) currentInput.value = "";
+        return;
+      }
+      if (nextPassword.length < 6) {
+        setAccountError("Mật khẩu mới phải có ít nhất 6 ký tự.");
+        return;
+      }
+      if (nextPassword === ADMIN_AUTH.password) {
+        setAccountError("Mật khẩu mới không được là admin123.");
+        return;
+      }
+      if (nextPassword !== confirmPassword) {
+        setAccountError("Nhập lại mật khẩu mới chưa khớp.");
+        return;
+      }
+
+      const nextHash = await sha256(nextPassword);
+      setCredentials(nextHash);
+      if (currentInput) currentInput.value = "";
+      if (nextInput) nextInput.value = "";
+      if (confirmInput) confirmInput.value = "";
+      renderSections();
+      showToast("Đã đổi mật khẩu. Lần sau hãy dùng mật khẩu mới.");
+    }
+
+    function updateSummary() {
+      document.getElementById("summary-salon-name").textContent = state.salon.name;
+      document.getElementById("summary-status").textContent = state.salon.status === "active" ? "Đang hiển thị" : "Tạm ẩn";
+      document.getElementById("summary-service-count").textContent = String(state.services.filter((item) => item.visible).length);
+      document.documentElement.style.setProperty("--primary", state.theme.primary || DEFAULT_ADMIN_DATA.theme.primary);
+      document.documentElement.style.setProperty("--primary-deep", state.theme.secondary || DEFAULT_ADMIN_DATA.theme.secondary);
+      document.documentElement.style.setProperty("--primary-soft", state.theme.accent || DEFAULT_ADMIN_DATA.theme.accent);
+      document.documentElement.style.setProperty("--bg", state.theme.background || DEFAULT_ADMIN_DATA.theme.background);
+      document.documentElement.style.setProperty("--text", state.theme.textDark || DEFAULT_ADMIN_DATA.theme.textDark);
+    }
+
+    function renderSections() {
+      const container = document.getElementById("sections");
+      container.innerHTML = SECTION_DEFS.map((section) => {
+        return "<article class=\"section-card" + (currentOpen === section.id ? " open" : "") + "\" data-id=\"" + section.id + "\">" +
+          "<button class=\"section-toggle\" type=\"button\" onclick=\"toggleSection('" + section.id + "')\">" +
+            "<span class=\"section-icon\">" + section.icon + "</span>" +
+            "<span class=\"section-meta\"><strong>" + esc(section.title) + "</strong><span>" + esc(section.desc) + "</span></span>" +
+            "<span class=\"section-arrow\">▾</span>" +
+          "</button>" +
+          "<div class=\"section-body\">" + (currentOpen === section.id ? renderSectionBody(section.id) : "") + "</div>" +
+        "</article>";
+      }).join("");
+      updateSummary();
+    }
+
+    function toggleSection(id) {
+      collectInputs();
+      currentOpen = currentOpen === id ? "" : id;
+      renderSections();
+    }
+
+    function collectInputs() {
+      const objectFields = {
+        salon: ["name", "logoText", "phone", "zalo", "address", "status"],
+        theme: ["templateName", "primary", "secondary", "accent", "background", "textDark"],
+        hero: ["title", "description", "primaryButton", "secondaryButton", "zaloButton"]
+      };
+
+      Object.keys(objectFields).forEach((group) => {
+        objectFields[group].forEach((field) => {
+          const element = document.getElementById(group + "-" + field);
+          if (element) state[group][field] = element.value;
+        });
+      });
+
+      state.trustBadges.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("trust-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.services.forEach((item, index) => {
+        ["title", "price", "description"].forEach((field) => {
+          const element = document.getElementById("service-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      ["title", "description", "buttonText"].forEach((field) => {
+        const element = document.getElementById("consultation-" + field);
+        if (element) state.consultation[field] = element.value;
+      });
+
+      state.consultation.bullets.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("consultation-bullet-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.gallery.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("gallery-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.products.forEach((item, index) => {
+        ["title", "description"].forEach((field) => {
+          const element = document.getElementById("product-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      state.feedback.forEach((item, index) => {
+        ["name", "content"].forEach((field) => {
+          const element = document.getElementById("feedback-" + index + "-" + field);
+          if (element) item[field] = element.value;
+        });
+      });
+
+      ["title", "note", "successMessage"].forEach((field) => {
+        const element = document.getElementById("booking-" + field);
+        if (element) state.booking[field] = element.value;
+      });
+
+      state.booking.fields.forEach((item, index) => {
+        const element = document.getElementById("booking-field-" + index + "-label");
+        if (element) item.label = element.value;
+      });
+    }
+
+    function saveData() {
+      collectInputs();
+      state.version = DATA_VERSION;
+      persistSilently();
+      renderSections();
+      showToast("Đã lưu trên thiết bị này");
+      
+      // Try to save online (fire-and-forget)
+      saveDataOnline().then((savedOnline) => {
+        if (savedOnline) {
+          showToast("Đã lưu online thành công");
+        }
+      }).catch(() => {
+        // Silent fail - user already has local save
+      });
+    }
+
+    function resetData() {
+      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Lavender Beauty version 3?");
+      if (!confirmed) return;
+      clearAllPreviewState();
+      state = deepClone(DEFAULT_ADMIN_DATA);
+      currentOpen = "basic";
+      persistSilently();
+      renderSections();
+      showToast("Đã reset về mẫu gốc version 3");
+    }
+
+    function field(id, label, value, hint, textarea) {
+      const inputHtml = textarea
+        ? "<textarea id=\"" + id + "\">" + esc(value) + "</textarea>"
+        : "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" />";
+      return "<div class=\"field\">" +
+        "<label for=\"" + id + "\">" + esc(label) + "</label>" +
+        inputHtml +
+        (hint ? "<div class=\"field-hint\">" + esc(hint) + "</div>" : "") +
+      "</div>";
+    }
+
+    function colorField(id, label, value) {
+      return "<div class=\"field\">" +
+        "<label>" + esc(label) + "</label>" +
+        "<div class=\"color-field\">" +
+          "<input type=\"color\" id=\"" + id + "-picker\" value=\"" + esc(value) + "\" oninput=\"syncColorFromPicker('" + id + "')\" />" +
+          "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" oninput=\"syncColorFromText('" + id + "')\" />" +
+        "</div>" +
+      "</div>";
+    }
+
+    function renderImageEditor(key, label, currentUrl) {
+      const preview = previewState[key];
+      const imageUrl = preview && preview.url ? preview.url : currentUrl;
+      const note = preview
+        ? "<div class=\"preview-inline\">Ảnh mới chỉ đang xem thử trên thiết bị này. Khi bật lưu online, ảnh sẽ được cập nhật lên website.</div>"
+        : "";
+      const warning = preview && preview.warning
+        ? "<div class=\"warn-inline\">" + esc(preview.warning) + "</div>"
+        : "";
+      return "<div class=\"image-editor\">" +
+        "<div class=\"image-editor__head\"><strong>" + esc(label) + "</strong><span class=\"field-hint\">Ảnh hiện tại hoặc ảnh đang xem thử</span></div>" +
+        "<div class=\"image-editor__frame\">" +
+          (imageUrl
+            ? "<img src=\"" + esc(imageUrl) + "\" alt=\"" + esc(label) + "\" />"
+            : "<div class=\"image-placeholder\">Chưa có ảnh hiển thị.<br />Bạn có thể chọn ảnh từ điện thoại để xem thử ngay.</div>") +
+        "</div>" +
+        "<div class=\"image-actions\">" +
+          "<label class=\"btn btn-soft\" for=\"file-" + esc(key) + "\">📱 Đổi ảnh từ điện thoại</label>" +
+          "<input id=\"file-" + esc(key) + "\" type=\"file\" accept=\"image/*\" onchange=\"handleImagePick(event, '" + esc(key) + "')\" />" +
+          (preview ? "<button class=\"btn btn-outline\" type=\"button\" onclick=\"cancelPreview('" + esc(key) + "')\">↩ Hủy ảnh mới</button>" : "") +
+        "</div>" +
+        "<div class=\"image-note\">Nên chọn ảnh ngang, rõ mặt hoặc rõ tóc, dung lượng dưới 5MB.</div>" +
+        note + warning +
+      "</div>";
+    }
+
+    function renderBasicSection() {
+      const trustCards = state.trustBadges.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Điểm tin cậy " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("trust-" + index, item.visible) + "</span>" +
+            "</div>" +
+          "</div>" +
+          field("trust-" + index + "-title", "Tiêu đề card", item.title) +
+          field("trust-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("");
+
+      return "<div class=\"subhead\">Thông tin salon</div>" +
+        "<div class=\"grid-2\">" +
+          field("salon-name", "Tên salon", state.salon.name) +
+          field("salon-status", "Trạng thái", state.salon.status === "active" ? "active" : "inactive", "Dùng active nếu landing đang hiển thị.") +
+        "</div>" +
+        "<div class=\"grid-3\">" +
+          field("salon-logoText", "Logo chữ", state.salon.logoText, "Gợi ý: 2 đến 3 ký tự in hoa.") +
+          field("salon-phone", "Số điện thoại", state.salon.phone) +
+          field("salon-zalo", "Số Zalo", state.salon.zalo) +
+        "</div>" +
+        field("salon-address", "Địa chỉ", state.salon.address, "Hiển thị ở khu thông tin cuối landing page.") +
+        "<div class=\"subhead\">Điểm tin cậy dưới hero</div>" +
+        "<div class=\"info-box\">Các card này đang nằm ngay dưới hero và giúp khách yên tâm hơn trước khi bấm đặt lịch.</div>" +
+        trustCards;
+    }
+
+    function renderThemeSection() {
+      return "<div class=\"info-box\">Tone màu này lấy đúng từ Mẫu 01 hiện tại để chủ salon chỉ cần tinh chỉnh nếu muốn đổi sắc tím đậm hoặc nền sáng.</div>" +
+        field("theme-templateName", "Tên mẫu đang dùng", state.theme.templateName) +
+        colorField("theme-primary", "Màu chính", state.theme.primary) +
+        colorField("theme-secondary", "Màu phụ đậm", state.theme.secondary) +
+        colorField("theme-accent", "Màu nền nhạt", state.theme.accent) +
+        colorField("theme-background", "Màu nền trang", state.theme.background) +
+        colorField("theme-textDark", "Màu chữ đậm", state.theme.textDark);
+    }
+
+    function renderHeroSection() {
+      return renderImageEditor("hero", "Ảnh đầu trang hiện tại", state.hero.imageUrl) +
+        field("hero-title", "Tiêu đề chính", state.hero.title, "", true) +
+        field("hero-description", "Mô tả ngắn", state.hero.description, "", true) +
+        "<div class=\"grid-3\">" +
+          field("hero-primaryButton", "Text nút chính", state.hero.primaryButton) +
+          field("hero-secondaryButton", "Text nút gọi", state.hero.secondaryButton) +
+          field("hero-zaloButton", "Text nút Zalo", state.hero.zaloButton) +
+        "</div>";
+    }
+
+    function renderServicesSection() {
+      return state.services.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Dịch vụ " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("service-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteService(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          renderImageEditor("service-" + item.id, item.title, item.imageUrl) +
+          field("service-" + index + "-title", "Tên dịch vụ", item.title) +
+          field("service-" + index + "-price", "Giá hiển thị", item.price) +
+          field("service-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addService()\">＋ Thêm card dịch vụ</button>";
+    }
+
+    function renderConsultationSection() {
+      const bullets = state.consultation.bullets.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\"><strong>Bước tư vấn " + (index + 1) + "</strong><div class=\"item-actions\"><span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("consult-" + index, item.visible) + "</span></div></div>" +
+          field("consultation-bullet-" + index + "-title", "Tiêu đề bước", item.title) +
+          field("consultation-bullet-" + index + "-description", "Mô tả bước", item.description, "", true) +
+        "</div>";
+      }).join("");
+
+      return renderImageEditor("consultation", "Ảnh section tư vấn", state.consultation.imageUrl) +
+        field("consultation-title", "Tiêu đề section", state.consultation.title, "", true) +
+        field("consultation-description", "Mô tả ngắn", state.consultation.description, "", true) +
+        field("consultation-buttonText", "Text nút chính", state.consultation.buttonText) +
+        bullets;
+    }
+
+    function renderGallerySection() {
+      return state.gallery.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Ảnh không gian " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("gallery-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteGalleryItem(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          renderImageEditor("gallery-" + item.id, item.title, item.imageUrl) +
+          field("gallery-" + index + "-title", "Tiêu đề ảnh", item.title) +
+          field("gallery-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addGalleryItem()\">＋ Thêm ảnh không gian</button>";
+    }
+
+    function renderProductsSection() {
+      return state.products.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Sản phẩm " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("product-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteProductItem(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          renderImageEditor("product-" + item.id, item.title, item.imageUrl) +
+          field("product-" + index + "-title", "Tên section / nhóm sản phẩm", item.title) +
+          field("product-" + index + "-description", "Mô tả ngắn", item.description, "", true) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addProductItem()\">＋ Thêm block sản phẩm</button>";
+    }
+
+    function renderFeedbackSection() {
+      return state.feedback.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Feedback " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\">" +
+              "<span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("feedback-" + index, item.visible) + "</span>" +
+              "<button class=\"mini-btn\" type=\"button\" onclick=\"deleteFeedbackItem(" + index + ")\">🗑 Xóa</button>" +
+            "</div>" +
+          "</div>" +
+          field("feedback-" + index + "-name", "Tên khách hàng", item.name) +
+          field("feedback-" + index + "-content", "Nội dung feedback", item.content, "", true) +
+          renderRating(index, item.rating) +
+        "</div>";
+      }).join("") + "<button class=\"add-btn\" type=\"button\" onclick=\"addFeedbackItem()\">＋ Thêm feedback</button>";
+    }
+
+    function renderBookingSection() {
+      const fields = state.booking.fields.map((item, index) => {
+        return "<div class=\"item-card\">" +
+          "<div class=\"item-head\">" +
+            "<strong>Trường form " + (index + 1) + "</strong>" +
+            "<div class=\"item-actions\"><span class=\"toggle-wrap\">Ẩn/hiện trên web " + renderToggle("booking-" + index, item.visible) + "</span></div>" +
+          "</div>" +
+          field("booking-field-" + index + "-label", "Tên trường hiển thị", item.label) +
+        "</div>";
+      }).join("");
+
+      return field("booking-title", "Tiêu đề form", state.booking.title) +
+        field("booking-note", "Ghi chú cho khách", state.booking.note, "", true) +
+        field("booking-successMessage", "Lời cảm ơn sau khi gửi", state.booking.successMessage, "", true) +
+        "<div class=\"subhead\">Các trường đang hiển thị</div>" + fields;
+    }
+
+    function renderAccountSection() {
+      const session = getSession();
+      const displayPhone = session && session.username ? session.username : normalizePhone(state.salon.phone);
+      const banner = isUsingDefaultPassword()
+        ? "<div class=\"account-banner\">Bạn đang dùng mật khẩu bàn giao mặc định admin123. Nên đổi mật khẩu sau khi nhận web.</div>"
+        : "";
+      return "<div class=\"info-box\">Tài khoản đăng nhập là số điện thoại salon.</div>" +
+        "<div class=\"field\"><label>Số điện thoại đăng nhập hiện tại</label><input type=\"text\" value=\"" + esc(displayPhone) + "\" readonly /></div>" +
+        banner +
+        "<form onsubmit=\"changePassword(event)\">" +
+          "<div class=\"field\"><label for=\"account-current-password\">Mật khẩu hiện tại</label><input type=\"password\" id=\"account-current-password\" autocomplete=\"current-password\" /></div>" +
+          "<div class=\"field\"><label for=\"account-new-password\">Mật khẩu mới</label><input type=\"password\" id=\"account-new-password\" autocomplete=\"new-password\" /></div>" +
+          "<div class=\"field\"><label for=\"account-confirm-password\">Nhập lại mật khẩu mới</label><input type=\"password\" id=\"account-confirm-password\" autocomplete=\"new-password\" /></div>" +
+          "<div class=\"field-hint\">Mật khẩu mới tối thiểu 6 ký tự và không dùng admin123.</div>" +
+          "<div id=\"account-error\" class=\"account-message\" role=\"alert\"></div>" +
+          "<div class=\"login-actions\"><button class=\"btn btn-primary\" type=\"submit\">🔐 Đổi mật khẩu</button></div>" +
+        "</form>";
+    }
+
+    function renderSectionBody(id) {
+      if (id === "basic") return renderBasicSection();
+      if (id === "theme") return renderThemeSection();
+      if (id === "hero") return renderHeroSection();
+      if (id === "services") return renderServicesSection();
+      if (id === "consultation") return renderConsultationSection();
+      if (id === "gallery") return renderGallerySection();
+      if (id === "products") return renderProductsSection();
+      if (id === "feedback") return renderFeedbackSection();
+      if (id === "booking") return renderBookingSection();
+      if (id === "account") return renderAccountSection();
+      return "";
+    }
+
+    function renderToggle(key, active) {
+      return "<button class=\"toggle " + (active ? "on" : "off") + "\" type=\"button\" onclick=\"toggleVisible('" + key + "')\"></button>";
+    }
+
+    function renderRating(index, rating) {
+      const stars = [1, 2, 3, 4, 5].map((value) => {
+        return "<button type=\"button\" onclick=\"setFeedbackRating(" + index + ", " + value + ")\">" + (rating >= value ? "⭐" : "☆") + "</button>";
+      }).join("");
+      return "<div class=\"field\"><label>Số sao</label><div class=\"rating-row\">" + stars + "</div></div>";
+    }
+
+    function toggleVisible(key) {
+      collectInputs();
+      const [group, indexRaw] = key.split("-");
+      const index = parseInt(indexRaw, 10);
+      if (group === "trust") state.trustBadges[index].visible = !state.trustBadges[index].visible;
+      if (group === "service") state.services[index].visible = !state.services[index].visible;
+      if (group === "consult") state.consultation.bullets[index].visible = !state.consultation.bullets[index].visible;
+      if (group === "gallery") state.gallery[index].visible = !state.gallery[index].visible;
+      if (group === "product") state.products[index].visible = !state.products[index].visible;
+      if (group === "feedback") state.feedback[index].visible = !state.feedback[index].visible;
+      if (group === "booking") state.booking.fields[index].visible = !state.booking.fields[index].visible;
+      renderSections();
+    }
+
+    function syncColorFromPicker(id) {
+      const picker = document.getElementById(id + "-picker");
+      const text = document.getElementById(id);
+      if (picker && text) text.value = picker.value.toUpperCase();
+    }
+
+    function syncColorFromText(id) {
+      const text = document.getElementById(id);
+      const picker = document.getElementById(id + "-picker");
+      if (text && picker && /^#[0-9a-fA-F]{6}$/.test(text.value)) picker.value = text.value;
+    }
+
+    function makeId(prefix) {
+      return prefix + "-" + Date.now() + "-" + Math.random().toString(16).slice(2, 6);
+    }
+
+    function addService() {
+      collectInputs();
+      state.services.push({ id: makeId("service"), title: "Dịch vụ mới", price: "Liên hệ", description: "Mô tả ngắn cho dịch vụ này.", visible: true, imageUrl: "" });
+      renderSections();
+    }
+
+    function deleteService(index) {
+      const item = state.services[index];
+      if (!window.confirm("Xóa card dịch vụ này?")) return;
+      revokePreview("service-" + item.id);
+      collectInputs();
+      state.services.splice(index, 1);
+      renderSections();
+    }
+
+    function addGalleryItem() {
+      collectInputs();
+      state.gallery.push({ id: makeId("gallery"), title: "Ảnh không gian mới", description: "Mô tả ngắn cho ảnh này.", visible: true, imageUrl: "" });
+      renderSections();
+    }
+
+    function deleteGalleryItem(index) {
+      const item = state.gallery[index];
+      if (!window.confirm("Xóa ảnh không gian này?")) return;
+      revokePreview("gallery-" + item.id);
+      collectInputs();
+      state.gallery.splice(index, 1);
+      renderSections();
+    }
+
+    function addProductItem() {
+      collectInputs();
+      state.products.push({ id: makeId("product"), title: "Block sản phẩm mới", description: "Mô tả ngắn cho block sản phẩm này.", visible: true, imageUrl: "" });
+      renderSections();
+    }
+
+    function deleteProductItem(index) {
+      const item = state.products[index];
+      if (!window.confirm("Xóa block sản phẩm này?")) return;
+      revokePreview("product-" + item.id);
+      collectInputs();
+      state.products.splice(index, 1);
+      renderSections();
+    }
+
+    function addFeedbackItem() {
+      collectInputs();
+      state.feedback.push({ id: makeId("feedback"), name: "Khách hàng mới", content: "Feedback mới từ khách hàng.", rating: 5, visible: true });
+      renderSections();
+    }
+
+    function deleteFeedbackItem(index) {
+      if (!window.confirm("Xóa feedback này?")) return;
+      collectInputs();
+      state.feedback.splice(index, 1);
+      renderSections();
+    }
+
+    function setFeedbackRating(index, rating) {
+      collectInputs();
+      state.feedback[index].rating = rating;
+      renderSections();
+    }
+
+    function handleImagePick(event, key) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type || !file.type.startsWith("image/")) {
+        showToast("Vui lòng chọn đúng file ảnh.");
+        event.target.value = "";
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("Ảnh quá nặng, vui lòng chọn ảnh dưới 5MB.");
+        event.target.value = "";
+        return;
+      }
+      revokePreview(key);
+      const objectUrl = URL.createObjectURL(file);
+      previewState[key] = { url: objectUrl, name: file.name, size: file.size, warning: "" };
+      const img = new Image();
+      img.onload = function () {
+        if (img.height > img.width) previewState[key].warning = "Ảnh này hơi dọc, khi lên web có thể bị cắt. Nên chọn ảnh ngang.";
+        renderSections();
+      };
+      img.onerror = function () {
+        previewState[key].warning = "Không đọc được ảnh này. Bạn thử chọn ảnh khác rõ hơn.";
+        renderSections();
+      };
+      img.src = objectUrl;
+      renderSections();
+      showToast("Đã xem thử ảnh mới trên thiết bị này");
+      event.target.value = "";
+    }
+
+    function cancelPreview(key) {
+      revokePreview(key);
+      renderSections();
+      showToast("Đã hủy ảnh mới");
+    }
+
+    renderApp();
+  </script>
+</body>
+</html>

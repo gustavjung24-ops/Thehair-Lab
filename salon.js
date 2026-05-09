@@ -151,6 +151,17 @@ const TEMPLATE_SALON_OVERRIDES = {
     address: "Tan An, Long An",
     description: "Salon demo dung de kiem tra quy trinh nhan ban tu template.",
   },
+  "salon-hung-saigon": {
+    slug: "salon-hung-saigon",
+    templateId: "02",
+    salon_name: "Salon Hưng Saigon",
+    status: "active",
+    themeName: "Green Natural",
+    phone: "0902 964 685",
+    zalo_url: "https://zalo.me/0902964685",
+    address: "Tân An, Long An",
+    description: "Dat lich tu van mien phi kieu toc phu hop guong mat tai Salon Hưng Saigon.",
+  },
 };
 
 const DEFAULT_SALON = {
@@ -905,6 +916,8 @@ async function loadSalon() {
   LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdForSlug(slug));
   SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 
+  const demoOverride = TEMPLATE_SALON_OVERRIDES[slug];
+
   // Try to fetch from D1 via Worker API first
   const controller = new AbortController();
   const fetchTimeout = setTimeout(() => controller.abort(), 8000);
@@ -1012,7 +1025,7 @@ async function loadSalon() {
   clearTimeout(fetchTimeout2);
 
   // Final fallback: use static config if any defined
-  const fallbackSalon = mergeSalonData(null, activeTemplateConfig);
+  const fallbackSalon = mergeSalonData(demoOverride || null, activeTemplateConfig);
   renderSalon(fallbackSalon, slug);
   bindDemoForm(fallbackSalon);
 }
