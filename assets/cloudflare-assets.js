@@ -47,7 +47,7 @@
 
     "salon.mau03.hero": normalizedBase + "/salon/mau-03/salon-mau-03-hero.png",
     "salon.mau03.hero02": normalizedBase + "/salon/mau-03/salon-mau-03-hero-02.png",
-    "salon.mau03.consultation": normalizedBase + "/salon/mau-03/salon-mau-03-treatment-service.png",
+    "salon.mau03.consultation": normalizedBase + "/salon/mau-03/salon-mau-03-consultation.png",
     "salon.mau03.colorService": normalizedBase + "/salon/mau-03/salon-mau-03-color-service.png",
     "salon.mau03.stylingService": normalizedBase + "/salon/mau-03/salon-mau-03-styling-service.png",
     "salon.mau03.treatmentService": normalizedBase + "/salon/mau-03/salon-mau-03-treatment-service.png",
