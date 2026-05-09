@@ -157,8 +157,8 @@ const TEMPLATE_SALON_OVERRIDES = {
     salon_name: "Salon Hưng Saigon",
     status: "active",
     themeName: "Green Natural",
-    phone: "0902 964 685",
-    zalo_url: "https://zalo.me/0902964685",
+    phone: "0938212878",
+    zalo_url: "https://zalo.me/0938212878",
     address: "Tân An, Long An",
     description: "Dat lich tu van mien phi kieu toc phu hop guong mat tai Salon Hưng Saigon.",
   },
@@ -912,11 +912,11 @@ async function loadSalon() {
     return;
   }
 
-  activeTemplateConfig = getTemplateConfig(slug);
-  LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdForSlug(slug));
-  SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
-
   const demoOverride = TEMPLATE_SALON_OVERRIDES[slug];
+  const initialTemplateId = demoOverride?.templateId || getTemplateIdForSlug(slug) || DEFAULT_TEMPLATE_ID;
+  activeTemplateConfig = getTemplateConfigById(initialTemplateId);
+  LOCAL_ASSETS = getLocalAssetsByTemplate(initialTemplateId);
+  SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 
   // Try to fetch from D1 via Worker API first
   const controller = new AbortController();
