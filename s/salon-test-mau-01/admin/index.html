@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Salon Test Mẫu 01 - Lavender Beauty</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #8b5cf6;
+      --primary-light: #ede9fe;
+      --primary-mid: #c4b5fd;
+      --bg: #fbf7ff;
+      --card: #ffffff;
+      --border: #ede9fe;
+      --text: #1e1b2e;
+      --muted: #6b7280;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+    }
+    .header-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-badge {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .header-title { flex: 1; min-width: 0; }
+    .header-title .sub {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .header-title .main {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-actions { display: flex; gap: 8px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 14px;
+      transition: opacity 0.15s;
+    }
+    .btn:active { opacity: 0.75; }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1.5px solid #fecaca;
+    }
+    .btn-sm { padding: 6px 10px; font-size: 13px; }
+    .admin-main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .top-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .draft-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .notice-box {
+      background: #fef3c7;
+      border: 1.5px solid #fcd34d;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.5;
+    }
+    .section-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .section-header:active { background: var(--primary-light); }
+    .section-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+    .section-meta { flex: 1; min-width: 0; }
+    .section-title { font-size: 15px; font-weight: 700; }
+    .section-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .section-chevron {
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 16px;
+      transition: transform 0.25s;
+    }
+    .section-card.open .section-chevron { transform: rotate(180deg); }
+    .section-body {
+      display: none;
+      border-top: 1.5px solid var(--border);
+      padding: 16px;
+    }
+    .section-card.open .section-body { display: block; }
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .field input[type="text"],
+    .field textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input[type="text"]:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
+    .field-hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .color-row input[type="color"] {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      cursor: pointer;
+      background: #fff;
+    }
+    .color-row input[type="text"] { flex: 1; }
+    .toggle-btn {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      border: none;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .toggle-btn.on { background: var(--primary); }
+    .toggle-btn.off { background: #d1d5db; }
+    .toggle-btn::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      transition: left 0.2s;
+    }
+    .toggle-btn.on::after { left: 24px; }
+    .toggle-btn.off::after { left: 4px; }
+    .item-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 12px;
+      background: var(--bg);
+    }
+    .item-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .item-card-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 460px) { .grid-2 { grid-template-columns: 1fr; } }
+    .btn-add {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed var(--primary-mid);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .btn-add:hover { background: var(--primary-light); }
+    .swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .swatch {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 1.5px var(--border);
+    }
+    .img-placeholder {
+      border: 2px dashed var(--primary-mid);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    .reset-area {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1.5px solid var(--border);
+      text-align: center;
+    }
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: #1e1b2e;
+      color: #fff;
+      border-radius: 99px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 200;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.97);
+      border-top: 1.5px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      gap: 10px;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .bottom-bar .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 12px;
+    }
+    @media (min-width: 640px) {
+      .bottom-bar {
+        max-width: 400px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="admin-header">
+  <div class="header-inner">
+    <div class="header-badge">M01</div>
+    <div class="header-title">
+      <div class="sub">Admin con · The Hair Lab</div>
+      <div class="main">Admin · Salon Test Mẫu 01</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="previewSalon()">👁 Xem trước</button>
+      <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Lưu</button>
+    </div>
+  </div>
+</header>
+
+<main class="admin-main">
+  <div class="top-badges">
+    <span class="draft-badge">📋 Bản nháp lưu trên máy này</span>
+  </div>
+
+  <div class="notice-box">
+    ⚠️ <strong>Bản demo admin chưa bật mật khẩu.</strong>
+    Khi bàn giao khách sẽ kích hoạt đăng nhập.
+  </div>
+
+  <div id="sections-container"></div>
+
+  <div class="reset-area">
+    <button class="btn btn-danger" style="margin: 0 auto;" onclick="resetData()">🔄 Đặt lại về mẫu gốc</button>
+    <p class="field-hint" style="margin-top: 8px;">Xóa toàn bộ nội dung đã chỉnh và quay về dữ liệu mẫu ban đầu.</p>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<div class="bottom-bar">
+  <button class="btn btn-outline" onclick="previewSalon()">👁 Xem trước</button>
+  <button class="btn btn-primary" onclick="saveData()">💾 Lưu thay đổi</button>
+</div>
+
+<script>
+const STORAGE_KEY = "thehairlab.admin.salon-test-mau-01";
+
+const DEFAULT_ADMIN_DATA = {
+  salon: {
+    name: "Salon Test Mẫu 01 - Lavender Beauty",
+    logoText: "HS",
+    phone: "0902 964 685",
+    zalo: "0902 964 685",
+    address: "Tân An, Long An",
+    status: "active"
+  },
+  theme: {
+    templateName: "Lavender Beauty",
+    primary: "#8B5CF6",
+    secondary: "#C4B5FD",
+    accent: "#F3E8FF",
+    background: "#FBF7FF",
+    textDark: "#2E1A47"
+  },
+  hero: {
+    title: "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt",
+    description: "Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.",
+    primaryButton: "Đặt lịch tư vấn",
+    secondaryButton: "Gọi salon",
+    zaloButton: "Nhắn Zalo"
+  },
+  services: [
+    { id: "cat-tao-kieu", title: "Cắt & tạo kiểu", price: "Từ 150.000đ", description: "Tư vấn kiểu tóc phù hợp gương mặt.", visible: true },
+    { id: "mau-toc", title: "Màu tóc", price: "Từ 650.000đ", description: "Nâng tông, phủ bạc, màu nâu thanh lịch.", visible: true },
+    { id: "nhuom-thoi-trang", title: "Nhuộm thời trang", price: "Từ 850.000đ", description: "Màu nổi bật theo xu hướng.", visible: true },
+    { id: "uon-setting", title: "Uốn setting", price: "Từ 800.000đ", description: "Uốn mềm, giữ form tự nhiên.", visible: true },
+    { id: "duoi-phuc-hoi", title: "Duỗi phục hồi", price: "Từ 750.000đ", description: "Duỗi mượt, giảm khô xơ.", visible: true },
+    { id: "cham-soc-phuc-hoi", title: "Chăm sóc phục hồi", price: "Từ 350.000đ", description: "Phục hồi tóc yếu, tóc hư tổn.", visible: true }
+  ],
+  consultation: {
+    title: "Tư vấn miễn phí kiểu tóc phù hợp",
+    description: "Đội ngũ salon giúp khách chọn kiểu tóc, màu tóc và dịch vụ phù hợp với gương mặt, chất tóc và phong cách."
+  },
+  gallery: [
+    { title: "Không gian tiếp khách", description: "Không gian nhẹ nhàng, nữ tính.", visible: true },
+    { title: "Khu vực làm tóc", description: "Ghế ngồi thoải mái, ánh sáng đẹp.", visible: true },
+    { title: "Góc chăm sóc tóc", description: "Khu vực phục hồi và chăm sóc chuyên sâu.", visible: true }
+  ],
+  products: [
+    { title: "Sản phẩm chăm sóc tóc", description: "Sử dụng sản phẩm phù hợp với tình trạng tóc.", visible: true }
+  ],
+  feedback: [
+    { name: "Khách hàng 01", content: "Tóc mềm hơn, màu lên đẹp và được tư vấn rất kỹ.", rating: 5, visible: true },
+    { name: "Khách hàng 02", content: "Không gian dễ chịu, nhân viên nhiệt tình.", rating: 5, visible: true }
+  ],
+  booking: {
+    title: "Đặt lịch tư vấn",
+    note: "Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.",
+    successMessage: "Cảm ơn bạn, salon sẽ liên hệ lại sớm."
+  }
+};
+
+function deepClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function esc(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+let state = deepClone(DEFAULT_ADMIN_DATA);
+let currentOpen = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      ["gallery", "products", "feedback"].forEach((k) => {
+        (state[k] || []).forEach((item) => {
+          if (item.visible === undefined) item.visible = true;
+        });
+      });
+    }
+  } catch (error) {
+    state = deepClone(DEFAULT_ADMIN_DATA);
+  }
+}
+
+function saveData() {
+  collectInputs();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  showToast("Đã lưu trên thiết bị này");
+}
+
+function resetData() {
+  if (!confirm("Đặt lại về mẫu gốc? Toàn bộ nội dung đã chỉnh sẽ bị xóa.")) return;
+  state = deepClone(DEFAULT_ADMIN_DATA);
+  localStorage.removeItem(STORAGE_KEY);
+  renderSections();
+  openSection("basic");
+  showToast("Đã đặt lại về mẫu gốc");
+}
+
+function previewSalon() {
+  window.open("/s/salon-test-mau-01/", "_blank");
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2600);
+}
+
+function collectInputs() {
+  ["name", "logoText", "phone", "zalo", "address"].forEach((k) => {
+    const el = document.getElementById("salon-" + k);
+    if (el) state.salon[k] = el.value;
+  });
+
+  ["primary", "secondary", "accent", "background", "textDark"].forEach((k) => {
+    const el = document.getElementById("theme-" + k);
+    if (el) state.theme[k] = el.value;
+  });
+
+  ["title", "description", "primaryButton", "secondaryButton", "zaloButton"].forEach((k) => {
+    const el = document.getElementById("hero-" + k);
+    if (el) state.hero[k] = el.value;
+  });
+
+  state.services.forEach((service, i) => {
+    ["title", "price", "description"].forEach((k) => {
+      const el = document.getElementById("svc-" + i + "-" + k);
+      if (el) service[k] = el.value;
+    });
+  });
+
+  ["title", "description"].forEach((k) => {
+    const el = document.getElementById("consult-" + k);
+    if (el) state.consultation[k] = el.value;
+  });
+
+  state.gallery.forEach((item, i) => {
+    ["title", "description"].forEach((k) => {
+      const el = document.getElementById("gallery-" + i + "-" + k);
+      if (el) item[k] = el.value;
+    });
+  });
+
+  state.products.forEach((item, i) => {
+    ["title", "description"].forEach((k) => {
+      const el = document.getElementById("product-" + i + "-" + k);
+      if (el) item[k] = el.value;
+    });
+  });
+
+  state.feedback.forEach((item, i) => {
+    ["name", "content"].forEach((k) => {
+      const el = document.getElementById("fb-" + i + "-" + k);
+      if (el) item[k] = el.value;
+    });
+  });
+
+  ["title", "note", "successMessage"].forEach((k) => {
+    const el = document.getElementById("booking-" + k);
+    if (el) state.booking[k] = el.value;
+  });
+}
+
+function field(id, label, value, hint, isTextarea) {
+  const input = isTextarea
+    ? "<textarea id=\"" + id + "\">" + esc(value) + "</textarea>"
+    : "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" />";
+
+  return "<div class=\"field\">" +
+    "<label for=\"" + id + "\">" + esc(label) + "</label>" +
+    input +
+    (hint ? "<div class=\"field-hint\">" + esc(hint) + "</div>" : "") +
+    "</div>";
+}
+
+function colorField(id, label, value) {
+  return "<div class=\"field\">" +
+    "<label>" + esc(label) + "</label>" +
+    "<div class=\"color-row\">" +
+    "<input type=\"color\" id=\"" + id + "-clr\" value=\"" + esc(value) + "\" oninput=\"syncColor('" + id + "')\" />" +
+    "<input type=\"text\" id=\"" + id + "\" value=\"" + esc(value) + "\" oninput=\"syncColorText('" + id + "')\" />" +
+    "</div></div>";
+}
+
+function toggleBtn(id, checked) {
+  return "<button class=\"toggle-btn " + (checked ? "on" : "off") + "\" id=\"tgl-" + id + "\" onclick=\"doToggle('" + id + "')\"></button>";
+}
+
+function bodyBasic() {
+  const s = state.salon;
+  return "<div class=\"field\" style=\"margin-bottom:14px;\">" +
+    "<label>Chữ viết tắt logo (2–3 ký tự)</label>" +
+    "<div style=\"display:flex;align-items:center;gap:12px;margin-top:6px;\">" +
+    "<div style=\"width:52px;height:52px;border-radius:14px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;\" id=\"logo-preview\">" + esc(s.logoText) + "</div>" +
+    "<input type=\"text\" id=\"salon-logoText\" value=\"" + esc(s.logoText) + "\" style=\"width:80px;\" maxlength=\"3\" oninput=\"document.getElementById('logo-preview').textContent=this.value\" />" +
+    "</div></div>" +
+    field("salon-name", "Tên salon", s.name) +
+    field("salon-phone", "Số điện thoại", s.phone, "Khách bấm nút Gọi sẽ dùng số này.") +
+    field("salon-zalo", "Số Zalo", s.zalo, "Khách bấm nút Zalo sẽ mở số này.") +
+    field("salon-address", "Địa chỉ", s.address);
+}
+
+function bodyTheme() {
+  const t = state.theme;
+  const swatches = [t.primary, t.secondary, t.accent, t.background, t.textDark]
+    .map((color) => "<span class=\"swatch\" style=\"background:" + esc(color) + ";\"></span>")
+    .join("");
+
+  return "<div style=\"background:linear-gradient(135deg," + esc(t.accent) + "," + esc(t.secondary) + "," + esc(t.primary) + ");border-radius:12px;padding:14px;margin-bottom:16px;\">" +
+    "<div style=\"font-size:12px;opacity:.7;\">Mẫu đang dùng</div>" +
+    "<div style=\"font-size:19px;font-weight:800;color:" + esc(t.textDark) + ";\">" + esc(t.templateName) + "</div>" +
+    "<div class=\"swatches\" style=\"margin-top:10px;margin-bottom:0;\">" + swatches + "</div></div>" +
+    colorField("theme-primary", "Màu chính", t.primary) +
+    colorField("theme-secondary", "Màu phụ", t.secondary) +
+    colorField("theme-accent", "Màu nền nhạt", t.accent) +
+    colorField("theme-background", "Màu nền trang", t.background) +
+    colorField("theme-textDark", "Màu chữ đậm", t.textDark);
+}
+
+function bodyHero() {
+  const h = state.hero;
+  return "<div class=\"img-placeholder\">🖼️<br/>Ảnh hero đang dùng từ CDN.<br/><em style=\"font-size:11px;\">Upload ảnh mới sẽ có ở phiên bản sau.</em></div>" +
+    field("hero-title", "Tiêu đề chính", h.title, "", true) +
+    field("hero-description", "Mô tả dưới tiêu đề", h.description, "", true) +
+    field("hero-primaryButton", "Nút đặt lịch", h.primaryButton) +
+    field("hero-secondaryButton", "Nút gọi điện", h.secondaryButton) +
+    field("hero-zaloButton", "Nút Zalo", h.zaloButton);
+}
+
+function bodyServices() {
+  return state.services.map((s, i) =>
+    "<div class=\"item-card\">" +
+      "<div class=\"item-card-head\"><div class=\"item-card-label\">Dịch vụ " + (i + 1) + "</div>" +
+      "<div class=\"item-card-actions\">" +
+      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
+      toggleBtn("svc-" + i, s.visible) +
+      "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteSvc(" + i + ")\">🗑</button></div></div>" +
+      "<div class=\"grid-2\">" +
+      field("svc-" + i + "-title", "Tên dịch vụ", s.title) +
+      field("svc-" + i + "-price", "Giá hiển thị", s.price) +
+      "</div>" +
+      field("svc-" + i + "-description", "Mô tả ngắn", s.description, "", true) +
+      "</div>"
+  ).join("") +
+  "<button class=\"btn-add\" onclick=\"addSvc()\">＋ Thêm dịch vụ mới</button>";
+}
+
+function bodyConsultation() {
+  const c = state.consultation;
+  return field("consult-title", "Tiêu đề section", c.title) +
+    field("consult-description", "Nội dung mô tả", c.description, "", true);
+}
+
+function bodyGallery() {
+  return state.gallery.map((g, i) =>
+    "<div class=\"item-card\">" +
+      "<div class=\"item-card-head\"><div class=\"item-card-label\">Ảnh không gian " + (i + 1) + "</div>" +
+      "<div class=\"item-card-actions\">" +
+      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
+      toggleBtn("gal-" + i, g.visible) +
+      "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteGal(" + i + ")\">🗑</button></div></div>" +
+      "<div class=\"img-placeholder\" style=\"padding:12px;font-size:12px;\">📷 Ảnh CDN · Upload thật ở phiên bản sau.</div>" +
+      field("gallery-" + i + "-title", "Tiêu đề ảnh", g.title) +
+      field("gallery-" + i + "-description", "Mô tả", g.description) +
+      "</div>"
+  ).join("") +
+  "<button class=\"btn-add\" onclick=\"addGal()\">＋ Thêm ảnh không gian</button>";
+}
+
+function bodyProducts() {
+  return state.products.map((p, i) =>
+    "<div class=\"item-card\">" +
+      "<div class=\"item-card-head\"><div class=\"item-card-label\">Sản phẩm " + (i + 1) + "</div>" +
+      "<div class=\"item-card-actions\">" +
+      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
+      toggleBtn("prd-" + i, p.visible) +
+      "<button class=\"btn btn-danger btn-sm\" onclick=\"deletePrd(" + i + ")\">🗑</button></div></div>" +
+      field("product-" + i + "-title", "Tên sản phẩm / nhóm", p.title) +
+      field("product-" + i + "-description", "Mô tả ngắn", p.description, "", true) +
+      "</div>"
+  ).join("") +
+  "<button class=\"btn-add\" onclick=\"addPrd()\">＋ Thêm sản phẩm</button>";
+}
+
+function bodyFeedback() {
+  return state.feedback.map((f, i) => {
+    const stars = [1, 2, 3, 4, 5].map((n) =>
+      "<button onclick=\"setRating(" + i + "," + n + ")\" style=\"background:none;border:none;cursor:pointer;font-size:26px;padding:2px;\">" +
+      (f.rating >= n ? "⭐" : "☆") +
+      "</button>"
+    ).join("");
+
+    return "<div class=\"item-card\">" +
+      "<div class=\"item-card-head\"><div class=\"item-card-label\">Feedback " + (i + 1) + "</div>" +
+      "<div class=\"item-card-actions\">" +
+      "<span style=\"font-size:12px;color:var(--muted);\">Ẩn/hiện trên web</span>" +
+      toggleBtn("fb-" + i, f.visible) +
+      "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteFb(" + i + ")\">🗑</button></div></div>" +
+      field("fb-" + i + "-name", "Tên khách hàng", f.name) +
+      field("fb-" + i + "-content", "Nội dung đánh giá", f.content, "", true) +
+      "<div class=\"field\"><label>Số sao</label><div style=\"margin-top:4px;\">" + stars + "</div></div>" +
+      "</div>";
+  }).join("") +
+  "<button class=\"btn-add\" onclick=\"addFb()\">＋ Thêm đánh giá</button>";
+}
+
+function bodyBooking() {
+  const b = state.booking;
+  return field("booking-title", "Tiêu đề form đặt lịch", b.title) +
+    field("booking-note", "Ghi chú cho khách", b.note, "Hiển thị phía trên form.") +
+    field("booking-successMessage", "Lời cảm ơn sau khi gửi", b.successMessage, "Xuất hiện khi khách gửi form thành công.");
+}
+
+const SECTIONS = [
+  { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo, hotline, địa chỉ, Zalo." },
+  { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Màu chủ đạo theo mẫu Lavender Beauty." },
+  { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Hero, tiêu đề, mô tả và nút đặt lịch." },
+  { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "Thêm, sửa, ẩn/hiện card dịch vụ." },
+  { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Nội dung section tư vấn miễn phí." },
+  { id: "gallery", icon: "📸", title: "Không gian salon", desc: "Gallery ảnh không gian và trải nghiệm." },
+  { id: "products", icon: "⭐", title: "Sản phẩm sử dụng", desc: "Sản phẩm nổi bật tại salon." },
+  { id: "feedback", icon: "💬", title: "Feedback khách hàng", desc: "Lời chứng thực, đánh giá, ảnh khách." },
+  { id: "booking", icon: "📅", title: "Form đặt lịch", desc: "Tiêu đề form, lời nhắn sau khi gửi." }
+];
+
+function getBodyHTML(id) {
+  if (id === "basic") return bodyBasic();
+  if (id === "theme") return bodyTheme();
+  if (id === "hero") return bodyHero();
+  if (id === "services") return bodyServices();
+  if (id === "consultation") return bodyConsultation();
+  if (id === "gallery") return bodyGallery();
+  if (id === "products") return bodyProducts();
+  if (id === "feedback") return bodyFeedback();
+  if (id === "booking") return bodyBooking();
+  return "";
+}
+
+function renderSections() {
+  document.getElementById("sections-container").innerHTML = SECTIONS.map((sec) =>
+    "<div class=\"section-card\" data-id=\"" + sec.id + "\">" +
+    "<div class=\"section-header\" onclick=\"openSection('" + sec.id + "')\">" +
+    "<div class=\"section-icon\">" + sec.icon + "</div>" +
+    "<div class=\"section-meta\">" +
+    "<div class=\"section-title\">" + esc(sec.title) + "</div>" +
+    "<div class=\"section-desc\">" + esc(sec.desc) + "</div></div>" +
+    "<div class=\"section-chevron\">▾</div></div>" +
+    "<div class=\"section-body\"></div></div>"
+  ).join("");
+}
+
+function openSection(id) {
+  collectInputs();
+  document.querySelectorAll(".section-card").forEach((card) => {
+    if (card.dataset.id === id) {
+      const wasOpen = card.classList.contains("open");
+      if (!wasOpen) {
+        card.classList.add("open");
+        card.querySelector(".section-body").innerHTML = getBodyHTML(id);
+        currentOpen = id;
+      } else {
+        card.classList.remove("open");
+        currentOpen = null;
+      }
+    } else {
+      card.classList.remove("open");
+    }
+  });
+}
+
+function refreshOpen() {
+  if (!currentOpen) return;
+  const card = document.querySelector(".section-card[data-id='" + currentOpen + "']");
+  if (card && card.classList.contains("open")) {
+    card.querySelector(".section-body").innerHTML = getBodyHTML(currentOpen);
+  }
+}
+
+function doToggle(id) {
+  collectInputs();
+  const parts = id.split("-");
+  if (id.startsWith("svc-")) state.services[parseInt(parts[1], 10)].visible = !state.services[parseInt(parts[1], 10)].visible;
+  else if (id.startsWith("gal-")) state.gallery[parseInt(parts[1], 10)].visible = !state.gallery[parseInt(parts[1], 10)].visible;
+  else if (id.startsWith("prd-")) state.products[parseInt(parts[1], 10)].visible = !state.products[parseInt(parts[1], 10)].visible;
+  else if (id.startsWith("fb-")) state.feedback[parseInt(parts[1], 10)].visible = !state.feedback[parseInt(parts[1], 10)].visible;
+  refreshOpen();
+}
+
+function addSvc() {
+  collectInputs();
+  state.services.push({
+    id: "dv-" + Date.now(),
+    title: "Dịch vụ mới",
+    price: "Liên hệ",
+    description: "Mô tả dịch vụ.",
+    visible: true
+  });
+  refreshOpen();
+}
+
+function deleteSvc(i) {
+  if (!confirm("Xóa dịch vụ này?")) return;
+  collectInputs();
+  state.services.splice(i, 1);
+  refreshOpen();
+}
+
+function addGal() {
+  collectInputs();
+  state.gallery.push({
+    title: "Ảnh mới",
+    description: "Mô tả ảnh.",
+    visible: true
+  });
+  refreshOpen();
+}
+
+function deleteGal(i) {
+  if (!confirm("Xóa ảnh này?")) return;
+  collectInputs();
+  state.gallery.splice(i, 1);
+  refreshOpen();
+}
+
+function addPrd() {
+  collectInputs();
+  state.products.push({
+    title: "Sản phẩm mới",
+    description: "Mô tả.",
+    visible: true
+  });
+  refreshOpen();
+}
+
+function deletePrd(i) {
+  if (!confirm("Xóa sản phẩm này?")) return;
+  collectInputs();
+  state.products.splice(i, 1);
+  refreshOpen();
+}
+
+function addFb() {
+  collectInputs();
+  state.feedback.push({
+    name: "Khách hàng mới",
+    content: "Nội dung đánh giá.",
+    rating: 5,
+    visible: true
+  });
+  refreshOpen();
+}
+
+function deleteFb(i) {
+  if (!confirm("Xóa đánh giá này?")) return;
+  collectInputs();
+  state.feedback.splice(i, 1);
+  refreshOpen();
+}
+
+function setRating(i, stars) {
+  collectInputs();
+  state.feedback[i].rating = stars;
+  refreshOpen();
+}
+
+function syncColor(id) {
+  const clr = document.getElementById(id + "-clr");
+  const txt = document.getElementById(id);
+  if (clr && txt) txt.value = clr.value;
+}
+
+function syncColorText(id) {
+  const txt = document.getElementById(id);
+  const clr = document.getElementById(id + "-clr");
+  if (txt && clr && /^#[0-9a-fA-F]{6}$/.test(txt.value)) {
+    clr.value = txt.value;
+  }
+}
+
+loadState();
+renderSections();
+openSection("basic");
+</script>
+</body>
+</html>
