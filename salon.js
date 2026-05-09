@@ -139,6 +139,17 @@ const TEMPLATE_SALON_OVERRIDES = {
     address: "The Hair Lab - Mẫu giao diện salon chuyên nghiệp",
     description: "Mẫu landing page salon phong cách gold sáng, chuyên nghiệp, phục hồi cao cấp.",
   },
+  "salon-demo-test": {
+    slug: "salon-demo-test",
+    templateId: "02",
+    salon_name: "Salon Demo Test",
+    status: "active",
+    themeName: "Green Natural",
+    phone: "0902 964 685",
+    zalo_url: "https://zalo.me/0902964685",
+    address: "Tan An, Long An",
+    description: "Salon demo dung de kiem tra quy trinh nhan ban tu template.",
+  },
 };
 
 const DEFAULT_SALON = {
