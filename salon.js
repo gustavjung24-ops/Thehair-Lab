@@ -1,3 +1,4 @@
+const THL_WORKER_API_BASE = "https://thehairlab-leads-worker.khuongbinh-info.workers.dev";
 const API_BASE = "https://thehairlab-leads-worker.khuongbinh-thehairlab.workers.dev/api/public/salons";
 const TEMPLATE_CONFIGS = {
   "01": {
@@ -843,12 +844,6 @@ async function loadSalon() {
 
   // Check TEMPLATE_SALON_OVERRIDES first (template/customer slugs)
   const demoOverride = TEMPLATE_SALON_OVERRIDES[slug];
-  if (demoOverride) {
-    const demoSalon = mergeSalonData(demoOverride, activeTemplateConfig);
-    renderSalon(demoSalon, slug);
-    bindDemoForm(demoSalon);
-    return;
-  }
 
   // Try to fetch from D1 via Worker API first
   const controller = new AbortController();
@@ -856,7 +851,7 @@ async function loadSalon() {
 
   try {
     // Try new GET /api/salons/:slug endpoint (D1-backed)
-    const response = await fetch(`/api/salons/${encodeURIComponent(slug)}`, {
+    const response = await fetch(`${THL_WORKER_API_BASE}/api/salons/${encodeURIComponent(slug)}`, {
       signal: controller.signal,
     });
     clearTimeout(fetchTimeout);

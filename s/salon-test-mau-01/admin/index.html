@@ -943,6 +943,7 @@
     const DATA_VERSION = 3;
     const CREDENTIAL_KEY = `thehairlab.admin.credentials.${ADMIN_SLUG}`;
     const PREVIEW_URL = `/s/${ADMIN_SLUG}/`;
+    const THL_WORKER_API_BASE = "https://thehairlab-leads-worker.khuongbinh-info.workers.dev";
     const ADMIN_AUTH = {
       password: "admin123",
       sessionKey: `thehairlab.admin.session.${ADMIN_SLUG}`
@@ -1186,7 +1187,7 @@
 
     async function saveDataOnline() {
       // Attempt to save to D1 via Worker API
-      const endpoint = `/api/admin/salons/${ADMIN_SLUG}`;
+      const endpoint = `${THL_WORKER_API_BASE}/api/admin/salons/${ADMIN_SLUG}`;
       try {
         const response = await fetch(endpoint, {
           method: 'PUT',
