@@ -176,9 +176,68 @@ function getTemplateIdFromSlug(slug) {
   return match ? match[1] : DEFAULT_TEMPLATE_ID;
 }
 
-function getTemplateConfig(slug) {
-  const templateId = getTemplateIdFromSlug(slug);
-  return TEMPLATE_CONFIGS[templateId] || TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
+function normalizeTemplateId(value) {
+  const match = String(value || "").match(/^(\d{2})$/);
+  return match ? match[1] : "";
+}
+
+function getTemplateIdForSlug(slug, apiSalon, adminData) {
+  const explicitTemplateId = normalizeTemplateId(
+    adminData?.templateId || adminData?.template_id || apiSalon?.template_id
+  );
+  const overrideTemplateId = normalizeTemplateId(TEMPLATE_SALON_OVERRIDES[slug]?.templateId);
+  return explicitTemplateId || overrideTemplateId || getTemplateIdFromSlug(slug) || DEFAULT_TEMPLATE_ID;
+}
+
+function getTemplateConfigById(templateId) {
+  const resolvedTemplateId = normalizeTemplateId(templateId) || DEFAULT_TEMPLATE_ID;
+  const config = TEMPLATE_CONFIGS[resolvedTemplateId] || TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
+  return JSON.parse(JSON.stringify(config));
+}
+
+function getTemplateConfig(slug, apiSalon, adminData) {
+  return getTemplateConfigById(getTemplateIdForSlug(slug, apiSalon, adminData));
+}
+
+function hasRenderableValue(value) {
+  if (value === undefined || value === null) {
+    return false;
+  }
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+  if (typeof value === "object") {
+    return Object.keys(value).length > 0;
+  }
+  return true;
+}
+
+function shouldUseAdminTheme(slug, apiSalon, adminData) {
+  const explicitTemplateId = normalizeTemplateId(
+    adminData?.templateId || adminData?.template_id || apiSalon?.template_id
+  );
+  if (explicitTemplateId) {
+    return true;
+  }
+  return !/^salon-test-mau-\d{2}$/i.test(String(slug || ""));
+}
+
+function mergeThemeData(baseTheme, adminTheme, allowOverride) {
+  const mergedTheme = { ...baseTheme };
+  if (!allowOverride || !adminTheme || typeof adminTheme !== "object") {
+    return mergedTheme;
+  }
+
+  ["primary", "secondary", "accent", "background", "textDark", "heroGradient"].forEach((key) => {
+    if (hasRenderableValue(adminTheme[key])) {
+      mergedTheme[key] = String(adminTheme[key]).trim();
+    }
+  });
+
+  return mergedTheme;
 }
 
 function getLocalAssetsByTemplate(templateId) {
@@ -724,15 +783,19 @@ function mergeSalonData(apiSalon, templateConfig) {
     theme_color: templateConfig.theme.primary,
   };
 
+  const candidateSalon = apiSalon || {};
+
   return {
     ...DEFAULT_SALON,
     ...templateSalon,
-    ...(apiSalon || {}),
+    ...Object.fromEntries(
+      Object.entries(candidateSalon).filter(([, value]) => hasRenderableValue(value))
+    ),
   };
 }
 
-function renderSalon(salon, slug) {
-  applyTheme(activeTemplateConfig.theme, salon.theme_color);
+function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme) {
+  applyTheme(themeConfig, salon.theme_color);
   updateSeo(salon);
 
   const subtitle = activeTemplateConfig.subtitle;
@@ -839,11 +902,8 @@ async function loadSalon() {
   }
 
   activeTemplateConfig = getTemplateConfig(slug);
-  LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdFromSlug(slug));
+  LOCAL_ASSETS = getLocalAssetsByTemplate(getTemplateIdForSlug(slug));
   SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
-
-  // Check TEMPLATE_SALON_OVERRIDES first (template/customer slugs)
-  const demoOverride = TEMPLATE_SALON_OVERRIDES[slug];
 
   // Try to fetch from D1 via Worker API first
   const controller = new AbortController();
@@ -867,7 +927,16 @@ async function loadSalon() {
       if (data?.success && data?.salon) {
         // D1 has this salon - use it
         const salonData = data.salon;
+        const resolvedTemplateId = getTemplateIdForSlug(slug, salonData, salonData.admin_data);
+        activeTemplateConfig = getTemplateConfigById(resolvedTemplateId);
+        LOCAL_ASSETS = getLocalAssetsByTemplate(resolvedTemplateId);
+        SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
         let salonToRender = null;
+        const resolvedTheme = mergeThemeData(
+          activeTemplateConfig.theme,
+          salonData.admin_data?.theme,
+          shouldUseAdminTheme(slug, salonData, salonData.admin_data)
+        );
 
         // If D1 has admin_data JSON, use it (includes theme, services, etc)
         if (salonData.admin_data && typeof salonData.admin_data === 'object') {
@@ -878,17 +947,13 @@ async function loadSalon() {
             zalo_url: salonData.admin_data.salon?.zalo ? `https://zalo.me/${salonData.admin_data.salon.zalo}` : salonData.zalo_url,
             address: salonData.admin_data.salon?.address || salonData.address,
             working_hours: salonData.working_hours || DEFAULT_SALON.working_hours,
-            theme_color: salonData.admin_data.theme?.primary || activeTemplateConfig.theme.primary,
+            theme_color: resolvedTheme.primary,
             logo_url: salonData.logo_url || '',
             facebook_url: salonData.facebook_url || DEFAULT_SALON.facebook_url,
           };
           // Merge and apply full admin data rendering
           const mergedSalon = mergeSalonData(salonToRender, activeTemplateConfig);
-          // Store admin_data for theme override
-          if (salonData.admin_data.theme) {
-            Object.assign(activeTemplateConfig.theme, salonData.admin_data.theme);
-          }
-          renderSalon(mergedSalon, slug);
+          renderSalon(mergedSalon, slug, resolvedTheme);
           bindDemoForm(mergedSalon);
           return;
         } else {
@@ -906,7 +971,7 @@ async function loadSalon() {
             },
             activeTemplateConfig
           );
-          renderSalon(salonToRender, slug);
+          renderSalon(salonToRender, slug, activeTemplateConfig.theme);
           bindDemoForm(salonToRender);
           return;
         }
