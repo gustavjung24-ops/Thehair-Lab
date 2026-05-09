@@ -1,27 +1,74 @@
-# The Hair Lab - Roadmap va Trang Thai
+# The Hair Lab — Trạng thái dự án
 
-Website phan phoi san pham cho salon, theo huong mo rong tu one-page ban hang sang he thong quan tri tong va landing page theo tung salon.
+Website phân phối sản phẩm tóc cho salon, kết hợp landing page demo theo từng mẫu và hệ thống quản trị tập trung.
 
-## Phase Roadmap
+## Trạng thái hiện tại (May 2026)
 
-- Phase 1 (done): One-page TheHairLab.top da hoan thanh va dang chay production.
-- Phase 2 (in progress): Cloudflare Worker + D1 cho API backend tap trung.
-- Phase 3 (in progress): Admin tong (khong dung Apps Script, khong dung Sanity Studio lam admin tong).
-- Phase 4 (planned): Trang con salon theo slug (`/[slug]`) sau khi backend/admin on dinh.
+| Hạng mục | Trạng thái |
+|---|---|
+| Trang chủ thehairlab.top | ✅ Production |
+| Landing salon Mẫu 01–05 (`/s/salon-test-mau-0X/`) | ✅ Hoàn thành, chạy được local + Vercel |
+| CDN/R2 cho ảnh landing salon 01–05 | ✅ Hoàn thành, 100% ảnh qua `cdn.thehairlab.top` |
+| Ảnh trang chủ (product + thumbnail mẫu) | ⏳ Vẫn dùng `public/image/` local — map R2 ở phase sau |
+| Nút "Xem mẫu" 5 card trang chủ | ✅ Đã link đúng `/s/salon-test-mau-0X/` |
+| OG image trang chủ | ✅ `hien-thi-tim-kiem.png` qua CDN |
+| OG image landing 01–05 | ✅ Hero CDN theo từng mẫu |
+| Admin tổng | 🔧 `admin/` + Cloudflare Worker D1 (đang xây) |
+| Backend API Worker | 🔧 Phase 2 — schema D1 đã có, đang deploy |
 
-## Cau truc hien tai
+## Roadmap Phase
+
+- **Phase 1** ✅: Trang chủ one-page TheHairLab.top — production.
+- **Phase 2** 🔧: Cloudflare Worker + D1 — API backend tập trung.
+- **Phase 3** 🔧: Admin tổng (`admin/` + Worker, không dùng Sanity Studio làm admin tổng).
+- **Phase 4** ⏳: Landing salon theo slug thực (`/[slug]`) sau khi backend/admin ổn định.
+- **Phase 5** ⏳: Map toàn bộ ảnh trang chủ từ `public/image/` sang R2/CDN.
+
+## Cấu trúc hiện tại
 
 ```
-index.html          # Trang one-page chinh
-script.js           # Logic frontend
-styles.css          # Giao dien frontend
-admin/              # Admin tong local (UI tinh)
-worker/             # Cloudflare Worker + D1 schema
-cms/                # Lop ket noi Sanity (giu lai)
-studio/             # Sanity Studio (giu lai)
+index.html                      # Trang chủ one-page
+script.js                       # Logic frontend trang chủ
+styles.css                      # Giao diện trang chủ
+salon.js                        # Runtime renderer landing salon
+salon.css                       # Giao diện landing salon
+assets/
+  cloudflare-assets.js          # Map CDN key → URL cho mẫu 01–05
+s/
+  salon-test-mau-01/            # Demo Mẫu 01 — Lavender Beauty
+  salon-test-mau-02/            # Demo Mẫu 02 — Green Natural
+  salon-test-mau-03/            # Demo Mẫu 03 — Black Gold Luxury
+  salon-test-mau-04/            # Demo Mẫu 04 — Spring Fresh
+  salon-test-mau-05/            # Demo Mẫu 05 — Gold Luxury
+admin/                          # Admin tổng (UI tĩnh, kết nối Worker)
+worker/                         # Cloudflare Worker + D1 schema
+public/image/                   # Ảnh local trang chủ (sẽ map CDN phase sau)
+cms/                            # Kết nối Sanity (giữ lại — legacy CMS)
+studio/                         # Sanity Studio (giữ lại — legacy)
+scripts/                        # Helper upload R2
 ```
+
+> **Lưu ý:** `studio/`, `cms/`, `worker/`, `public/image/` không xóa.
+
+## CDN / Cloudflare R2
+
+Tất cả ảnh landing salon đã upload R2 và phục vụ qua `cdn.thehairlab.top`:
+
+| Mẫu | Hero | Trạng thái |
+|-----|------|------------|
+| Mẫu 01 — Lavender Beauty | `mau-01/salon-mau-01-hero.png` | ✅ 200 |
+| Mẫu 02 — Green Natural | `mau-02/salon-mau-02-hero.jpg` | ✅ 200 |
+| Mẫu 03 — Black Gold Luxury | `mau-03/salon-mau-03-hero.png` | ✅ 200 |
+| Mẫu 04 — Spring Fresh | `mau-04/salon-mau-04-hero.png` | ✅ 200 |
+| Mẫu 05 — Gold Luxury | `mau-05/salon-mau-05-hero.png` | ✅ 200 |
+| Site OG | `site/hien-thi-tim-kiem.png` | ✅ 200 |
+
+Ảnh fallback local cho mẫu 01 vẫn trong `public/image/` (dùng khi CDN không trả về).
+Ảnh trang chủ (`public/image/thehairlab-*.png`) vẫn local — sẽ map CDN ở phase 5.
 
 ## API Worker (Phase 2)
+
+> Admin tổng dùng `admin/` + Worker D1. **Không dùng Sanity Studio làm admin tổng.**
 
 Worker endpoint duoc thiet ke:
 
@@ -50,13 +97,16 @@ Bang du lieu backend:
 
 ## Local Development
 
-### 1) Chay website tinh
+### Chạy website (trang chủ + landing salon)
 
 ```bash
 npx --yes http-server . -p 5200 -c-1
 ```
 
-### 2) Chay Worker local
+Mở `http://127.0.0.1:5200/` — trang chủ.
+Mở `http://127.0.0.1:5200/s/salon-test-mau-01/` ... `mau-05/` — demo salon.
+
+### Chạy Worker local
 
 ```bash
 cd worker
@@ -64,116 +114,46 @@ npm install
 npm run dev
 ```
 
-### 3) Khoi tao D1 local schema
+### Khởi tạo D1 local schema
 
 ```bash
 cd worker
 npx wrangler d1 execute thehairlab-main --local --file=schema.sql
 ```
 
-## Secrets va Deploy
+## Legacy CMS (Sanity)
 
-- Khong deploy Worker khi chua co du secret that.
-- Chua xoa Sanity, chua xoa cac trang legacy.
-- Chi push sau khi test local day du.
+`studio/` và `cms/` giữ lại, không xóa. **Không dùng cho admin tổng.** Dùng khi cần fallback CMS hoặc nội dung tĩnh.
 
-```bash
-python3 -m http.server 8080
-```
-
-Mo `http://localhost:8080`.
-
-### Sanity Studio (thu muc `studio`)
+### Chạy Studio local
 
 ```bash
 cd studio
-cp .env.example .env
-# cap nhat SANITY_STUDIO_PROJECT_ID va SANITY_STUDIO_DATASET
 npm install
 npm run dev
 ```
 
-Mac dinh Studio chay o `http://localhost:3333`.
+Mặc định `http://localhost:3333`.
 
-## 5) Tao project Sanity va lay projectId/dataset
+## Quy tắc bảo mật
 
-Ban co the tao project theo 2 cach:
+- Frontend **không** dùng write token.
+- Frontend chỉ dùng public config (`projectId`, `dataset`, `apiVersion`, `useCdn`).
+- Token chỉ để ở server env (Vercel Functions / Worker secrets), không đưa vào JS frontend.
+- Không deploy Worker khi chưa có đủ secret thật.
+- Chỉ push sau khi test local đầy đủ.
 
-1. Truc tiep trong giao dien manage.sanity.io (khuyen nghi).
-2. Qua CLI sau khi login (`sanity login`).
+## Deploy Vercel
 
-Lay thong tin:
+### Project A: Website tĩnh
 
-- `projectId`: trong trang Project Settings (hoac URL project tren Sanity Manage).
-- `dataset`: thuong dung `production`.
+- Root Directory: `/`
+- Framework preset: `Other` (static)
+- Không cần secret env bắt buộc cho frontend
 
-Cap nhat 2 noi:
+### Project B: Sanity Studio (legacy)
 
-1. Frontend public config: `cms/sanityConfig.js`
-2. Studio env: `studio/.env` (tu `.env.example`)
-
-## 6) Schema CMS da co
-
-Da tao day du cac document type:
-
-- `siteSettings`
-- `homepageHero`
-- `trustPoint`
-- `brand`
-- `productCategory`
-- `testimonial`
-- `contactBlock`
-
-Frontend da map noi dung cho cac section chinh:
-
-- Hero
-- Trust section
-- Nhom san pham
-- Nhom thuong hieu
-- Testimonial
-- Contact info / contact block
-
-Neu fetch loi hoac CMS chua co data, frontend tu dong dung fallback content de tranh trang trang.
-
-## 7) Quy tac bao mat (quan trong)
-
-- Frontend KHONG dung write token.
-- Frontend chi dung public config (`projectId`, `dataset`, `apiVersion`, `useCdn`).
-- Neu can mutate/server-side job sau nay, dung token chi o server env (Vercel Functions), KHONG dua vao JS frontend.
-
-## 8) Deploy Vercel (2 project)
-
-### Project A: Website tinh
-
-- Import repo vao Vercel.
-- Root Directory: `/` (mac dinh).
-- Framework preset: `Other` (static).
-- Khong can secret env bat buoc cho frontend.
-
-Luu y frontend doc config tu `cms/sanityConfig.js` (public), nen can cap nhat file nay dung voi project Sanity that.
-
-### Project B: Sanity Studio
-
-- Tao project Vercel moi, import cung repo.
 - Root Directory: `studio`
 - Build Command: `npm run build`
 - Output Directory: `dist`
-
-Environment Variables cho Project B:
-
-- `SANITY_STUDIO_PROJECT_ID`
-- `SANITY_STUDIO_DATASET`
-
-## 9) TODO du lieu that can nhap tren Studio
-
-Sau khi chay Studio, tao du lieu toi thieu:
-
-1. 1 document `siteSettings`.
-2. 1 document `homepageHero`.
-3. It nhat 4 `trustPoint`.
-4. It nhat 3 `brand`.
-5. It nhat 4 `productCategory`.
-6. It nhat 3 `testimonial`.
-7. 1 document `contactBlock`.
-
-Sau khi co data, website root se tu doc va render ngay ma khong can doi framework.
+- Env vars: `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`
