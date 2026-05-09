@@ -1,5 +1,7 @@
--- Migration 0002: Add admin_data_json column to salons for admin-con persistence
--- This allows storing full admin version 3 data (theme, services, gallery, etc)
--- for each salon template, enabling D1-backed persistence.
+-- Migration 0002: no-op (admin_data_json is now part of schema.sql base init)
+-- Reason:
+-- 1) SQLite on D1 does not support "ADD COLUMN IF NOT EXISTS" syntax.
+-- 2) Existing remote DB may already contain admin_data_json, so re-adding can fail.
+-- Keep this migration as a harmless checkpoint for migration ordering.
 
-ALTER TABLE salons ADD COLUMN IF NOT EXISTS admin_data_json TEXT;
+SELECT 1;

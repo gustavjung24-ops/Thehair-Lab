@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS salons (
   telegram_chat_id TEXT,
   admin_email TEXT,
   status TEXT NOT NULL DEFAULT 'inactive' CHECK (status IN ('active', 'inactive')),
+  admin_data_json TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

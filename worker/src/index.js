@@ -519,14 +519,27 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
     return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
   }
 
+  const salonPayload = body.salon && typeof body.salon === 'object' ? body.salon : {};
+  const salonName = typeof salonPayload.name === 'string' && salonPayload.name.trim()
+    ? salonPayload.name.trim()
+    : null;
+  const phone = typeof salonPayload.phone === 'string' && salonPayload.phone.trim()
+    ? salonPayload.phone.trim()
+    : null;
+  const zalo = typeof salonPayload.zalo === 'string' && salonPayload.zalo.trim()
+    ? salonPayload.zalo.trim()
+    : null;
+  const address = typeof salonPayload.address === 'string' && salonPayload.address.trim()
+    ? salonPayload.address.trim()
+    : null;
+  const status = salonPayload.status === 'active' || salonPayload.status === 'inactive'
+    ? salonPayload.status
+    : null;
+
   // Check if salon exists by slug
   const existing = await env.DB.prepare(
     'SELECT id AS salon_id FROM salons WHERE slug = ? LIMIT 1',
   ).bind(normalizedSlug).first();
-
-  if (!existing) {
-    return errorResponse('Salon không tồn tại', 404, origin);
-  }
 
   // Serialize admin data to JSON
   let adminDataJson;
@@ -536,10 +549,49 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
     return errorResponse('Không thể serialize dữ liệu admin', 400, origin);
   }
 
-  // Update salon's admin_data_json column
-  await env.DB.prepare(
-    'UPDATE salons SET admin_data_json = ?, updated_at = CURRENT_TIMESTAMP WHERE slug = ?',
-  ).bind(adminDataJson, normalizedSlug).run();
+  if (existing) {
+    await env.DB.prepare(
+      `UPDATE salons
+       SET admin_data_json = ?,
+           salon_name = COALESCE(?, salon_name),
+           phone = COALESCE(?, phone),
+           zalo_url = COALESCE(?, zalo_url),
+           address = COALESCE(?, address),
+           status = COALESCE(?, status),
+           updated_at = CURRENT_TIMESTAMP
+       WHERE slug = ?`,
+    ).bind(
+      adminDataJson,
+      salonName,
+      phone,
+      zalo,
+      address,
+      status,
+      normalizedSlug,
+    ).run();
+  } else {
+    await env.DB.prepare(
+      `INSERT INTO salons (
+         slug,
+         salon_name,
+         phone,
+         zalo_url,
+         address,
+         status,
+         admin_data_json,
+         created_at,
+         updated_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+    ).bind(
+      normalizedSlug,
+      salonName || normalizedSlug,
+      phone,
+      zalo,
+      address,
+      status || 'active',
+      adminDataJson,
+    ).run();
+  }
 
   // Return updated salon
   const updated = await env.DB.prepare(

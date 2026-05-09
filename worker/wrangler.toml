@@ -7,7 +7,7 @@ compatibility_date = "2024-01-01"
 binding = "DB"
 database_name = "thehairlab-leads"
 # database_id will be filled after: wrangler d1 create thehairlab-leads
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "246086b1-150c-4b25-a13c-1d08d93c1409"
 
 [vars]
 TELEGRAM_LEADS_CHAT_ID = "REPLACE_WITH_TELEGRAM_GROUP_ID"
