@@ -750,8 +750,9 @@ async function syncSalonToWorkerBySlug(payload) {
 			merged.salon.zalo = payload.zalo_url || merged.salon.zalo || "";
 			merged.salon.address = payload.address || merged.salon.address || "";
 			merged.salon.status = payload.status || merged.salon.status || "inactive";
-			merged.salon.phone = payload.phone || merged.salon.phone || "";
-			merged.salon.name = payload.salon_name || merged.salon.name || "";
+			merged.salon.telegram_chat_id = payload.telegram_chat_id !== undefined
+				? String(payload.telegram_chat_id)
+				: (merged.salon.telegram_chat_id || "");
 
 			const headers = {
 				"Content-Type": "application/json",

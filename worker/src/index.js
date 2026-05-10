@@ -578,6 +578,10 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
     return errorResponse('Không thể serialize dữ liệu admin', 400, origin);
   }
 
+  const telegramChatId = typeof salonPayload.telegram_chat_id === 'string'
+    ? (salonPayload.telegram_chat_id.trim() || null)
+    : null;
+
   if (existing) {
     await env.DB.prepare(
       `UPDATE salons
@@ -587,6 +591,7 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
            zalo_url = COALESCE(?, zalo_url),
            address = COALESCE(?, address),
            status = COALESCE(?, status),
+           telegram_chat_id = COALESCE(?, telegram_chat_id),
            updated_at = CURRENT_TIMESTAMP
        WHERE slug = ?`,
     ).bind(
@@ -596,6 +601,7 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
       zalo,
       address,
       status,
+      telegramChatId,
       normalizedSlug,
     ).run();
   } else {
