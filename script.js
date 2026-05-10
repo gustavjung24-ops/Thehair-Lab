@@ -27,7 +27,7 @@ const APP_STATE = {
   },
 }
 
-const HOME_QUOTE_ZALO_LINK = 'https://zalo.me/0902964685'
+const HOME_QUOTE_ENDPOINT = 'https://thehairlab-leads-worker.khuongbinh-info.workers.dev/api/public/quote'
 
 const DEFAULT_CAPABILITIES = [
   {
@@ -1014,60 +1014,6 @@ function validateLeadForm(form, formData) {
   return null
 }
 
-async function copyToClipboardWithFallback(text) {
-  if (navigator?.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text)
-      return true
-    } catch (_error) {
-      // Fallback to textarea + execCommand below.
-    }
-  }
-
-  try {
-    const helper = document.createElement('textarea')
-    helper.value = text
-    helper.setAttribute('readonly', '')
-    helper.style.position = 'fixed'
-    helper.style.opacity = '0'
-    helper.style.pointerEvents = 'none'
-    helper.style.left = '-9999px'
-    document.body.appendChild(helper)
-    helper.focus()
-    helper.select()
-    const copied = document.execCommand('copy')
-    document.body.removeChild(helper)
-    return copied
-  } catch (_error) {
-    return false
-  }
-}
-
-function buildHomeQuoteMessage(formData) {
-  const note = hasUsableValue(formData.note) ? formData.note : '(không có)'
-
-  return [
-    'YÊU CẦU BÁO GIÁ THE HAIR LAB',
-    '',
-    `Tên salon: ${formData.businessName}`,
-    `Người liên hệ: ${formData.contactName}`,
-    `SĐT/Zalo: ${formData.phone}`,
-    `Khu vực: ${formData.area}`,
-    `Nhóm sản phẩm quan tâm: ${formData.interest}`,
-    `Mẫu landing page muốn nhận: ${formData.businessModel}`,
-    `Ghi chú: ${note}`,
-    '',
-    'Nguồn: https://www.thehairlab.top/',
-  ].join('\n')
-}
-
-function openQuoteZaloLink() {
-  const popup = window.open(HOME_QUOTE_ZALO_LINK, '_blank', 'noopener')
-  if (!popup) {
-    window.location.href = HOME_QUOTE_ZALO_LINK
-  }
-}
-
 function buildLeadMessage(formData) {
   const lines = [
     `YÊU CẦU LEAD KINH DOANH - ${APP_STATE.brandName}`,
@@ -1126,24 +1072,49 @@ async function handleLeadSubmit(event) {
   }
 
   if (form.classList.contains('quote-form')) {
-    const quoteMessage = buildHomeQuoteMessage(formData)
-    const copied = await copyToClipboardWithFallback(quoteMessage)
-    openQuoteZaloLink()
+    try {
+      const response = await fetch(HOME_QUOTE_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          businessName: formData.businessName,
+          contactName: formData.contactName,
+          phone: formData.phone,
+          area: formData.area,
+          interest: formData.interest,
+          businessModel: formData.businessModel,
+          note: formData.note,
+          sourceUrl: window.location.origin + '/',
+        }),
+      })
 
-    if (copied) {
+      let data = null
+      try {
+        data = await response.json()
+      } catch (_error) {
+        data = null
+      }
+
+      if (response.ok && data?.success) {
+        form.reset()
+        showFormStatus(form, 'Đã gửi yêu cầu báo giá. Đội kinh doanh The Hair Lab sẽ liên hệ lại sớm.')
+        return
+      }
+
       showFormStatus(
         form,
-        'Nội dung yêu cầu đã được copy. Vui lòng dán vào Zalo và gửi cho đội kinh doanh.'
+        'Gửi yêu cầu báo giá thất bại. Vui lòng thử lại hoặc liên hệ Zalo 0902964685.',
+        true
+      )
+      return
+    } catch (_error) {
+      showFormStatus(
+        form,
+        'Gửi yêu cầu báo giá thất bại. Vui lòng thử lại hoặc liên hệ Zalo 0902964685.',
+        true
       )
       return
     }
-
-    showFormStatus(
-      form,
-      'Không thể tự động copy nội dung. Vui lòng nhập lại vào Zalo và gửi cho đội kinh doanh.',
-      true
-    )
-    return
   }
 
   const message = buildLeadMessage(formData)

@@ -933,6 +933,93 @@ async function handleAdminTelegramTest(request, env, origin) {
   return jsonResponse({ success: false, error: `Telegram API lỗi: ${errDesc}` }, 200, origin);
 }
 
+async function handlePublicQuote(request, env, origin) {
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  const businessName = String(body?.businessName || '').trim();
+  const contactName = String(body?.contactName || '').trim();
+  const phone = String(body?.phone || '').trim();
+  const area = String(body?.area || '').trim();
+  const interest = String(body?.interest || '').trim();
+  const businessModel = String(body?.businessModel || '').trim();
+  const note = String(body?.note || '').trim();
+  const sourceUrl = String(body?.sourceUrl || '').trim() || 'https://www.thehairlab.top/';
+
+  if (!businessName) {
+    return errorResponse('Vui lòng nhập tên salon.', 422, origin);
+  }
+
+  if (!contactName) {
+    return errorResponse('Vui lòng nhập người liên hệ.', 422, origin);
+  }
+
+  if (!phone) {
+    return errorResponse('Vui lòng nhập số điện thoại.', 422, origin);
+  }
+
+  if (!/^[0-9+()\s.\-]{7,20}$/.test(phone)) {
+    return errorResponse('Số điện thoại không hợp lệ.', 422, origin);
+  }
+
+  const token = (env.TELEGRAM_BOT_TOKEN || '').trim();
+  if (!token) {
+    return errorResponse('TELEGRAM_BOT_TOKEN chưa được cấu hình trong Worker secret.', 500, origin);
+  }
+
+  const groupChatId = '-5104953507';
+  const lines = [
+    '📩 <b>YÊU CẦU BÁO GIÁ MỚI - THE HAIR LAB</b>',
+    '',
+    `Tên salon: ${businessName}`,
+    `Người liên hệ: ${contactName}`,
+    `SĐT/Zalo: ${phone}`,
+    `Khu vực: ${area || '(không ghi)'}`,
+    `Nhóm sản phẩm quan tâm: ${interest || '(không ghi)'}`,
+    `Mẫu landing page muốn nhận: ${businessModel || '(không ghi)'}`,
+    `Ghi chú: ${note || '(không ghi)'}`,
+    '',
+    `Nguồn: ${sourceUrl}`,
+  ];
+
+  let tgRes;
+  try {
+    tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: groupChatId,
+        text: lines.join('\n'),
+        parse_mode: 'HTML',
+      }),
+    });
+  } catch (err) {
+    return jsonResponse(
+      { success: false, error: `Không kết nối được Telegram API: ${err?.message || err}` },
+      502,
+      origin,
+    );
+  }
+
+  let tgData = null;
+  try {
+    tgData = await tgRes.json();
+  } catch {
+    tgData = null;
+  }
+
+  if (!tgData?.ok) {
+    const error = tgData?.description || `HTTP ${tgRes.status}`;
+    return jsonResponse({ success: false, error }, 200, origin);
+  }
+
+  return jsonResponse({ success: true, telegramSent: true }, 200, origin);
+}
+
 // ─── Main Handler ──────────────────────────────────────────────────────────
 
 export default {
@@ -987,6 +1074,10 @@ export default {
 
     if (pathname === '/api/admin/telegram/test' && method === 'POST') {
       return handleAdminTelegramTest(request, env, origin);
+    }
+
+    if (pathname === '/api/public/quote' && method === 'POST') {
+      return handlePublicQuote(request, env, origin);
     }
 
     if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'salons' && segments[3] === 'leads' && method === 'POST') {
