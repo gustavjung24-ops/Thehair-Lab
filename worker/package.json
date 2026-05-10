@@ -1,6 +1,6 @@
 {
   "name": "thehairlab-leads-worker",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Cloudflare Worker for The Hair Lab lead form",
   "main": "src/index.js",
   "scripts": {

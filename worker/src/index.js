@@ -59,6 +59,7 @@ const DEFAULT_HOMEPAGE_SETTINGS = {
   googleSheetUrl: '',
   googleSheetId: '',
   googleSheetTab: 'homepage_quotes',
+  googleAppsScriptUrl: '',
   quoteEnabled: true,
   internalNote: '',
 };
@@ -85,6 +86,7 @@ function normalizeHomepageSettings(body) {
     googleSheetUrl: text(safeBody.googleSheetUrl),
     googleSheetId: text(safeBody.googleSheetId),
     googleSheetTab: text(safeBody.googleSheetTab) || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    googleAppsScriptUrl: text(safeBody.googleAppsScriptUrl),
     quoteEnabled: bool(safeBody.quoteEnabled, DEFAULT_HOMEPAGE_SETTINGS.quoteEnabled),
     internalNote: text(safeBody.internalNote),
   };
@@ -107,6 +109,41 @@ function resolveGoogleSheetIdFromUrl(sheetUrl) {
   }
 
   return '';
+}
+
+function normalizeGoogleAppsScriptUrl(scriptUrl) {
+  return String(scriptUrl || '').trim();
+}
+
+async function postToGoogleAppsScript(scriptUrl, payload) {
+  const url = normalizeGoogleAppsScriptUrl(scriptUrl);
+  if (!url) {
+    return { ok: false, skipped: true, warning: 'Chưa cấu hình Google Apps Script Web App URL.' };
+  }
+
+  let response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    return { ok: false, warning: `Không kết nối được Google Apps Script: ${error?.message || error}` };
+  }
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok || data?.success === false) {
+    return { ok: false, warning: data?.error || `HTTP ${response.status}` };
+  }
+
+  return { ok: true, response: data };
 }
 
 async function getSiteSettingsRow(env, key) {
@@ -162,6 +199,7 @@ function publicHomepageSettings(settings) {
     googleSheetUrl: settings.googleSheetUrl || '',
     googleSheetId: settings.googleSheetId || '',
     googleSheetTab: settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    googleAppsScriptUrl: settings.googleAppsScriptUrl || '',
     quoteEnabled: Boolean(settings.quoteEnabled),
   };
 }
@@ -174,6 +212,7 @@ function adminHomepageSettings(settings) {
 }
 
 let siteSettingsSchemaEnsured = false;
+let salonsSchemaEnsured = false;
 
 async function ensureSiteSettingsSchema(env) {
   if (siteSettingsSchemaEnsured || !env?.DB) {
@@ -197,6 +236,26 @@ async function ensureSiteSettingsSchema(env) {
   }
 
   siteSettingsSchemaEnsured = true;
+}
+
+async function ensureSalonsSchema(env) {
+  if (salonsSchemaEnsured || !env?.DB) {
+    return;
+  }
+
+  try {
+    const columnsResult = await env.DB.prepare('PRAGMA table_info(salons)').all();
+    const columns = Array.isArray(columnsResult?.results) ? columnsResult.results : [];
+    const hasAppsScriptUrl = columns.some((column) => column?.name === 'google_apps_script_url');
+
+    if (!hasAppsScriptUrl) {
+      await env.DB.prepare('ALTER TABLE salons ADD COLUMN google_apps_script_url TEXT').run();
+    }
+  } catch {
+    return;
+  }
+
+  salonsSchemaEnsured = true;
 }
 
 function normalizeSalonPayload(body) {
@@ -227,6 +286,7 @@ function normalizeSalonPayload(body) {
     google_sheet_url: nullableText(safeBody.google_sheet_url),
     google_sheet_id: nullableText(safeBody.google_sheet_id),
     google_sheet_tab: googleSheetTabRaw || 'appointments',
+    google_apps_script_url: nullableText(safeBody.google_apps_script_url),
     telegram_chat_id: nullableText(safeBody.telegram_chat_id),
     admin_email: nullableText(safeBody.admin_email),
     status,
@@ -521,7 +581,7 @@ async function handleSalonLeadSubmit(request, env, origin, slug) {
   }
 
   const salon = await env.DB.prepare(
-    'SELECT id, slug, salon_name, telegram_chat_id, admin_data_json FROM salons WHERE slug = ? LIMIT 1',
+    'SELECT id, slug, salon_name, telegram_chat_id, google_sheet_url, google_sheet_id, google_sheet_tab, google_apps_script_url, admin_data_json FROM salons WHERE slug = ? LIMIT 1',
   ).bind(normalizedSlug).first();
 
   if (!salon) {
@@ -552,13 +612,15 @@ async function handleSalonLeadSubmit(request, env, origin, slug) {
   const telegramResult = await sendSalonLeadTelegram(env, telegramChatId, leadPayload);
 
   if (telegramResult.ok) {
+    const sheetResult = await appendSalonLeadToSheet(env, salon, leadPayload);
     return jsonResponse(
       {
         success: true,
         message: 'Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.',
         leadSaved: Boolean(saveResult?.saved),
         telegramSent: true,
-        warning: saveResult?.warning || null,
+        sheetSaved: Boolean(sheetResult?.saved),
+        warning: sheetResult?.warning || saveResult?.warning || null,
       },
       200,
       origin,
@@ -689,12 +751,56 @@ async function appendRowToSheet(accessToken, sheetId, tabName, row) {
   });
 }
 
-async function appendHomepageQuoteToSheet(env, settings, quote) {
-  const sheetId = settings.googleSheetId || resolveGoogleSheetIdFromUrl(settings.googleSheetUrl);
-  const tabName = settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab;
+async function appendConfiguredSheetRow(env, config) {
+  const sheetId = config.googleSheetId || resolveGoogleSheetIdFromUrl(config.googleSheetUrl);
+  const tabName = config.googleSheetTab || config.defaultTab || 'Sheet1';
+  const row = Array.isArray(config.row) ? config.row : [];
+  const formLabel = config.formLabel || 'dữ liệu';
+  const scriptUrl = normalizeGoogleAppsScriptUrl(config.googleAppsScriptUrl);
+
+  if (scriptUrl) {
+    const scriptResult = await postToGoogleAppsScript(scriptUrl, {
+      formType: config.formType || 'unknown',
+      spreadsheetId: sheetId,
+      sheetTab: tabName,
+      row,
+      data: config.data || {},
+    });
+
+    if (scriptResult.ok) {
+      return { ok: true, saved: true, transport: 'apps-script' };
+    }
+
+    if (sheetId) {
+      const accessToken = await getGoogleAccessToken(env);
+      if (accessToken) {
+        try {
+          await appendRowToSheet(accessToken, sheetId, tabName, row);
+          return {
+            ok: true,
+            saved: true,
+            transport: 'google-api',
+            warning: `Apps Script thất bại: ${scriptResult.warning || 'Không rõ nguyên nhân'}. Đã fallback ghi trực tiếp Google Sheet.`,
+          };
+        } catch (error) {
+          return {
+            ok: false,
+            saved: false,
+            warning: `Apps Script thất bại: ${scriptResult.warning || 'Không rõ nguyên nhân'}. Fallback Google Sheet cũng thất bại: ${error?.message || error}`,
+          };
+        }
+      }
+    }
+
+    return {
+      ok: false,
+      saved: false,
+      warning: `Apps Script thất bại: ${scriptResult.warning || 'Không rõ nguyên nhân'}`,
+    };
+  }
 
   if (!sheetId) {
-    return { ok: false, skipped: true, warning: 'Chưa cấu hình Google Sheet ID cho trang chủ.' };
+    return { ok: false, skipped: true, warning: `Chưa cấu hình Google Sheet ID cho ${formLabel}.` };
   }
 
   const accessToken = await getGoogleAccessToken(env);
@@ -702,6 +808,15 @@ async function appendHomepageQuoteToSheet(env, settings, quote) {
     return { ok: false, skipped: true, warning: 'Chưa cấu hình Google service account để ghi Google Sheet.' };
   }
 
+  try {
+    await appendRowToSheet(accessToken, sheetId, tabName, row);
+    return { ok: true, saved: true, transport: 'google-api' };
+  } catch (error) {
+    return { ok: false, saved: false, warning: `Ghi Google Sheet thất bại: ${error?.message || error}` };
+  }
+}
+
+async function appendHomepageQuoteToSheet(env, settings, quote) {
   const time = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
   const row = [
     time,
@@ -715,12 +830,54 @@ async function appendHomepageQuoteToSheet(env, settings, quote) {
     quote.note || '',
   ];
 
-  try {
-    await appendRowToSheet(accessToken, sheetId, tabName, row);
-    return { ok: true, saved: true };
-  } catch (error) {
-    return { ok: false, saved: false, warning: `Ghi Google Sheet thất bại: ${error?.message || error}` };
-  }
+  return appendConfiguredSheetRow(env, {
+    formType: 'homepage',
+    formLabel: 'trang chủ',
+    googleAppsScriptUrl: settings.googleAppsScriptUrl,
+    googleSheetUrl: settings.googleSheetUrl,
+    googleSheetId: settings.googleSheetId,
+    googleSheetTab: settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    defaultTab: DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    row,
+    data: quote,
+  });
+}
+
+async function appendSalonLeadToSheet(env, salon, lead) {
+  const time = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+  const row = [
+    time,
+    lead.sourceUrl || '',
+    lead.salonName || '',
+    lead.name || '',
+    lead.phone || '',
+    lead.service || '',
+    lead.preferredDate || '',
+    lead.preferredTime || '',
+    lead.note || '',
+  ];
+
+  return appendConfiguredSheetRow(env, {
+    formType: 'salon',
+    formLabel: `salon ${salon?.slug || ''}`.trim() || 'salon',
+    googleAppsScriptUrl: salon?.google_apps_script_url,
+    googleSheetUrl: salon?.google_sheet_url,
+    googleSheetId: salon?.google_sheet_id,
+    googleSheetTab: salon?.google_sheet_tab || 'appointments',
+    defaultTab: 'appointments',
+    row,
+    data: {
+      salonSlug: salon?.slug || '',
+      salonName: lead.salonName || '',
+      contactName: lead.name || '',
+      phone: lead.phone || '',
+      service: lead.service || '',
+      preferredDate: lead.preferredDate || '',
+      preferredTime: lead.preferredTime || '',
+      note: lead.note || '',
+      sourceUrl: lead.sourceUrl || '',
+    },
+  });
 }
 
 function buildHomepageQuoteMessage(quote) {
@@ -771,6 +928,7 @@ async function listPublicSalons(env, origin) {
       google_sheet_url,
       google_sheet_id,
       google_sheet_tab,
+      google_apps_script_url,
       telegram_chat_id,
       admin_email,
       status,
@@ -837,11 +995,12 @@ async function createAdminSalon(request, env, origin) {
       google_sheet_url,
       google_sheet_id,
       google_sheet_tab,
+      google_apps_script_url,
       telegram_chat_id,
       admin_email,
       status,
       updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
   `).bind(
     payload.slug,
     payload.salon_name,
@@ -856,6 +1015,7 @@ async function createAdminSalon(request, env, origin) {
     payload.google_sheet_url,
     payload.google_sheet_id,
     payload.google_sheet_tab,
+    payload.google_apps_script_url,
     payload.telegram_chat_id,
     payload.admin_email,
     payload.status,
@@ -913,6 +1073,7 @@ async function updateAdminSalon(request, env, origin, id) {
       google_sheet_url = ?,
       google_sheet_id = ?,
       google_sheet_tab = ?,
+      google_apps_script_url = ?,
       telegram_chat_id = ?,
       admin_email = ?,
       status = ?,
@@ -932,6 +1093,7 @@ async function updateAdminSalon(request, env, origin, id) {
     payload.google_sheet_url,
     payload.google_sheet_id,
     payload.google_sheet_tab,
+    payload.google_apps_script_url,
     payload.telegram_chat_id,
     payload.admin_email,
     payload.status,
@@ -1024,6 +1186,18 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
   const telegramChatId = typeof salonPayload.telegram_chat_id === 'string'
     ? (salonPayload.telegram_chat_id.trim() || null)
     : null;
+  const googleSheetUrl = typeof salonPayload.google_sheet_url === 'string'
+    ? (salonPayload.google_sheet_url.trim() || null)
+    : null;
+  const googleSheetId = typeof salonPayload.google_sheet_id === 'string'
+    ? (salonPayload.google_sheet_id.trim() || null)
+    : null;
+  const googleSheetTab = typeof salonPayload.google_sheet_tab === 'string'
+    ? (salonPayload.google_sheet_tab.trim() || null)
+    : null;
+  const googleAppsScriptUrl = typeof salonPayload.google_apps_script_url === 'string'
+    ? (salonPayload.google_apps_script_url.trim() || null)
+    : null;
 
   if (existing) {
     await env.DB.prepare(
@@ -1034,6 +1208,10 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
            zalo_url = COALESCE(?, zalo_url),
            address = COALESCE(?, address),
            status = COALESCE(?, status),
+           google_sheet_url = COALESCE(?, google_sheet_url),
+           google_sheet_id = COALESCE(?, google_sheet_id),
+           google_sheet_tab = COALESCE(?, google_sheet_tab),
+           google_apps_script_url = COALESCE(?, google_apps_script_url),
            telegram_chat_id = COALESCE(?, telegram_chat_id),
            updated_at = CURRENT_TIMESTAMP
        WHERE slug = ?`,
@@ -1044,6 +1222,10 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
       zalo,
       address,
       status,
+      googleSheetUrl,
+      googleSheetId,
+      googleSheetTab,
+      googleAppsScriptUrl,
       telegramChatId,
       normalizedSlug,
     ).run();
@@ -1056,10 +1238,14 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
          zalo_url,
          address,
          status,
+         google_sheet_url,
+         google_sheet_id,
+         google_sheet_tab,
+         google_apps_script_url,
          admin_data_json,
          created_at,
          updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
     ).bind(
       normalizedSlug,
       salonName || normalizedSlug,
@@ -1067,6 +1253,10 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
       zalo,
       address,
       status || 'active',
+      googleSheetUrl,
+      googleSheetId,
+      googleSheetTab,
+      googleAppsScriptUrl,
       adminDataJson,
     ).run();
   }
@@ -1323,6 +1513,8 @@ export default {
     if (method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
+
+    await ensureSalonsSchema(env);
 
     // GET /api/salons/:slug (public, trả admin data từ D1)
     if (segments.length === 3 && segments[0] === 'api' && segments[1] === 'salons' && method === 'GET') {

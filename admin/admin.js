@@ -8,6 +8,7 @@ const HOMEPAGE_SETTINGS_DEFAULTS = {
 	googleSheetUrl: "",
 	googleSheetId: "",
 	googleSheetTab: "homepage_quotes",
+	googleAppsScriptUrl: "",
 	quoteEnabled: true,
 	internalNote: "",
 };
@@ -50,6 +51,7 @@ const els = {
 	homepageGoogleSheetUrl: document.getElementById("homepage-google-sheet-url"),
 	homepageGoogleSheetId: document.getElementById("homepage-google-sheet-id"),
 	homepageGoogleSheetTab: document.getElementById("homepage-google-sheet-tab"),
+	homepageGoogleAppsScriptUrl: document.getElementById("homepage-google-apps-script-url"),
 	homepageQuoteEnabled: document.getElementById("homepage-quote-enabled"),
 	homepageInternalNote: document.getElementById("homepage-internal-note"),
 	homepageSettingsMessage: document.getElementById("homepage-settings-message"),
@@ -81,6 +83,7 @@ const els = {
 		google_sheet_url: document.getElementById("salon-google-sheet-url"),
 		google_sheet_id: document.getElementById("salon-google-sheet-id"),
 		google_sheet_tab: document.getElementById("salon-google-sheet-tab"),
+		google_apps_script_url: document.getElementById("salon-google-apps-script-url"),
 		telegram_chat_id: document.getElementById("salon-telegram-chat-id"),
 		admin_email: document.getElementById("salon-admin-email"),
 		status: document.getElementById("salon-status"),
@@ -164,6 +167,7 @@ function seedSalons() {
 			google_sheet_url: "",
 			google_sheet_id: "",
 			google_sheet_tab: "appointments",
+			google_apps_script_url: "",
 			telegram_chat_id: "",
 			admin_email: "hung@salon.vn",
 			status: "active",
@@ -193,6 +197,7 @@ function normalizeSalonRecord(item) {
 		google_sheet_url: String(item?.google_sheet_url || "").trim(),
 		google_sheet_id: String(item?.google_sheet_id || "").trim(),
 		google_sheet_tab: String(item?.google_sheet_tab || "appointments").trim() || "appointments",
+		google_apps_script_url: String(item?.google_apps_script_url || "").trim(),
 		telegram_chat_id: String(item?.telegram_chat_id || "").trim(),
 		admin_email: String(item?.admin_email || "").trim(),
 		status: item?.status === "active" ? "active" : "inactive",
@@ -297,6 +302,7 @@ function normalizeHomepageSettings(value) {
 		googleSheetUrl: String(source.googleSheetUrl || "").trim(),
 		googleSheetId: String(source.googleSheetId || "").trim(),
 		googleSheetTab: String(source.googleSheetTab || HOMEPAGE_SETTINGS_DEFAULTS.googleSheetTab).trim() || HOMEPAGE_SETTINGS_DEFAULTS.googleSheetTab,
+		googleAppsScriptUrl: String(source.googleAppsScriptUrl || "").trim(),
 		quoteEnabled: source.quoteEnabled === false ? false : true,
 		internalNote: String(source.internalNote || "").trim(),
 	};
@@ -327,6 +333,9 @@ function syncHomepageSettingsInputs() {
 	if (els.homepageGoogleSheetTab) {
 		els.homepageGoogleSheetTab.value = homepageSettings.googleSheetTab;
 	}
+	if (els.homepageGoogleAppsScriptUrl) {
+		els.homepageGoogleAppsScriptUrl.value = homepageSettings.googleAppsScriptUrl;
+	}
 	if (els.homepageQuoteEnabled) {
 		els.homepageQuoteEnabled.checked = Boolean(homepageSettings.quoteEnabled);
 	}
@@ -343,6 +352,7 @@ function readHomepageSettingsForm() {
 		googleSheetUrl: els.homepageGoogleSheetUrl?.value || "",
 		googleSheetId: els.homepageGoogleSheetId?.value || "",
 		googleSheetTab: els.homepageGoogleSheetTab?.value || HOMEPAGE_SETTINGS_DEFAULTS.googleSheetTab,
+		googleAppsScriptUrl: els.homepageGoogleAppsScriptUrl?.value || "",
 		quoteEnabled: Boolean(els.homepageQuoteEnabled?.checked),
 		internalNote: els.homepageInternalNote?.value || "",
 	});
@@ -752,6 +762,7 @@ function resetForm() {
 	els.fields.theme_color.value = "#8b5cf6";
 	els.fields.status.value = "inactive";
 	els.fields.google_sheet_tab.value = "appointments";
+	els.fields.google_apps_script_url.value = "";
 	els.formTitle.textContent = "Tao salon moi";
 	els.sheetParseMessage.textContent = "";
 	els.slugError.textContent = "";
@@ -775,6 +786,7 @@ function fillForm(item) {
 	els.fields.google_sheet_url.value = item.google_sheet_url;
 	els.fields.google_sheet_id.value = item.google_sheet_id;
 	els.fields.google_sheet_tab.value = item.google_sheet_tab || "appointments";
+	els.fields.google_apps_script_url.value = item.google_apps_script_url || "";
 	els.fields.telegram_chat_id.value = item.telegram_chat_id;
 	els.fields.admin_email.value = item.admin_email;
 	els.fields.status.value = item.status;
@@ -889,6 +901,7 @@ function buildSalonPayload() {
 		google_sheet_url: els.fields.google_sheet_url.value.trim(),
 		google_sheet_id: els.fields.google_sheet_id.value.trim(),
 		google_sheet_tab: (els.fields.google_sheet_tab.value.trim() || "appointments"),
+		google_apps_script_url: els.fields.google_apps_script_url.value.trim(),
 		telegram_chat_id: els.fields.telegram_chat_id.value.trim(),
 		admin_email: els.fields.admin_email.value.trim(),
 		status: els.fields.status.value,
@@ -946,6 +959,9 @@ async function syncSalonToWorkerBySlug(payload) {
 			merged.salon.telegram_chat_id = payload.telegram_chat_id !== undefined
 				? String(payload.telegram_chat_id)
 				: (merged.salon.telegram_chat_id || "");
+			merged.salon.google_apps_script_url = payload.google_apps_script_url !== undefined
+				? String(payload.google_apps_script_url)
+				: (merged.salon.google_apps_script_url || "");
 
 			const headers = {
 				"Content-Type": "application/json",

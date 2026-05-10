@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS salons (
   google_sheet_url TEXT,
   google_sheet_id TEXT,
   google_sheet_tab TEXT DEFAULT 'appointments',
+  google_apps_script_url TEXT,
   telegram_chat_id TEXT,
   admin_email TEXT,
   status TEXT NOT NULL DEFAULT 'inactive' CHECK (status IN ('active', 'inactive')),
