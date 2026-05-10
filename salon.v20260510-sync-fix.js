@@ -330,6 +330,7 @@ let activeTemplateConfig = TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
 let LOCAL_ASSETS = getLocalAssetsByTemplate(DEFAULT_TEMPLATE_ID);
 let SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
 let activeAdminData = null;
+let activeSalonSlug = "";
 let strictAdminMediaMode = false;
 let hiddenByAdminKeys = new Set();
 let bookingSuccessMessage = "Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.";
@@ -362,6 +363,38 @@ const CUSTOMER_IMAGE_MANIFEST_OVERRIDES = {
 
 function getCustomerImageOverride(slug) {
   return CUSTOMER_IMAGE_MANIFEST_OVERRIDES[String(slug || "")] || null;
+}
+
+function isTemplateDemoMedia(url) {
+  return /\/salon\/mau-\d{2}\//i.test(String(url || ""));
+}
+
+function getCustomerOverrideImage(slug, mediaKey) {
+  const override = getCustomerImageOverride(slug);
+  if (!override?.images) {
+    return "";
+  }
+
+  if (mediaKey.startsWith("services.")) {
+    const serviceKey = mediaKey.split(".")[1] || "";
+    return String(override.images.services?.[serviceKey] || "").trim();
+  }
+
+  return String(override.images[mediaKey] || "").trim();
+}
+
+function resolvePreferredMediaUrl(slug, mediaKey, adminUrl) {
+  const adminValue = String(adminUrl || "").trim();
+  const customerValue = getCustomerOverrideImage(slug, mediaKey);
+
+  if (!customerValue) {
+    return adminValue;
+  }
+  if (!adminValue || isTemplateDemoMedia(adminValue)) {
+    return customerValue;
+  }
+
+  return adminValue;
 }
 
 function isHiddenByAdminFlag(item) {
@@ -414,21 +447,24 @@ function prepareAdminRendering(adminData) {
     return;
   }
 
-  if (activeAdminData.hero?.imageUrl) {
-    SALON_ASSETS.hero = String(activeAdminData.hero.imageUrl).trim();
+  const heroMedia = resolvePreferredMediaUrl(activeSalonSlug, "hero", activeAdminData.hero?.imageUrl);
+  if (heroMedia) {
+    SALON_ASSETS.hero = heroMedia;
   } else if (strictAdminMediaMode) {
     SALON_ASSETS.hero = "";
   }
 
-  if (activeAdminData.consultation?.imageUrl) {
-    SALON_ASSETS.consultation = String(activeAdminData.consultation.imageUrl).trim();
+  const consultationMedia = resolvePreferredMediaUrl(activeSalonSlug, "consultation", activeAdminData.consultation?.imageUrl);
+  if (consultationMedia) {
+    SALON_ASSETS.consultation = consultationMedia;
   } else if (strictAdminMediaMode) {
     SALON_ASSETS.consultation = "";
   }
 
   const products = Array.isArray(activeAdminData.products) ? activeAdminData.products : [];
-  if (products[0]?.imageUrl) {
-    SALON_ASSETS.productLineup = String(products[0].imageUrl).trim();
+  const productMedia = resolvePreferredMediaUrl(activeSalonSlug, "products", products[0]?.imageUrl);
+  if (productMedia) {
+    SALON_ASSETS.productLineup = productMedia;
   } else if (strictAdminMediaMode) {
     SALON_ASSETS.productLineup = "";
   }
@@ -437,7 +473,7 @@ function prepareAdminRendering(adminData) {
   services.forEach((item, index) => {
     const key = resolveServiceMediaKey(item, index);
     if (!key) return;
-    SALON_ASSETS.services[key] = String(item?.imageUrl || "").trim();
+    SALON_ASSETS.services[key] = resolvePreferredMediaUrl(activeSalonSlug, `services.${key}`, item?.imageUrl);
     if (isHiddenByAdminFlag(item)) {
       hiddenByAdminKeys.add(`service:${key}`);
     }
@@ -447,7 +483,7 @@ function prepareAdminRendering(adminData) {
   gallery.forEach((item, index) => {
     const key = resolveGalleryMediaKey(item, index);
     if (!key) return;
-    SALON_ASSETS[key] = String(item?.imageUrl || "").trim();
+    SALON_ASSETS[key] = resolvePreferredMediaUrl(activeSalonSlug, key, item?.imageUrl);
     if (isHiddenByAdminFlag(item)) {
       hiddenByAdminKeys.add(`gallery:${key}`);
     }
@@ -995,6 +1031,7 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
     if (!finalFallback || PRODUCT_IMAGE_PATTERN.test(finalFallback)) {
       img.hidden = true;
       img.removeAttribute("src");
+      card.hidden = true;
       card.classList.add("is-fallback");
       return;
     }
@@ -1449,6 +1486,7 @@ function bindPublicLeadForm(salon, slug) {
 
 async function loadSalon() {
   const slug = getSlugFromUrl();
+  activeSalonSlug = String(slug || "");
   if (!slug) {
     showError(
       "Salon không tồn tại hoặc đang tạm ngưng",

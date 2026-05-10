@@ -1,0 +1,257 @@
+{
+  "status": 200,
+  "text": "{\"success\":true,\"salon\":{\"id\":4,\"slug\":\"salon-hung-saigon\",\"salon_name\":\"Salon Hưng Saigon\",\"phone\":\"0938212878\",\"zalo_url\":\"0938212878\",\"facebook_url\":null,\"address\":\"Tân An, Long An\",\"working_hours\":null,\"logo_url\":null,\"banner_url\":null,\"theme_color\":\"#8b5cf6\",\"google_sheet_url\":\"https://docs.google.com/spreadsheets/d/1CWnjipbpiOfspd73wKCzeWjyNzyErjasghAMZbwAH6g/edit?gid=0#gid=0\",\"google_sheet_id\":\"1CWnjipbpiOfspd73wKCzeWjyNzyErjasghAMZbwAH6g\",\"google_sheet_tab\":\"appointments\",\"telegram_chat_id\":\"-5244966843\",\"admin_email\":null,\"status\":\"active\",\"created_at\":\"2026-05-09 15:47:34\",\"updated_at\":\"2026-05-10 11:56:04\",\"admin_data_json\":\"{\\\"version\\\":3,\\\"salon\\\":{\\\"name\\\":\\\"Salon Hưng Saigon\\\",\\\"logoText\\\":\\\"M02\\\",\\\"phone\\\":\\\"0938212878\\\",\\\"zalo\\\":\\\"0938212878\\\",\\\"address\\\":\\\"Tân An, Long An\\\",\\\"status\\\":\\\"active\\\"},\\\"theme\\\":{\\\"templateName\\\":\\\"Green Natural\\\",\\\"primary\\\":\\\"#6E8F62\\\",\\\"secondary\\\":\\\"#A8BF8A\\\",\\\"accent\\\":\\\"#DDE8CF\\\",\\\"background\\\":\\\"#F6F8F2\\\",\\\"textDark\\\":\\\"#2F3A2C\\\"},\\\"hero\\\":{\\\"title\\\":\\\"Tư vấn miễn phí kiểu tóc phù hợp với gương mặt\\\",\\\"description\\\":\\\"Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.\\\",\\\"primaryButton\\\":\\\"Đặt lịch tư vấn\\\",\\\"secondaryButton\\\":\\\"Gọi salon\\\",\\\"zaloButton\\\":\\\"Nhắn Zalo\\\",\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-hero.png\\\"},\\\"trustBadges\\\":[{\\\"id\\\":\\\"trust-1\\\",\\\"title\\\":\\\"Tư vấn 1:1\\\",\\\"description\\\":\\\"Lộ trình theo gương mặt và phong cách cá nhân.\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"trust-2\\\",\\\"title\\\":\\\"Kỹ thuật salon chuyên nghiệp\\\",\\\"description\\\":\\\"Quy trình cắt, nhuộm, uốn, duỗi chuẩn kỹ thuật.\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"trust-3\\\",\\\"title\\\":\\\"Lịch hẹn nhanh\\\",\\\"description\\\":\\\"Đặt lịch trước để đến là phục vụ ngay.\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"trust-4\\\",\\\"title\\\":\\\"Sản phẩm chuyên nghiệp\\\",\\\"description\\\":\\\"Dùng sản phẩm phù hợp từng nền tóc tại salon.\\\",\\\"visible\\\":true}],\\\"services\\\":[{\\\"id\\\":\\\"cat-tao-kieu\\\",\\\"title\\\":\\\"Cắt & tạo kiểu nữ\\\",\\\"price\\\":\\\"Từ 321K (SYNC TEST)\\\",\\\"description\\\":\\\"Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png\\\"},{\\\"id\\\":\\\"mau-toc\\\",\\\"title\\\":\\\"Tư vấn màu tóc tôn da\\\",\\\"price\\\":\\\"Liên Hệ Tư Vấn\\\",\\\"description\\\":\\\"Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png\\\"},{\\\"id\\\":\\\"nhuom-thoi-trang\\\",\\\"title\\\":\\\"Nhuộm thời trang\\\",\\\"price\\\":\\\"Liên Hệ Tư Vấn\\\",\\\"description\\\":\\\"Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png\\\"},{\\\"id\\\":\\\"uon-setting\\\",\\\"title\\\":\\\"Uốn setting\\\",\\\"price\\\":\\\"Liên Hệ Tư Vấn\\\",\\\"description\\\":\\\"Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png\\\"},{\\\"id\\\":\\\"duoi-phuc-hoi\\\",\\\"title\\\":\\\"Duỗi phục hồi\\\",\\\"price\\\":\\\"Liên Hệ Tư Vấn\\\",\\\"description\\\":\\\"Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png\\\"},{\\\"id\\\":\\\"cham-soc-phuc-hoi\\\",\\\"title\\\":\\\"Chăm sóc phục hồi tóc\\\",\\\"price\\\":\\\"Liên Hệ Tư Vấn\\\",\\\"description\\\":\\\"Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png\\\"}],\\\"consultation\\\":{\\\"title\\\":\\\"Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.\\\",\\\"description\\\":\\\"Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.\\\",\\\"bullets\\\":[{\\\"id\\\":\\\"consult-1\\\",\\\"title\\\":\\\"Đọc tỷ lệ gương mặt\\\",\\\"description\\\":\\\"Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"consult-2\\\",\\\"title\\\":\\\"Kiểm tra nền tóc\\\",\\\"description\\\":\\\"Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"consult-3\\\",\\\"title\\\":\\\"Chốt màu và phong cách\\\",\\\"description\\\":\\\"Lựa màu tóc hài hoà tông da và thống nhất phong cách theo mục tiêu.\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"consult-4\\\",\\\"title\\\":\\\"Lên lịch thực hiện\\\",\\\"description\\\":\\\"Chốt khung giờ, dịch vụ và dặn dò chăm sóc trước và sau khi làm tóc.\\\",\\\"visible\\\":true}],\\\"buttonText\\\":\\\"Đặt lịch tư vấn\\\",\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-consultation.png\\\"},\\\"gallery\\\":[{\\\"id\\\":\\\"space-01\\\",\\\"title\\\":\\\"Khu tư vấn riêng\\\",\\\"description\\\":\\\"Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.\\\",\\\"visible\\\":false,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png\\\"},{\\\"id\\\":\\\"space-02\\\",\\\"title\\\":\\\"Góc tạo kiểu\\\",\\\"description\\\":\\\"Khu làm tóc có ánh sáng đẹp để dễ kiểm tra phom tóc và màu tóc sau khi hoàn thiện.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-02.png\\\"},{\\\"id\\\":\\\"space-03\\\",\\\"title\\\":\\\"Khu chăm sóc và phục hồi\\\",\\\"description\\\":\\\"Khu vực chuyên cho các liệu trình phục hồi, dưỡng và chăm sóc chuyên sâu.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-03.png\\\"}],\\\"products\\\":[{\\\"id\\\":\\\"product-lineup\\\",\\\"title\\\":\\\"Sản phẩm chuyên nghiệp sử dụng tại salon\\\",\\\"description\\\":\\\"Đây là section duy nhất hiển thị ảnh sản phẩm. Tất cả các section dịch vụ, tư vấn và không gian salon không dùng ảnh sản phẩm công ty.\\\",\\\"visible\\\":true,\\\"imageUrl\\\":\\\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-products.png\\\"}],\\\"feedback\\\":[{\\\"id\\\":\\\"fb-1\\\",\\\"name\\\":\\\"Khách hàng Minh Anh\\\",\\\"content\\\":\\\"Mình được tư vấn kỹ theo gương mặt nên cắt xong nhìn thanh hơn hẳn.\\\",\\\"rating\\\":5,\\\"visible\\\":true},{\\\"id\\\":\\\"fb-2\\\",\\\"name\\\":\\\"Khách hàng Bảo Trân\\\",\\\"content\\\":\\\"Màu tóc lên đúng tone, nhìn sáng da và đi làm vẫn rất sang.\\\",\\\"rating\\\":5,\\\"visible\\\":true},{\\\"id\\\":\\\"fb-3\\\",\\\"name\\\":\\\"Khách hàng Thu Hà\\\",\\\"content\\\":\\\"Đặt lịch nhanh, salon làm đúng giờ, không phải chờ đợi lâu.\\\",\\\"rating\\\":5,\\\"visible\\\":true}],\\\"booking\\\":{\\\"title\\\":\\\"Đăng ký tư vấn nhanh\\\",\\\"note\\\":\\\"Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.\\\",\\\"successMessage\\\":\\\"Cảm ơn bạn, salon sẽ liên hệ lại sớm.\\\",\\\"fields\\\":[{\\\"id\\\":\\\"customer-name\\\",\\\"label\\\":\\\"Họ tên\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"customer-phone\\\",\\\"label\\\":\\\"Số điện thoại\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"service-name\\\",\\\"label\\\":\\\"Dịch vụ quan tâm\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"appointment-date\\\",\\\"label\\\":\\\"Ngày muốn hẹn\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"appointment-time\\\",\\\"label\\\":\\\"Giờ muốn hẹn\\\",\\\"visible\\\":true},{\\\"id\\\":\\\"customer-note\\\",\\\"label\\\":\\\"Ghi chú\\\",\\\"visible\\\":true}]}}\",\"google_apps_script_url\":\"https://script.google.com/macros/s/AKfycbxCMY9acCgYsPnmrCrbPAvv__X9POqe2BONUoX4YaKr92MtPWyTPg2gGlwwWQidzlNpuQ/exec\",\"admin_data\":{\"version\":3,\"salon\":{\"name\":\"Salon Hưng Saigon\",\"logoText\":\"M02\",\"phone\":\"0938212878\",\"zalo\":\"0938212878\",\"address\":\"Tân An, Long An\",\"status\":\"active\"},\"theme\":{\"templateName\":\"Green Natural\",\"primary\":\"#6E8F62\",\"secondary\":\"#A8BF8A\",\"accent\":\"#DDE8CF\",\"background\":\"#F6F8F2\",\"textDark\":\"#2F3A2C\"},\"hero\":{\"title\":\"Tư vấn miễn phí kiểu tóc phù hợp với gương mặt\",\"description\":\"Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.\",\"primaryButton\":\"Đặt lịch tư vấn\",\"secondaryButton\":\"Gọi salon\",\"zaloButton\":\"Nhắn Zalo\",\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-hero.png\"},\"trustBadges\":[{\"id\":\"trust-1\",\"title\":\"Tư vấn 1:1\",\"description\":\"Lộ trình theo gương mặt và phong cách cá nhân.\",\"visible\":true},{\"id\":\"trust-2\",\"title\":\"Kỹ thuật salon chuyên nghiệp\",\"description\":\"Quy trình cắt, nhuộm, uốn, duỗi chuẩn kỹ thuật.\",\"visible\":true},{\"id\":\"trust-3\",\"title\":\"Lịch hẹn nhanh\",\"description\":\"Đặt lịch trước để đến là phục vụ ngay.\",\"visible\":true},{\"id\":\"trust-4\",\"title\":\"Sản phẩm chuyên nghiệp\",\"description\":\"Dùng sản phẩm phù hợp từng nền tóc tại salon.\",\"visible\":true}],\"services\":[{\"id\":\"cat-tao-kieu\",\"title\":\"Cắt & tạo kiểu nữ\",\"price\":\"Từ 321K (SYNC TEST)\",\"description\":\"Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png\"},{\"id\":\"mau-toc\",\"title\":\"Tư vấn màu tóc tôn da\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png\"},{\"id\":\"nhuom-thoi-trang\",\"title\":\"Nhuộm thời trang\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png\"},{\"id\":\"uon-setting\",\"title\":\"Uốn setting\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png\"},{\"id\":\"duoi-phuc-hoi\",\"title\":\"Duỗi phục hồi\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png\"},{\"id\":\"cham-soc-phuc-hoi\",\"title\":\"Chăm sóc phục hồi tóc\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png\"}],\"consultation\":{\"title\":\"Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.\",\"description\":\"Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.\",\"bullets\":[{\"id\":\"consult-1\",\"title\":\"Đọc tỷ lệ gương mặt\",\"description\":\"Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.\",\"visible\":true},{\"id\":\"consult-2\",\"title\":\"Kiểm tra nền tóc\",\"description\":\"Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.\",\"visible\":true},{\"id\":\"consult-3\",\"title\":\"Chốt màu và phong cách\",\"description\":\"Lựa màu tóc hài hoà tông da và thống nhất phong cách theo mục tiêu.\",\"visible\":true},{\"id\":\"consult-4\",\"title\":\"Lên lịch thực hiện\",\"description\":\"Chốt khung giờ, dịch vụ và dặn dò chăm sóc trước và sau khi làm tóc.\",\"visible\":true}],\"buttonText\":\"Đặt lịch tư vấn\",\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-consultation.png\"},\"gallery\":[{\"id\":\"space-01\",\"title\":\"Khu tư vấn riêng\",\"description\":\"Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.\",\"visible\":false,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png\"},{\"id\":\"space-02\",\"title\":\"Góc tạo kiểu\",\"description\":\"Khu làm tóc có ánh sáng đẹp để dễ kiểm tra phom tóc và màu tóc sau khi hoàn thiện.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-02.png\"},{\"id\":\"space-03\",\"title\":\"Khu chăm sóc và phục hồi\",\"description\":\"Khu vực chuyên cho các liệu trình phục hồi, dưỡng và chăm sóc chuyên sâu.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-03.png\"}],\"products\":[{\"id\":\"product-lineup\",\"title\":\"Sản phẩm chuyên nghiệp sử dụng tại salon\",\"description\":\"Đây là section duy nhất hiển thị ảnh sản phẩm. Tất cả các section dịch vụ, tư vấn và không gian salon không dùng ảnh sản phẩm công ty.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-products.png\"}],\"feedback\":[{\"id\":\"fb-1\",\"name\":\"Khách hàng Minh Anh\",\"content\":\"Mình được tư vấn kỹ theo gương mặt nên cắt xong nhìn thanh hơn hẳn.\",\"rating\":5,\"visible\":true},{\"id\":\"fb-2\",\"name\":\"Khách hàng Bảo Trân\",\"content\":\"Màu tóc lên đúng tone, nhìn sáng da và đi làm vẫn rất sang.\",\"rating\":5,\"visible\":true},{\"id\":\"fb-3\",\"name\":\"Khách hàng Thu Hà\",\"content\":\"Đặt lịch nhanh, salon làm đúng giờ, không phải chờ đợi lâu.\",\"rating\":5,\"visible\":true}],\"booking\":{\"title\":\"Đăng ký tư vấn nhanh\",\"note\":\"Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.\",\"successMessage\":\"Cảm ơn bạn, salon sẽ liên hệ lại sớm.\",\"fields\":[{\"id\":\"customer-name\",\"label\":\"Họ tên\",\"visible\":true},{\"id\":\"customer-phone\",\"label\":\"Số điện thoại\",\"visible\":true},{\"id\":\"service-name\",\"label\":\"Dịch vụ quan tâm\",\"visible\":true},{\"id\":\"appointment-date\",\"label\":\"Ngày muốn hẹn\",\"visible\":true},{\"id\":\"appointment-time\",\"label\":\"Giờ muốn hẹn\",\"visible\":true},{\"id\":\"customer-note\",\"label\":\"Ghi chú\",\"visible\":true}]}}}}",
+  "json": {
+    "success": true,
+    "salon": {
+      "id": 4,
+      "slug": "salon-hung-saigon",
+      "salon_name": "Salon Hưng Saigon",
+      "phone": "0938212878",
+      "zalo_url": "0938212878",
+      "facebook_url": null,
+      "address": "Tân An, Long An",
+      "working_hours": null,
+      "logo_url": null,
+      "banner_url": null,
+      "theme_color": "#8b5cf6",
+      "google_sheet_url": "https://docs.google.com/spreadsheets/d/1CWnjipbpiOfspd73wKCzeWjyNzyErjasghAMZbwAH6g/edit?gid=0#gid=0",
+      "google_sheet_id": "1CWnjipbpiOfspd73wKCzeWjyNzyErjasghAMZbwAH6g",
+      "google_sheet_tab": "appointments",
+      "telegram_chat_id": "-5244966843",
+      "admin_email": null,
+      "status": "active",
+      "created_at": "2026-05-09 15:47:34",
+      "updated_at": "2026-05-10 11:56:04",
+      "admin_data_json": "{\"version\":3,\"salon\":{\"name\":\"Salon Hưng Saigon\",\"logoText\":\"M02\",\"phone\":\"0938212878\",\"zalo\":\"0938212878\",\"address\":\"Tân An, Long An\",\"status\":\"active\"},\"theme\":{\"templateName\":\"Green Natural\",\"primary\":\"#6E8F62\",\"secondary\":\"#A8BF8A\",\"accent\":\"#DDE8CF\",\"background\":\"#F6F8F2\",\"textDark\":\"#2F3A2C\"},\"hero\":{\"title\":\"Tư vấn miễn phí kiểu tóc phù hợp với gương mặt\",\"description\":\"Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.\",\"primaryButton\":\"Đặt lịch tư vấn\",\"secondaryButton\":\"Gọi salon\",\"zaloButton\":\"Nhắn Zalo\",\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-hero.png\"},\"trustBadges\":[{\"id\":\"trust-1\",\"title\":\"Tư vấn 1:1\",\"description\":\"Lộ trình theo gương mặt và phong cách cá nhân.\",\"visible\":true},{\"id\":\"trust-2\",\"title\":\"Kỹ thuật salon chuyên nghiệp\",\"description\":\"Quy trình cắt, nhuộm, uốn, duỗi chuẩn kỹ thuật.\",\"visible\":true},{\"id\":\"trust-3\",\"title\":\"Lịch hẹn nhanh\",\"description\":\"Đặt lịch trước để đến là phục vụ ngay.\",\"visible\":true},{\"id\":\"trust-4\",\"title\":\"Sản phẩm chuyên nghiệp\",\"description\":\"Dùng sản phẩm phù hợp từng nền tóc tại salon.\",\"visible\":true}],\"services\":[{\"id\":\"cat-tao-kieu\",\"title\":\"Cắt & tạo kiểu nữ\",\"price\":\"Từ 321K (SYNC TEST)\",\"description\":\"Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png\"},{\"id\":\"mau-toc\",\"title\":\"Tư vấn màu tóc tôn da\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png\"},{\"id\":\"nhuom-thoi-trang\",\"title\":\"Nhuộm thời trang\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png\"},{\"id\":\"uon-setting\",\"title\":\"Uốn setting\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png\"},{\"id\":\"duoi-phuc-hoi\",\"title\":\"Duỗi phục hồi\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png\"},{\"id\":\"cham-soc-phuc-hoi\",\"title\":\"Chăm sóc phục hồi tóc\",\"price\":\"Liên Hệ Tư Vấn\",\"description\":\"Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png\"}],\"consultation\":{\"title\":\"Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.\",\"description\":\"Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.\",\"bullets\":[{\"id\":\"consult-1\",\"title\":\"Đọc tỷ lệ gương mặt\",\"description\":\"Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.\",\"visible\":true},{\"id\":\"consult-2\",\"title\":\"Kiểm tra nền tóc\",\"description\":\"Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.\",\"visible\":true},{\"id\":\"consult-3\",\"title\":\"Chốt màu và phong cách\",\"description\":\"Lựa màu tóc hài hoà tông da và thống nhất phong cách theo mục tiêu.\",\"visible\":true},{\"id\":\"consult-4\",\"title\":\"Lên lịch thực hiện\",\"description\":\"Chốt khung giờ, dịch vụ và dặn dò chăm sóc trước và sau khi làm tóc.\",\"visible\":true}],\"buttonText\":\"Đặt lịch tư vấn\",\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-consultation.png\"},\"gallery\":[{\"id\":\"space-01\",\"title\":\"Khu tư vấn riêng\",\"description\":\"Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.\",\"visible\":false,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png\"},{\"id\":\"space-02\",\"title\":\"Góc tạo kiểu\",\"description\":\"Khu làm tóc có ánh sáng đẹp để dễ kiểm tra phom tóc và màu tóc sau khi hoàn thiện.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-02.png\"},{\"id\":\"space-03\",\"title\":\"Khu chăm sóc và phục hồi\",\"description\":\"Khu vực chuyên cho các liệu trình phục hồi, dưỡng và chăm sóc chuyên sâu.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-03.png\"}],\"products\":[{\"id\":\"product-lineup\",\"title\":\"Sản phẩm chuyên nghiệp sử dụng tại salon\",\"description\":\"Đây là section duy nhất hiển thị ảnh sản phẩm. Tất cả các section dịch vụ, tư vấn và không gian salon không dùng ảnh sản phẩm công ty.\",\"visible\":true,\"imageUrl\":\"https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-products.png\"}],\"feedback\":[{\"id\":\"fb-1\",\"name\":\"Khách hàng Minh Anh\",\"content\":\"Mình được tư vấn kỹ theo gương mặt nên cắt xong nhìn thanh hơn hẳn.\",\"rating\":5,\"visible\":true},{\"id\":\"fb-2\",\"name\":\"Khách hàng Bảo Trân\",\"content\":\"Màu tóc lên đúng tone, nhìn sáng da và đi làm vẫn rất sang.\",\"rating\":5,\"visible\":true},{\"id\":\"fb-3\",\"name\":\"Khách hàng Thu Hà\",\"content\":\"Đặt lịch nhanh, salon làm đúng giờ, không phải chờ đợi lâu.\",\"rating\":5,\"visible\":true}],\"booking\":{\"title\":\"Đăng ký tư vấn nhanh\",\"note\":\"Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.\",\"successMessage\":\"Cảm ơn bạn, salon sẽ liên hệ lại sớm.\",\"fields\":[{\"id\":\"customer-name\",\"label\":\"Họ tên\",\"visible\":true},{\"id\":\"customer-phone\",\"label\":\"Số điện thoại\",\"visible\":true},{\"id\":\"service-name\",\"label\":\"Dịch vụ quan tâm\",\"visible\":true},{\"id\":\"appointment-date\",\"label\":\"Ngày muốn hẹn\",\"visible\":true},{\"id\":\"appointment-time\",\"label\":\"Giờ muốn hẹn\",\"visible\":true},{\"id\":\"customer-note\",\"label\":\"Ghi chú\",\"visible\":true}]}}",
+      "google_apps_script_url": "https://script.google.com/macros/s/AKfycbxCMY9acCgYsPnmrCrbPAvv__X9POqe2BONUoX4YaKr92MtPWyTPg2gGlwwWQidzlNpuQ/exec",
+      "admin_data": {
+        "version": 3,
+        "salon": {
+          "name": "Salon Hưng Saigon",
+          "logoText": "M02",
+          "phone": "0938212878",
+          "zalo": "0938212878",
+          "address": "Tân An, Long An",
+          "status": "active"
+        },
+        "theme": {
+          "templateName": "Green Natural",
+          "primary": "#6E8F62",
+          "secondary": "#A8BF8A",
+          "accent": "#DDE8CF",
+          "background": "#F6F8F2",
+          "textDark": "#2F3A2C"
+        },
+        "hero": {
+          "title": "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt",
+          "description": "Đặt lịch để được phân tích gương mặt, tư vấn màu tóc và chọn kiểu uốn/duỗi/nhuộm phù hợp phong cách cá nhân.",
+          "primaryButton": "Đặt lịch tư vấn",
+          "secondaryButton": "Gọi salon",
+          "zaloButton": "Nhắn Zalo",
+          "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-hero.png"
+        },
+        "trustBadges": [
+          {
+            "id": "trust-1",
+            "title": "Tư vấn 1:1",
+            "description": "Lộ trình theo gương mặt và phong cách cá nhân.",
+            "visible": true
+          },
+          {
+            "id": "trust-2",
+            "title": "Kỹ thuật salon chuyên nghiệp",
+            "description": "Quy trình cắt, nhuộm, uốn, duỗi chuẩn kỹ thuật.",
+            "visible": true
+          },
+          {
+            "id": "trust-3",
+            "title": "Lịch hẹn nhanh",
+            "description": "Đặt lịch trước để đến là phục vụ ngay.",
+            "visible": true
+          },
+          {
+            "id": "trust-4",
+            "title": "Sản phẩm chuyên nghiệp",
+            "description": "Dùng sản phẩm phù hợp từng nền tóc tại salon.",
+            "visible": true
+          }
+        ],
+        "services": [
+          {
+            "id": "cat-tao-kieu",
+            "title": "Cắt & tạo kiểu nữ",
+            "price": "Từ 321K (SYNC TEST)",
+            "description": "Thiết kế phom tóc phù hợp tỷ lệ gương mặt và lịch trình sinh hoạt hàng ngày.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cat-tao-kieu.png"
+          },
+          {
+            "id": "mau-toc",
+            "title": "Tư vấn màu tóc tôn da",
+            "price": "Liên Hệ Tư Vấn",
+            "description": "Phân tích undertone da để chọn bảng màu giúp gương mặt tươi và sáng hơn.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-mau-toc.png"
+          },
+          {
+            "id": "nhuom-thoi-trang",
+            "title": "Nhuộm thời trang",
+            "price": "Liên Hệ Tư Vấn",
+            "description": "Lên màu có kiểm soát, giữ độ bóng mượt và tối ưu độ bền màu sau khi làm.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-nhuom-thoi-trang.png"
+          },
+          {
+            "id": "uon-setting",
+            "title": "Uốn setting",
+            "price": "Liên Hệ Tư Vấn",
+            "description": "Nếp uốn mềm, bồng và dễ vào form khi tự sấy tại nhà sau dịch vụ.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-uon-setting.png"
+          },
+          {
+            "id": "duoi-phuc-hoi",
+            "title": "Duỗi phục hồi",
+            "price": "Liên Hệ Tư Vấn",
+            "description": "Duỗi mượt và cân bằng độ ẩm để tóc suôn tự nhiên nhưng vẫn mềm khỏe.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-duoi-phuc-hoi.png"
+          },
+          {
+            "id": "cham-soc-phuc-hoi",
+            "title": "Chăm sóc phục hồi tóc",
+            "price": "Liên Hệ Tư Vấn",
+            "description": "Liệu trình phục hồi giúp tóc yếu giảm khô xơ, dễ chải và giữ nếp tốt hơn.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-dv-cham-soc-phuc-hoi.png"
+          }
+        ],
+        "consultation": {
+          "title": "Quy trình 4 bước rõ ràng để khách an tâm trước khi làm dịch vụ.",
+          "description": "Tư vấn miễn phí kiểu tóc phù hợp với gương mặt, chất tóc và phong cách cá nhân trước khi chốt lịch.",
+          "bullets": [
+            {
+              "id": "consult-1",
+              "title": "Đọc tỷ lệ gương mặt",
+              "description": "Xác định điểm nhấn khuôn mặt để chọn phom tóc tôn đường nét tự nhiên.",
+              "visible": true
+            },
+            {
+              "id": "consult-2",
+              "title": "Kiểm tra nền tóc",
+              "description": "Đánh giá độ đàn hồi, lịch sử hoá chất để thiết kế kỹ thuật phù hợp.",
+              "visible": true
+            },
+            {
+              "id": "consult-3",
+              "title": "Chốt màu và phong cách",
+              "description": "Lựa màu tóc hài hoà tông da và thống nhất phong cách theo mục tiêu.",
+              "visible": true
+            },
+            {
+              "id": "consult-4",
+              "title": "Lên lịch thực hiện",
+              "description": "Chốt khung giờ, dịch vụ và dặn dò chăm sóc trước và sau khi làm tóc.",
+              "visible": true
+            }
+          ],
+          "buttonText": "Đặt lịch tư vấn",
+          "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-consultation.png"
+        },
+        "gallery": [
+          {
+            "id": "space-01",
+            "title": "Khu tư vấn riêng",
+            "description": "Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.",
+            "visible": false,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png"
+          },
+          {
+            "id": "space-02",
+            "title": "Góc tạo kiểu",
+            "description": "Khu làm tóc có ánh sáng đẹp để dễ kiểm tra phom tóc và màu tóc sau khi hoàn thiện.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-02.png"
+          },
+          {
+            "id": "space-03",
+            "title": "Khu chăm sóc và phục hồi",
+            "description": "Khu vực chuyên cho các liệu trình phục hồi, dưỡng và chăm sóc chuyên sâu.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-03.png"
+          }
+        ],
+        "products": [
+          {
+            "id": "product-lineup",
+            "title": "Sản phẩm chuyên nghiệp sử dụng tại salon",
+            "description": "Đây là section duy nhất hiển thị ảnh sản phẩm. Tất cả các section dịch vụ, tư vấn và không gian salon không dùng ảnh sản phẩm công ty.",
+            "visible": true,
+            "imageUrl": "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-products.png"
+          }
+        ],
+        "feedback": [
+          {
+            "id": "fb-1",
+            "name": "Khách hàng Minh Anh",
+            "content": "Mình được tư vấn kỹ theo gương mặt nên cắt xong nhìn thanh hơn hẳn.",
+            "rating": 5,
+            "visible": true
+          },
+          {
+            "id": "fb-2",
+            "name": "Khách hàng Bảo Trân",
+            "content": "Màu tóc lên đúng tone, nhìn sáng da và đi làm vẫn rất sang.",
+            "rating": 5,
+            "visible": true
+          },
+          {
+            "id": "fb-3",
+            "name": "Khách hàng Thu Hà",
+            "content": "Đặt lịch nhanh, salon làm đúng giờ, không phải chờ đợi lâu.",
+            "rating": 5,
+            "visible": true
+          }
+        ],
+        "booking": {
+          "title": "Đăng ký tư vấn nhanh",
+          "note": "Salon sẽ liên hệ xác nhận lịch sau khi khách gửi thông tin.",
+          "successMessage": "Cảm ơn bạn, salon sẽ liên hệ lại sớm.",
+          "fields": [
+            {
+              "id": "customer-name",
+              "label": "Họ tên",
+              "visible": true
+            },
+            {
+              "id": "customer-phone",
+              "label": "Số điện thoại",
+              "visible": true
+            },
+            {
+              "id": "service-name",
+              "label": "Dịch vụ quan tâm",
+              "visible": true
+            },
+            {
+              "id": "appointment-date",
+              "label": "Ngày muốn hẹn",
+              "visible": true
+            },
+            {
+              "id": "appointment-time",
+              "label": "Giờ muốn hẹn",
+              "visible": true
+            },
+            {
+              "id": "customer-note",
+              "label": "Ghi chú",
+              "visible": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}
