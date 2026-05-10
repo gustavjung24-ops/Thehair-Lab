@@ -168,7 +168,7 @@ const DEFAULT_SALON = {
   salon_name: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].name,
   phone: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].phone,
   zalo_url: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].zalo,
-  facebook_url: "https://facebook.com/thehairlab.top",
+  facebook_url: "",
   address: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].address,
   working_hours: "08:00 - 20:00 mỗi ngày",
   maps_url: "",
@@ -821,8 +821,10 @@ const els = {
 
   infoZaloRow: document.getElementById("info-zalo-row"),
   infoFacebookRow: document.getElementById("info-facebook-row"),
+  infoMapsRow: document.getElementById("info-maps-row"),
   salonZaloLink: document.getElementById("salon-zalo-link"),
   salonFacebookLink: document.getElementById("salon-facebook-link"),
+  salonMapsLink: document.getElementById("salon-maps-link"),
 
   appointmentForm: document.getElementById("appointment-form"),
   appointmentFeedback: document.getElementById("appointment-feedback"),
@@ -929,6 +931,20 @@ function normalizeFacebookUrl(value) {
     return "";
   }
   return "";
+}
+
+function normalizeMapsUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) {
+    return "";
+  }
+  const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const parsed = new URL(candidate);
+    return parsed.toString();
+  } catch {
+    return "";
+  }
 }
 
 function escapeHtml(text) {
@@ -1269,6 +1285,13 @@ function renderQuickActions(salon) {
       `<a class="btn btn-soft" href="tel:${escapeHtml(salon.phone)}">Gọi salon</a>`
     );
   }
+  const mapsLink = normalizeMapsUrl(salon.maps_url || "");
+  if (mapsLink) {
+    els.appointmentQuickActions.insertAdjacentHTML(
+      "beforeend",
+      `<a class="btn btn-soft" href="${escapeHtml(mapsLink)}" target="_blank" rel="noopener noreferrer">Xem đường đi</a>`
+    );
+  }
 }
 
 function updateContactActions(salon) {
@@ -1390,6 +1413,9 @@ function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme, admi
   }
   if (els.infoFacebookRow && els.salonFacebookLink) {
     els.infoFacebookRow.hidden = !setHref(els.salonFacebookLink, normalizeFacebookUrl(salon.facebook_url || ""));
+  }
+  if (els.infoMapsRow && els.salonMapsLink) {
+    els.infoMapsRow.hidden = !setHref(els.salonMapsLink, normalizeMapsUrl(salon.maps_url || ""));
   }
 
   setupLogo(salon.logo_url || LOCAL_ASSETS.logo);

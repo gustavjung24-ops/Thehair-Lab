@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin · Salon Test Mẫu 01 - Lavender Beauty</title>
+  <title>Admin � Salon Test M?u 01 - Lavender Beauty</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -849,11 +849,11 @@
       <div class="login-card__brand">M01</div>
       <h1>Đăng nhập quản trị salon</h1>
       <p>Dùng số điện thoại salon được bàn giao để mở khu chỉnh sửa nội dung.</p>
-      <div id="login-salon-name" class="login-card__salon">Salon Test Mẫu 01 - Lavender Beauty</div>
+      <div id="login-salon-name" class="login-card__salon">Salon Test M?u 01 - Lavender Beauty</div>
       <form class="login-form" onsubmit="handleLogin(event)">
         <div class="field">
           <label for="login-phone">Số điện thoại</label>
-          <input type="text" id="login-phone" autocomplete="username" inputmode="tel" placeholder="Ví dụ: 0902 964 685" />
+          <input type="text" id="login-phone" autocomplete="username" inputmode="tel" placeholder="Ví dụ: 0900000000" />
           <div class="field-hint">Dùng số điện thoại salon được bàn giao.</div>
         </div>
         <div class="field">
@@ -890,8 +890,8 @@
         <div class="hero-card__top">
           <div class="hero-card__title">
             <small>Bản nháp lưu trên máy này</small>
-            <h1 id="summary-salon-name">Salon Test Mẫu 01 - Lavender Beauty</h1>
-            <p>Mẫu đang dùng: Lavender Beauty. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
+            <h1 id="summary-salon-name">Salon Test M?u 01 - Lavender Beauty</h1>
+            <p>Mẫu đang dùng: Green Natural. Chủ salon có thể sửa nội dung, giá, ẩn hiện card và xem thử ảnh mới ngay trên điện thoại.</p>
           </div>
           <div class="status-chip" id="summary-status">Đang hiển thị</div>
         </div>
@@ -952,11 +952,14 @@
     const DEFAULT_ADMIN_DATA = {
       version: 3,
       salon: {
-        name: "Salon Test Mẫu 01 - Lavender Beauty",
+        name: "Salon Test M?u 01 - Lavender Beauty",
         logoText: "M01",
-        phone: "0902964685",
-        zalo: "0900000000",
-        address: "123 Lavender Beauty, Phường Salon, TP. Hồ Chí Minh",
+        phone: "0900000000",
+        zalo_url: "https://zalo.me/0900000000",
+        facebook_url: "",
+        $1123 Lavender Beauty, Phu?ng Salon, TP. H? Ch� Minh",
+        working_hours: "08:00 - 20:00 mỗi ngày",
+        maps_url: "",
         status: "active"
       },
       theme: {
@@ -1048,8 +1051,8 @@
           id: "space-01",
           title: "Khu tư vấn riêng",
           description: "Không gian thật để khách ngồi trao đổi kỹ với salon trước khi chốt dịch vụ.",
-          visible: true,
-          imageUrl: "https://cdn.thehairlab.top/thehairlab/salon/mau-01/salon-mau-01-space-01.png"
+          visible: false,
+          imageUrl: ""
         },
         {
           id: "space-02",
@@ -1097,7 +1100,7 @@
 
     const SECTION_DEFS = [
       { id: "basic", icon: "⚙️", title: "Thông tin salon", desc: "Tên salon, logo chữ, số gọi, Zalo, địa chỉ và các điểm tin cậy dưới hero." },
-      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Lavender Beauty đúng với landing Mẫu 01." },
+      { id: "theme", icon: "🎨", title: "Màu sắc giao diện", desc: "Tone Green Natural đúng với landing Mẫu 02." },
       { id: "hero", icon: "🖼️", title: "Ảnh đầu trang & lời chào", desc: "Tiêu đề chính, mô tả, nút bấm và ảnh hero." },
       { id: "services", icon: "✂️", title: "Dịch vụ & giá", desc: "6 card dịch vụ thực tế đang hiển thị trên landing page." },
       { id: "consultation", icon: "✨", title: "Tư vấn kiểu tóc", desc: "Section tư vấn miễn phí và 4 bước tư vấn cho khách." },
@@ -1119,6 +1122,31 @@
 
     function normalizePhone(value) {
       return String(value || "").replace(/\D/g, "");
+    }
+
+    function normalizeZaloUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      if (/^https?:\/\//i.test(raw)) return raw;
+      const digits = raw.replace(/[\s.\-()]/g, "").replace(/^\+/, "");
+      if (!/^\d{7,20}$/.test(digits)) return "";
+      return `https://zalo.me/${digits}`;
+    }
+
+    function normalizeFacebookUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+      try {
+        const url = new URL(candidate);
+        const host = url.hostname.toLowerCase();
+        if (host === "facebook.com" || host === "www.facebook.com" || host === "fb.com" || host === "www.fb.com") {
+          return url.toString();
+        }
+      } catch (error) {
+        return "";
+      }
+      return "";
     }
 
     async function sha256(text) {
@@ -1161,6 +1189,18 @@
 
     function normalizeLoadedData(raw) {
       const merged = deepMerge(DEFAULT_ADMIN_DATA, raw || {});
+      const legacyZalo = String(raw?.salon?.zalo || "").trim();
+      const rawZalo = String(raw?.salon?.zalo_url || raw?.salon?.zaloUrl || "").trim();
+      const rawFacebook = String(raw?.salon?.facebook_url || raw?.salon?.facebookUrl || "").trim();
+      const rawWorkingHours = String(raw?.salon?.working_hours || raw?.salon?.workingHours || "").trim();
+      const rawMapsUrl = String(raw?.salon?.maps_url || raw?.salon?.mapsUrl || "").trim();
+
+      merged.salon.zalo_url = normalizeZaloUrl(rawZalo || legacyZalo || merged.salon.zalo_url);
+      merged.salon.facebook_url = normalizeFacebookUrl(rawFacebook || merged.salon.facebook_url);
+      merged.salon.working_hours = rawWorkingHours || merged.salon.working_hours;
+      merged.salon.maps_url = rawMapsUrl || merged.salon.maps_url;
+      delete merged.salon.zalo;
+
       merged.version = DATA_VERSION;
       if (!Array.isArray(merged.trustBadges)) merged.trustBadges = deepClone(DEFAULT_ADMIN_DATA.trustBadges);
       if (!Array.isArray(merged.services)) merged.services = deepClone(DEFAULT_ADMIN_DATA.services);
@@ -1185,10 +1225,39 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    async function loadStateOnline() {
+      const endpoint = `${THL_WORKER_API_BASE}/api/salons/${ADMIN_SLUG}`;
+      try {
+        const response = await fetch(endpoint, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          return false;
+        }
+
+        const data = await response.json().catch(() => null);
+        const onlineAdminData = data?.salon?.admin_data;
+        if (!onlineAdminData || typeof onlineAdminData !== "object") {
+          return false;
+        }
+
+        state = normalizeLoadedData(onlineAdminData);
+        persistSilently();
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
     async function saveDataOnline() {
       // Attempt to save to D1 via Worker API
       const endpoint = `${THL_WORKER_API_BASE}/api/admin/salons/${ADMIN_SLUG}`;
       try {
+        normalizeSalonContactState();
         const response = await fetch(endpoint, {
           method: 'PUT',
           headers: {
@@ -1272,7 +1341,7 @@
       return inputHash === credentials.passwordHash;
     }
 
-    function loadState() {
+    function loadStateLocal() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
         state = deepClone(DEFAULT_ADMIN_DATA);
@@ -1341,12 +1410,17 @@
       }
     }
 
-    function renderApp() {
+    async function renderApp() {
       const session = getSession();
       isAuthenticated = Boolean(session && session.loggedIn);
       renderAuthView();
       if (!isAuthenticated) return;
-      loadState();
+
+      loadStateLocal();
+      const loadedOnline = await loadStateOnline();
+      if (loadedOnline) {
+        showToast("Đã đồng bộ dữ liệu mới nhất từ hệ thống.");
+      }
       renderSections();
     }
 
@@ -1365,7 +1439,7 @@
       }
       persistSession(phone);
       isAuthenticated = true;
-      renderApp();
+      await renderApp();
       showToast("Đăng nhập thành công");
     }
 
@@ -1447,7 +1521,7 @@
 
     function collectInputs() {
       const objectFields = {
-        salon: ["name", "logoText", "phone", "zalo", "address", "status"],
+        salon: ["name", "logoText", "phone", "zalo_url", "facebook_url", "address", "working_hours", "maps_url", "status"],
         theme: ["templateName", "primary", "secondary", "accent", "background", "textDark"],
         hero: ["title", "description", "primaryButton", "secondaryButton", "zaloButton"]
       };
@@ -1517,25 +1591,31 @@
       });
     }
 
-    function saveData() {
+    function normalizeSalonContactState() {
+      state.salon.zalo_url = normalizeZaloUrl(state.salon.zalo_url);
+      state.salon.facebook_url = normalizeFacebookUrl(state.salon.facebook_url);
+      if (!state.salon.working_hours) state.salon.working_hours = DEFAULT_ADMIN_DATA.salon.working_hours;
+      if (!state.salon.maps_url) state.salon.maps_url = "";
+    }
+
+    async function saveData() {
       collectInputs();
+      normalizeSalonContactState();
       state.version = DATA_VERSION;
       persistSilently();
       renderSections();
-      showToast("Đã lưu trên thiết bị này");
+      showToast("Đã lưu nháp trên thiết bị này");
       
-      // Try to save online (fire-and-forget)
-      saveDataOnline().then((savedOnline) => {
-        if (savedOnline) {
-          showToast("Đã lưu online thành công");
-        }
-      }).catch(() => {
-        // Silent fail - user already has local save
-      });
+      const savedOnline = await saveDataOnline();
+      if (savedOnline) {
+        showToast("Đã lưu online thành công");
+      } else {
+        showToast("Lưu online thất bại. Dữ liệu hiện chỉ ở máy này.");
+      }
     }
 
     function resetData() {
-      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Lavender Beauty version 3?");
+      const confirmed = window.confirm("Bạn có chắc muốn reset toàn bộ về mẫu gốc Green Natural version 3?");
       if (!confirmed) return;
       clearAllPreviewState();
       state = deepClone(DEFAULT_ADMIN_DATA);
@@ -1614,9 +1694,14 @@
         "<div class=\"grid-3\">" +
           field("salon-logoText", "Logo chữ", state.salon.logoText, "Gợi ý: 2 đến 3 ký tự in hoa.") +
           field("salon-phone", "Số điện thoại", state.salon.phone) +
-          field("salon-zalo", "Số Zalo", state.salon.zalo) +
+          field("salon-zalo_url", "Zalo URL hoặc số Zalo", state.salon.zalo_url, "Nhập số hoặc link. Ví dụ: 0900000000 hoặc https://zalo.me/0900000000") +
+        "</div>" +
+        "<div class=\"grid-2\">" +
+          field("salon-facebook_url", "Facebook URL", state.salon.facebook_url, "Để trống nếu không dùng Facebook.") +
+          field("salon-working_hours", "Giờ làm việc", state.salon.working_hours) +
         "</div>" +
         field("salon-address", "Địa chỉ", state.salon.address, "Hiển thị ở khu thông tin cuối landing page.") +
+        field("salon-maps_url", "Google Maps URL", state.salon.maps_url, "Tùy chọn: dùng cho các lần mở rộng sau.") +
         "<div class=\"subhead\">Điểm tin cậy dưới hero</div>" +
         "<div class=\"info-box\">Các card này đang nằm ngay dưới hero và giúp khách yên tâm hơn trước khi bấm đặt lịch.</div>" +
         trustCards;
@@ -1866,7 +1951,7 @@
 
     function addFeedbackItem() {
       collectInputs();
-      state.feedback.push({ id: makeId("feedback"), name: "Khách hàng mới", content: "Feedback mới từ khách hàng.", rating: 5, visible: true });
+      state.feedback.push({ id: makeId("feedback"), name: "Khách mới", content: "Feedback mới từ khách hàng.", rating: 5, visible: true });
       renderSections();
     }
 
@@ -1924,3 +2009,4 @@
   </script>
 </body>
 </html>
+
