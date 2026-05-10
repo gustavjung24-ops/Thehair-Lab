@@ -34,6 +34,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../../salon.css?v=20260511" />
+    <link rel="stylesheet" href="salon-hung-search.css" />
   </head>
   <body>
     <main class="salon-shell">
@@ -113,6 +114,39 @@
             </aside>
           </div>
         </header>
+
+        <!-- Ô tìm kiếm – chỉ Salon Hưng Saigon, driven by salon-hung-search.js -->
+        <div id="hung-search-bar" class="hung-search-bar" hidden>
+          <div class="container">
+            <div class="hung-search-inner">
+              <div class="hung-search-field">
+                <span class="hung-search-icon" aria-hidden="true"></span>
+                <input
+                  id="hung-search-input"
+                  class="hung-search-input"
+                  type="search"
+                  placeholder="Tìm dịch vụ, giá, sản phẩm..."
+                  autocomplete="off"
+                  aria-label="Tìm kiếm nội dung salon"
+                />
+                <button
+                  id="hung-search-clear"
+                  class="hung-search-clear"
+                  type="button"
+                  aria-label="Xóa tìm kiếm"
+                  hidden
+                >&#10005;</button>
+              </div>
+              <div id="hung-search-results" class="hung-search-results" hidden>
+                <ul id="hung-search-list" class="hung-search-list"></ul>
+                <p id="hung-search-empty" class="hung-search-empty" hidden>
+                  Không tìm thấy nội dung phù hợp.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /Ô tìm kiếm -->
 
         <section class="section trust-section">
           <div class="container">
@@ -355,5 +389,6 @@
 
     <script src="/assets/cloudflare-assets.js"></script>
     <script src="../../salon.v20260510-sync-fix.js?v=20260513-maps"></script>
+    <script src="salon-hung-search.js"></script>
   </body>
 </html>
