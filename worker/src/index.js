@@ -1154,18 +1154,37 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
   }
 
   const salonPayload = body.salon && typeof body.salon === 'object' ? body.salon : {};
-  const salonName = typeof salonPayload.name === 'string' && salonPayload.name.trim()
-    ? salonPayload.name.trim()
-    : null;
-  const phone = typeof salonPayload.phone === 'string' && salonPayload.phone.trim()
-    ? salonPayload.phone.trim()
-    : null;
-  const zalo = typeof salonPayload.zalo === 'string' && salonPayload.zalo.trim()
-    ? salonPayload.zalo.trim()
-    : null;
-  const address = typeof salonPayload.address === 'string' && salonPayload.address.trim()
-    ? salonPayload.address.trim()
-    : null;
+  const normalizeZaloUrl = (value) => {
+    const raw = typeof value === 'string' ? value.trim() : '';
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    const digits = raw.replace(/[\s.\-()]/g, '').replace(/^\+/, '');
+    if (!/^\d{7,20}$/.test(digits)) return null;
+    return `https://zalo.me/${digits}`;
+  };
+  const normalizeFacebookUrl = (value) => {
+    const raw = typeof value === 'string' ? value.trim() : '';
+    if (!raw) return null;
+    const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    try {
+      const parsed = new URL(candidate);
+      const host = parsed.hostname.toLowerCase();
+      if (host === 'facebook.com' || host === 'www.facebook.com' || host === 'fb.com' || host === 'www.fb.com') {
+        return parsed.toString();
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  };
+  const textOrNull = (value) => (typeof value === 'string' && value.trim() ? value.trim() : null);
+
+  const salonName = textOrNull(salonPayload.name);
+  const phone = textOrNull(salonPayload.phone);
+  const zalo = normalizeZaloUrl(salonPayload.zalo_url || salonPayload.zaloUrl || salonPayload.zalo);
+  const facebook = normalizeFacebookUrl(salonPayload.facebook_url || salonPayload.facebookUrl);
+  const address = textOrNull(salonPayload.address);
+  const workingHours = textOrNull(salonPayload.working_hours || salonPayload.workingHours);
   const status = salonPayload.status === 'active' || salonPayload.status === 'inactive'
     ? salonPayload.status
     : null;
@@ -1205,8 +1224,10 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
        SET admin_data_json = ?,
            salon_name = COALESCE(?, salon_name),
            phone = COALESCE(?, phone),
-           zalo_url = COALESCE(?, zalo_url),
+           zalo_url = ?,
+           facebook_url = ?,
            address = COALESCE(?, address),
+           working_hours = ?,
            status = COALESCE(?, status),
            google_sheet_url = COALESCE(?, google_sheet_url),
            google_sheet_id = COALESCE(?, google_sheet_id),
@@ -1220,7 +1241,9 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
       salonName,
       phone,
       zalo,
+      facebook,
       address,
+      workingHours,
       status,
       googleSheetUrl,
       googleSheetId,
@@ -1236,7 +1259,9 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
          salon_name,
          phone,
          zalo_url,
+         facebook_url,
          address,
+         working_hours,
          status,
          google_sheet_url,
          google_sheet_id,
@@ -1245,13 +1270,15 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
          admin_data_json,
          created_at,
          updated_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
     ).bind(
       normalizedSlug,
       salonName || normalizedSlug,
       phone,
       zalo,
+      facebook,
       address,
+      workingHours,
       status || 'active',
       googleSheetUrl,
       googleSheetId,

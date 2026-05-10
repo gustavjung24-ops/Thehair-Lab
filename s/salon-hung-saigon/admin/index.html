@@ -955,8 +955,11 @@
         name: "Salon Hưng Saigon",
         logoText: "M02",
         phone: "0938212878",
-        zalo: "0938212878",
+        zalo_url: "https://zalo.me/0938212878",
+        facebook_url: "",
         address: "Tân An, Long An",
+        working_hours: "08:00 - 20:00 mỗi ngày",
+        maps_url: "",
         status: "active"
       },
       theme: {
@@ -1121,6 +1124,31 @@
       return String(value || "").replace(/\D/g, "");
     }
 
+    function normalizeZaloUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      if (/^https?:\/\//i.test(raw)) return raw;
+      const digits = raw.replace(/[\s.\-()]/g, "").replace(/^\+/, "");
+      if (!/^\d{7,20}$/.test(digits)) return "";
+      return `https://zalo.me/${digits}`;
+    }
+
+    function normalizeFacebookUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+      try {
+        const url = new URL(candidate);
+        const host = url.hostname.toLowerCase();
+        if (host === "facebook.com" || host === "www.facebook.com" || host === "fb.com" || host === "www.fb.com") {
+          return url.toString();
+        }
+      } catch (error) {
+        return "";
+      }
+      return "";
+    }
+
     async function sha256(text) {
       const encoder = new TextEncoder();
       const data = encoder.encode(text);
@@ -1161,6 +1189,18 @@
 
     function normalizeLoadedData(raw) {
       const merged = deepMerge(DEFAULT_ADMIN_DATA, raw || {});
+      const legacyZalo = String(raw?.salon?.zalo || "").trim();
+      const rawZalo = String(raw?.salon?.zalo_url || raw?.salon?.zaloUrl || "").trim();
+      const rawFacebook = String(raw?.salon?.facebook_url || raw?.salon?.facebookUrl || "").trim();
+      const rawWorkingHours = String(raw?.salon?.working_hours || raw?.salon?.workingHours || "").trim();
+      const rawMapsUrl = String(raw?.salon?.maps_url || raw?.salon?.mapsUrl || "").trim();
+
+      merged.salon.zalo_url = normalizeZaloUrl(rawZalo || legacyZalo || merged.salon.zalo_url);
+      merged.salon.facebook_url = normalizeFacebookUrl(rawFacebook || merged.salon.facebook_url);
+      merged.salon.working_hours = rawWorkingHours || merged.salon.working_hours;
+      merged.salon.maps_url = rawMapsUrl || merged.salon.maps_url;
+      delete merged.salon.zalo;
+
       merged.version = DATA_VERSION;
       if (!Array.isArray(merged.trustBadges)) merged.trustBadges = deepClone(DEFAULT_ADMIN_DATA.trustBadges);
       if (!Array.isArray(merged.services)) merged.services = deepClone(DEFAULT_ADMIN_DATA.services);
@@ -1217,6 +1257,7 @@
       // Attempt to save to D1 via Worker API
       const endpoint = `${THL_WORKER_API_BASE}/api/admin/salons/${ADMIN_SLUG}`;
       try {
+        normalizeSalonContactState();
         const response = await fetch(endpoint, {
           method: 'PUT',
           headers: {
@@ -1480,7 +1521,7 @@
 
     function collectInputs() {
       const objectFields = {
-        salon: ["name", "logoText", "phone", "zalo", "address", "status"],
+        salon: ["name", "logoText", "phone", "zalo_url", "facebook_url", "address", "working_hours", "maps_url", "status"],
         theme: ["templateName", "primary", "secondary", "accent", "background", "textDark"],
         hero: ["title", "description", "primaryButton", "secondaryButton", "zaloButton"]
       };
@@ -1550,8 +1591,16 @@
       });
     }
 
+    function normalizeSalonContactState() {
+      state.salon.zalo_url = normalizeZaloUrl(state.salon.zalo_url);
+      state.salon.facebook_url = normalizeFacebookUrl(state.salon.facebook_url);
+      if (!state.salon.working_hours) state.salon.working_hours = DEFAULT_ADMIN_DATA.salon.working_hours;
+      if (!state.salon.maps_url) state.salon.maps_url = "";
+    }
+
     async function saveData() {
       collectInputs();
+      normalizeSalonContactState();
       state.version = DATA_VERSION;
       persistSilently();
       renderSections();
@@ -1645,9 +1694,14 @@
         "<div class=\"grid-3\">" +
           field("salon-logoText", "Logo chữ", state.salon.logoText, "Gợi ý: 2 đến 3 ký tự in hoa.") +
           field("salon-phone", "Số điện thoại", state.salon.phone) +
-          field("salon-zalo", "Số Zalo", state.salon.zalo) +
+          field("salon-zalo_url", "Zalo URL hoặc số Zalo", state.salon.zalo_url, "Nhập số hoặc link. Ví dụ: 0938212878 hoặc https://zalo.me/0938212878") +
+        "</div>" +
+        "<div class=\"grid-2\">" +
+          field("salon-facebook_url", "Facebook URL", state.salon.facebook_url, "Để trống nếu không dùng Facebook.") +
+          field("salon-working_hours", "Giờ làm việc", state.salon.working_hours) +
         "</div>" +
         field("salon-address", "Địa chỉ", state.salon.address, "Hiển thị ở khu thông tin cuối landing page.") +
+        field("salon-maps_url", "Google Maps URL", state.salon.maps_url, "Tùy chọn: dùng cho các lần mở rộng sau.") +
         "<div class=\"subhead\">Điểm tin cậy dưới hero</div>" +
         "<div class=\"info-box\">Các card này đang nằm ngay dưới hero và giúp khách yên tâm hơn trước khi bấm đặt lịch.</div>" +
         trustCards;

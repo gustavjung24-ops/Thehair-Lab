@@ -171,6 +171,7 @@ const DEFAULT_SALON = {
   facebook_url: "https://facebook.com/thehairlab.top",
   address: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].address,
   working_hours: "08:00 - 20:00 mỗi ngày",
+  maps_url: "",
   theme_color: TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID].theme.primary,
   logo_url: "",
 };
@@ -773,10 +774,13 @@ const els = {
 
   ctaCall: document.getElementById("cta-call"),
   ctaZalo: document.getElementById("cta-zalo"),
+  ctaFacebook: document.getElementById("cta-facebook"),
   navCall: document.getElementById("nav-call"),
   navZalo: document.getElementById("nav-zalo"),
+  navFacebook: document.getElementById("nav-facebook"),
   stickyCall: document.getElementById("sticky-call"),
   stickyZalo: document.getElementById("sticky-zalo"),
+  stickyFacebook: document.getElementById("sticky-facebook"),
   stickyBook: document.getElementById("sticky-book"),
   mobileSticky: document.getElementById("mobile-sticky"),
 
@@ -892,6 +896,39 @@ function setHref(node, value) {
   }
   node.href = String(value).trim();
   return true;
+}
+
+function normalizeZaloUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+  const digits = raw.replace(/[\s.\-()]/g, "").replace(/^\+/, "");
+  if (!/^\d{7,20}$/.test(digits)) {
+    return "";
+  }
+  return `https://zalo.me/${digits}`;
+}
+
+function normalizeFacebookUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) {
+    return "";
+  }
+  const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const parsed = new URL(candidate);
+    const host = parsed.hostname.toLowerCase();
+    if (host === "facebook.com" || host === "www.facebook.com" || host === "fb.com" || host === "www.fb.com") {
+      return parsed.toString();
+    }
+  } catch {
+    return "";
+  }
+  return "";
 }
 
 function escapeHtml(text) {
@@ -1219,10 +1256,11 @@ function renderQuickActions(salon) {
   }
   els.appointmentQuickActions.innerHTML = "";
 
-  if (salon.zalo_url) {
+  const zaloLink = normalizeZaloUrl(salon.zalo_url || "");
+  if (zaloLink) {
     els.appointmentQuickActions.insertAdjacentHTML(
       "beforeend",
-      `<a class="btn btn-soft" href="${escapeHtml(salon.zalo_url)}" target="_blank" rel="noreferrer">Nhắn Zalo salon</a>`
+      `<a class="btn btn-soft" href="${escapeHtml(zaloLink)}" target="_blank" rel="noreferrer">Nhắn Zalo salon</a>`
     );
   }
   if (salon.phone) {
@@ -1235,7 +1273,8 @@ function renderQuickActions(salon) {
 
 function updateContactActions(salon) {
   const callLink = salon.phone ? `tel:${salon.phone}` : "";
-  const zaloLink = salon.zalo_url || "";
+  const zaloLink = normalizeZaloUrl(salon.zalo_url || "");
+  const facebookLink = normalizeFacebookUrl(salon.facebook_url || "");
 
   [els.ctaCall, els.navCall, els.stickyCall].forEach((node) => {
     if (!node) {
@@ -1257,6 +1296,13 @@ function updateContactActions(salon) {
     }
     node.hidden = !setHref(node, zaloLink);
   });
+
+  [els.ctaFacebook, els.navFacebook, els.stickyFacebook].forEach((node) => {
+    if (!node) {
+      return;
+    }
+    node.hidden = !setHref(node, facebookLink);
+  });
 }
 
 function mergeSalonData(apiSalon, templateConfig) {
@@ -1270,13 +1316,21 @@ function mergeSalonData(apiSalon, templateConfig) {
 
   const candidateSalon = apiSalon || {};
 
-  return {
+  const merged = {
     ...DEFAULT_SALON,
     ...templateSalon,
     ...Object.fromEntries(
       Object.entries(candidateSalon).filter(([, value]) => hasRenderableValue(value))
     ),
   };
+
+  ["zalo_url", "facebook_url", "working_hours", "maps_url"].forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(candidateSalon, key)) {
+      merged[key] = String(candidateSalon[key] || "").trim();
+    }
+  });
+
+  return merged;
 }
 
 function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme, adminData = null) {
@@ -1332,10 +1386,10 @@ function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme, admi
   }
 
   if (els.infoZaloRow && els.salonZaloLink) {
-    els.infoZaloRow.hidden = !setHref(els.salonZaloLink, salon.zalo_url || "");
+    els.infoZaloRow.hidden = !setHref(els.salonZaloLink, normalizeZaloUrl(salon.zalo_url || ""));
   }
   if (els.infoFacebookRow && els.salonFacebookLink) {
-    els.infoFacebookRow.hidden = !setHref(els.salonFacebookLink, salon.facebook_url || "");
+    els.infoFacebookRow.hidden = !setHref(els.salonFacebookLink, normalizeFacebookUrl(salon.facebook_url || ""));
   }
 
   setupLogo(salon.logo_url || LOCAL_ASSETS.logo);
@@ -1546,16 +1600,26 @@ async function loadSalon() {
 
         // If D1 has admin_data JSON, use it (includes theme, services, etc)
         if (salonData.admin_data && typeof salonData.admin_data === 'object') {
+          const adminSalon = salonData.admin_data.salon && typeof salonData.admin_data.salon === "object"
+            ? salonData.admin_data.salon
+            : {};
+          const resolvedZalo = normalizeZaloUrl(
+            adminSalon.zalo_url || adminSalon.zaloUrl || adminSalon.zalo || salonData.zalo_url
+          );
+          const resolvedFacebook = normalizeFacebookUrl(
+            adminSalon.facebook_url || adminSalon.facebookUrl || salonData.facebook_url || ""
+          );
           // admin_data has full version 3 structure
           salonToRender = {
-            salon_name: salonData.admin_data.salon?.name || salonData.salon_name,
-            phone: salonData.admin_data.salon?.phone || salonData.phone,
-            zalo_url: salonData.admin_data.salon?.zalo ? `https://zalo.me/${salonData.admin_data.salon.zalo}` : salonData.zalo_url,
-            address: salonData.admin_data.salon?.address || salonData.address,
-            working_hours: salonData.working_hours || DEFAULT_SALON.working_hours,
+            salon_name: adminSalon.name || salonData.salon_name,
+            phone: adminSalon.phone || salonData.phone,
+            zalo_url: resolvedZalo,
+            facebook_url: resolvedFacebook,
+            address: adminSalon.address || salonData.address,
+            working_hours: adminSalon.working_hours || adminSalon.workingHours || salonData.working_hours || DEFAULT_SALON.working_hours,
+            maps_url: adminSalon.maps_url || adminSalon.mapsUrl || "",
             theme_color: resolvedTheme.primary,
             logo_url: salonData.logo_url || '',
-            facebook_url: salonData.facebook_url || DEFAULT_SALON.facebook_url,
           };
           // Merge and apply full admin data rendering
           const mergedSalon = mergeSalonData(salonToRender, activeTemplateConfig);
@@ -1569,12 +1633,12 @@ async function loadSalon() {
             {
               salon_name: salonData.salon_name,
               phone: salonData.phone,
-              zalo_url: salonData.zalo_url,
+              zalo_url: normalizeZaloUrl(salonData.zalo_url || ""),
               address: salonData.address,
               working_hours: salonData.working_hours,
               theme_color: salonData.theme_color,
               logo_url: salonData.logo_url,
-              facebook_url: salonData.facebook_url,
+              facebook_url: normalizeFacebookUrl(salonData.facebook_url || ""),
             },
             activeTemplateConfig
           );
