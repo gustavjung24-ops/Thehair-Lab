@@ -243,13 +243,17 @@ function loadApiConfig() {
 
 	apiConfig.baseUrl = (apiConfig.baseUrl || "").trim().replace(/\/+$/, "");
 	apiConfig.token = (apiConfig.token || "").trim();
-	if (!apiConfig.baseUrl || !apiConfig.token) {
+	if (!apiConfig.baseUrl) {
 		apiConfig = null;
 	}
 }
 
-function hasApiConfig() {
-	return Boolean(apiConfig?.baseUrl && apiConfig?.token);
+function hasApiBaseUrl() {
+	return Boolean(apiConfig?.baseUrl);
+}
+
+function hasAdminToken() {
+	return Boolean(apiConfig?.token);
 }
 
 function saveApiConfig(baseUrl, token) {
@@ -276,15 +280,17 @@ function syncApiConfigInputs() {
 	els.apiBaseUrl.value = apiConfig?.baseUrl || "";
 	els.apiToken.value = apiConfig?.token || "";
 
-	if (hasApiConfig()) {
-		setApiModeStatus("Che do API dang bat.");
+	if (hasApiBaseUrl() && hasAdminToken()) {
+		setApiModeStatus("Che do API dang bat (co token admin).");
+	} else if (hasApiBaseUrl()) {
+		setApiModeStatus("Che do API dang bat (chua co token admin, chi sync theo slug).", true);
 	} else {
 		setApiModeStatus("Chua cau hinh API, dang dung localStorage.");
 	}
 }
 
 async function requestApi(path, options = {}) {
-	if (!hasApiConfig()) {
+	if (!hasApiBaseUrl() || !hasAdminToken()) {
 		throw new Error("NO_API_CONFIG");
 	}
 
@@ -409,7 +415,7 @@ async function loadSalonsData() {
 		return;
 	} catch {}
 
-	if (hasApiConfig()) {
+	if (hasApiBaseUrl() && hasAdminToken()) {
 		try {
 			const data = await requestApi("/api/admin/salons", { method: "GET" });
 			salons = normalizeRemoteSalons(data.salons);
@@ -622,8 +628,8 @@ async function onSaveApiConfig() {
 	const baseUrl = (els.apiBaseUrl?.value || "").trim();
 	const token = (els.apiToken?.value || "").trim();
 
-	if (!baseUrl || !token) {
-		setApiModeStatus("Can nhap du API Base URL va Admin API Token.", true);
+	if (!baseUrl) {
+		setApiModeStatus("Can nhap API Base URL.", true);
 		return;
 	}
 
@@ -701,13 +707,29 @@ function buildSalonPayload() {
 async function syncSalonToWorkerBySlug(payload) {
 	const slug = String(payload?.slug || "").trim().toLowerCase();
 	if (!slug) {
-		return false;
+		return { ok: false, error: "THIEU_SLUG" };
 	}
 
+	const candidateBases = [];
+	if (apiConfig?.baseUrl) {
+		candidateBases.push(apiConfig.baseUrl);
+	}
+	if (activeWorkerBase && !candidateBases.includes(activeWorkerBase)) {
+		candidateBases.push(activeWorkerBase);
+	}
 	for (const base of WORKER_BASES) {
+		if (!candidateBases.includes(base)) {
+			candidateBases.push(base);
+		}
+	}
+
+	let lastError = "SYNC_WORKER_FAILED";
+
+	for (const base of candidateBases) {
 		try {
 			const getResponse = await fetch(`${base}/api/salons/${encodeURIComponent(slug)}`);
 			if (!getResponse.ok) {
+				lastError = `Khong doc du lieu salon tu Worker (${base})`;
 				continue;
 			}
 
@@ -728,49 +750,60 @@ async function syncSalonToWorkerBySlug(payload) {
 			merged.salon.zalo = payload.zalo_url || merged.salon.zalo || "";
 			merged.salon.address = payload.address || merged.salon.address || "";
 			merged.salon.status = payload.status || merged.salon.status || "inactive";
+			merged.salon.phone = payload.phone || merged.salon.phone || "";
+			merged.salon.name = payload.salon_name || merged.salon.name || "";
+
+			const headers = {
+				"Content-Type": "application/json",
+			};
+			if (apiConfig?.token) {
+				headers.Authorization = `Bearer ${apiConfig.token}`;
+				headers["x-admin-token"] = apiConfig.token;
+			}
 
 			const putResponse = await fetch(`${base}/api/admin/salons/${encodeURIComponent(slug)}`, {
 				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers,
 				body: JSON.stringify(merged),
 			});
 
 			if (putResponse.ok) {
 				activeWorkerBase = base;
-				return true;
+				return { ok: true, base };
 			}
-		} catch {}
+
+			let errorMessage = `HTTP ${putResponse.status}`;
+			try {
+				const errData = await putResponse.json();
+				if (errData?.error) {
+					errorMessage = errData.error;
+				}
+			} catch {}
+
+			lastError = `${errorMessage} (${base})`;
+		} catch (error) {
+			lastError = error?.message || "SYNC_WORKER_FAILED";
+		}
 	}
 
-	return false;
+	return { ok: false, error: lastError };
 }
 
-async function saveSalonToLocal(payload) {
+function saveSalonToLocal(payload) {
 	const existing = salons.find((item) => item.id === payload.id);
 	const isEdit = Boolean(existing);
 	if (existing) {
 		payload.created_at = existing.created_at || nowIso();
 		salons = salons.map((item) => (item.id === payload.id ? payload : item));
-		showFormMessage("Cap nhat salon thanh cong.");
 	} else {
 		payload.created_at = nowIso();
 		salons.unshift(payload);
-		showFormMessage("Tao salon moi thanh cong.");
 	}
 
 	persistSalons();
 	renderAll();
 	resetForm();
-
-	// Keep local-first behavior, then try Worker sync in background for edited salons.
-	if (isEdit) {
-		const synced = await syncSalonToWorkerBySlug(payload);
-		if (synced) {
-			showFormMessage("Cap nhat salon thanh cong. Da dong bo len Worker.");
-		}
-	}
+	return { isEdit };
 }
 
 async function onSalonSubmit(event) {
@@ -807,53 +840,25 @@ async function onSalonSubmit(event) {
 		}
 	}
 
-	if (hasApiConfig()) {
-		try {
-			const isEdit = Boolean(payload.id && salons.find((item) => String(item.id) === String(payload.id)));
-			const apiPayload = {
-				salon_name: payload.salon_name,
-				slug: payload.slug,
-				phone: payload.phone,
-				zalo_url: payload.zalo_url,
-				facebook_url: payload.facebook_url,
-				address: payload.address,
-				working_hours: payload.working_hours,
-				logo_url: payload.logo_url,
-				banner_url: payload.banner_url,
-				theme_color: payload.theme_color,
-				google_sheet_url: payload.google_sheet_url,
-				google_sheet_id: payload.google_sheet_id,
-				google_sheet_tab: payload.google_sheet_tab,
-				telegram_chat_id: payload.telegram_chat_id,
-				admin_email: payload.admin_email,
-				status: payload.status,
-			};
+	const localResult = saveSalonToLocal(payload);
+	showFormMessage(localResult.isEdit ? "Da luu local: Cap nhat salon thanh cong." : "Da luu local: Tao salon moi thanh cong.");
 
-			if (isEdit) {
-				await requestApi(`/api/admin/salons/${payload.id}`, {
-					method: "PUT",
-					body: JSON.stringify(apiPayload),
-				});
-				showFormMessage("Cap nhat salon thanh cong (API).");
-			} else {
-				await requestApi("/api/admin/salons", {
-					method: "POST",
-					body: JSON.stringify(apiPayload),
-				});
-				showFormMessage("Tao salon moi thanh cong (API).");
-			}
-
-			await loadSalonsData();
-			renderAll();
-			resetForm();
-			return;
-		} catch {
-			setApiModeStatus("Khong ket noi duoc API, dang dung du lieu local.", true);
-			showFormMessage("Khong ket noi duoc API, dang dung du lieu local.", true);
-		}
+	if (!hasApiBaseUrl()) {
+		setApiModeStatus("Chua cau hinh API Base URL, dang chi luu localStorage.", true);
+		return;
 	}
 
-	await saveSalonToLocal(payload);
+	const syncResult = await syncSalonToWorkerBySlug(payload);
+	if (!syncResult.ok) {
+		setApiModeStatus("Luu local thanh cong, nhung dong bo Worker that bai.", true);
+		showFormMessage(`Da luu local, NHUNG dong bo Worker that bai: ${syncResult.error}`, true);
+		return;
+	}
+
+	setApiModeStatus(`Da dong bo Worker thanh cong (${syncResult.base}).`);
+	showFormMessage(`Da luu local va dong bo Worker/D1 thanh cong (${syncResult.base}).`);
+	await loadSalonsData();
+	renderAll();
 }
 
 function findSalonById(id) {
@@ -953,7 +958,7 @@ async function onSeedClick() {
 }
 
 async function onClearStorageClick() {
-	if (hasApiConfig()) {
+	if (hasApiBaseUrl()) {
 		showFormMessage("Dang o che do API, khong xoa local cache de tranh mat cache.");
 		return;
 	}
