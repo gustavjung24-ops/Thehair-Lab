@@ -1,5 +1,5 @@
 const THL_WORKER_API_BASE = "https://thehairlab-leads-worker.khuongbinh-info.workers.dev";
-const API_BASE = "https://thehairlab-leads-worker.khuongbinh-thehairlab.workers.dev/api/public/salons";
+const API_BASE = `${THL_WORKER_API_BASE}/api/public/salons`;
 const TEMPLATE_CONFIGS = {
   "01": {
     slug: "salon-test-mau-01",
@@ -1028,16 +1028,130 @@ function showError(title, copy) {
   showState("error");
 }
 
-function bindDemoForm(salon) {
+function setAppointmentFeedback(message, type = "info") {
+  if (!els.appointmentFeedback) {
+    return;
+  }
+
+  els.appointmentFeedback.textContent = message;
+
+  if (type === "error") {
+    els.appointmentFeedback.style.color = "#b91c1c";
+    return;
+  }
+
+  if (type === "warning") {
+    els.appointmentFeedback.style.color = "#b45309";
+    return;
+  }
+
+  if (type === "success") {
+    els.appointmentFeedback.style.color = "#065f46";
+    return;
+  }
+
+  els.appointmentFeedback.style.color = "";
+}
+
+function bindPublicLeadForm(salon, slug) {
   if (!els.appointmentForm || !els.appointmentFeedback) {
     return;
   }
 
-  els.appointmentForm.addEventListener("submit", (event) => {
+  const submitButton = els.appointmentForm.querySelector('button[type="submit"]');
+
+  els.appointmentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    els.appointmentFeedback.textContent =
-      "Thông tin đã được ghi nhận demo. Phase sau sẽ nối form này về Telegram và Google Sheet riêng của salon.";
-    renderQuickActions(salon);
+    const formData = new FormData(els.appointmentForm);
+
+    const payload = {
+      name: String(formData.get("customer_name") || "").trim(),
+      phone: String(formData.get("customer_phone") || "").trim(),
+      service: String(formData.get("service_name") || "").trim(),
+      preferredDate: String(formData.get("appointment_date") || "").trim(),
+      preferredTime: String(formData.get("appointment_time") || "").trim(),
+      note: String(formData.get("customer_note") || "").trim(),
+      sourceUrl: window.location.href,
+    };
+
+    if (!payload.name) {
+      setAppointmentFeedback("Vui lòng nhập họ tên.", "error");
+      return;
+    }
+
+    if (!payload.phone) {
+      setAppointmentFeedback("Vui lòng nhập số điện thoại.", "error");
+      return;
+    }
+
+    if (!/^[0-9+()\s.\-]{7,20}$/.test(payload.phone)) {
+      setAppointmentFeedback("Số điện thoại không hợp lệ.", "error");
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    setAppointmentFeedback("Đang gửi thông tin tư vấn...");
+
+    try {
+      const response = await fetch(
+        `${THL_WORKER_API_BASE}/api/salons/${encodeURIComponent(slug)}/leads`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok) {
+        const serverError = data?.error || `HTTP ${response.status}`;
+        setAppointmentFeedback(`Gửi thất bại: ${serverError}`, "error");
+        return;
+      }
+
+      if (data?.success) {
+        if (data?.warning) {
+          setAppointmentFeedback(
+            `Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm. Lưu ý: ${data.warning}`,
+            "warning"
+          );
+        } else {
+          setAppointmentFeedback("Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.", "success");
+        }
+        renderQuickActions(salon);
+        return;
+      }
+
+      if (data?.leadSaved) {
+        const detail = data?.warning || data?.error || "Lỗi không xác định từ Telegram.";
+        setAppointmentFeedback(
+          `Đã lưu thông tin, nhưng gửi Telegram thất bại. Vui lòng kiểm tra cấu hình Telegram. Chi tiết: ${detail}`,
+          "warning"
+        );
+        renderQuickActions(salon);
+        return;
+      }
+
+      setAppointmentFeedback(
+        `Gửi thất bại: ${data?.error || data?.warning || "Lỗi không xác định."}`,
+        "error"
+      );
+    } catch (error) {
+      setAppointmentFeedback(`Không kết nối được hệ thống: ${error?.message || error}`, "error");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
   });
 }
 
@@ -1112,7 +1226,7 @@ async function loadSalon() {
           // Merge and apply full admin data rendering
           const mergedSalon = mergeSalonData(salonToRender, activeTemplateConfig);
           renderSalon(mergedSalon, slug, resolvedTheme);
-          bindDemoForm(mergedSalon);
+          bindPublicLeadForm(mergedSalon, slug);
           return;
         } else {
           // Only basic salon info in D1, no admin customization yet
@@ -1130,7 +1244,7 @@ async function loadSalon() {
             activeTemplateConfig
           );
           renderSalon(salonToRender, slug, activeTemplateConfig.theme);
-          bindDemoForm(salonToRender);
+          bindPublicLeadForm(salonToRender, slug);
           return;
         }
       }
@@ -1160,7 +1274,7 @@ async function loadSalon() {
     if (response.ok && data?.success && data?.salon) {
       const salon = mergeSalonData(data.salon, activeTemplateConfig);
       renderSalon(salon, slug);
-      bindDemoForm(salon);
+      bindPublicLeadForm(salon, slug);
       return;
     }
   } catch (error) {
@@ -1172,7 +1286,7 @@ async function loadSalon() {
   // Final fallback: use static config if any defined
   const fallbackSalon = mergeSalonData(demoOverride || null, activeTemplateConfig);
   renderSalon(fallbackSalon, slug);
-  bindDemoForm(fallbackSalon);
+  bindPublicLeadForm(fallbackSalon, slug);
 }
 
 showState("loading");

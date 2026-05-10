@@ -192,6 +192,248 @@ async function sendTelegram(env, lead) {
   });
 }
 
+function parseSalonAdminData(adminDataJson) {
+  if (!adminDataJson || typeof adminDataJson !== 'string') {
+    return null;
+  }
+
+  try {
+    return JSON.parse(adminDataJson);
+  } catch {
+    return null;
+  }
+}
+
+function resolveSalonTelegramChatId(salonRow) {
+  const direct = typeof salonRow?.telegram_chat_id === 'string'
+    ? salonRow.telegram_chat_id.trim()
+    : '';
+  if (direct) {
+    return direct;
+  }
+
+  const adminData = parseSalonAdminData(salonRow?.admin_data_json);
+  const nested = typeof adminData?.salon?.telegram_chat_id === 'string'
+    ? adminData.salon.telegram_chat_id.trim()
+    : '';
+  if (nested) {
+    return nested;
+  }
+
+  const root = typeof adminData?.telegram_chat_id === 'string'
+    ? adminData.telegram_chat_id.trim()
+    : '';
+  return root || null;
+}
+
+async function tableExists(env, tableName) {
+  const row = await env.DB.prepare(
+    "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ? LIMIT 1",
+  ).bind(tableName).first();
+  return Boolean(row?.name);
+}
+
+async function saveSalonLeadIfPossible(env, lead) {
+  if (!env?.DB) {
+    return { saved: false, warning: 'Worker chưa có binding D1.' };
+  }
+
+  const hasLeadsTable = await tableExists(env, 'leads');
+  if (!hasLeadsTable) {
+    return { saved: false, warning: 'Không tìm thấy bảng leads trong D1, đã bỏ qua lưu lead.' };
+  }
+
+  const noteLines = [];
+  if (lead.preferredDate) {
+    noteLines.push(`Ngay hen: ${lead.preferredDate}`);
+  }
+  if (lead.preferredTime) {
+    noteLines.push(`Gio hen: ${lead.preferredTime}`);
+  }
+  if (lead.note) {
+    noteLines.push(`Ghi chu: ${lead.note}`);
+  }
+  const mergedNote = noteLines.join('\n') || null;
+
+  const result = await env.DB.prepare(`
+    INSERT INTO leads
+      (salon_id, salon_slug, salon_name, contact_name, phone_zalo, product_interest, note, source_url)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    lead.salonId,
+    lead.salonSlug,
+    lead.salonName,
+    lead.name,
+    lead.phone,
+    lead.service || null,
+    mergedNote,
+    lead.sourceUrl || null,
+  ).run();
+
+  return {
+    saved: true,
+    leadId: result?.meta?.last_row_id || null,
+  };
+}
+
+async function sendSalonLeadTelegram(env, chatId, lead) {
+  const token = (env.TELEGRAM_BOT_TOKEN || '').trim();
+  if (!token) {
+    return {
+      ok: false,
+      error: 'TELEGRAM_BOT_TOKEN chưa được cấu hình trong Worker secret.',
+    };
+  }
+
+  if (!chatId) {
+    return {
+      ok: false,
+      error: 'Salon chưa cấu hình Telegram Chat ID.',
+    };
+  }
+
+  const lines = [
+    `💇 <b>LỊCH HẸN MỚI - ${lead.salonName}</b>`,
+    '',
+    `Khách: ${lead.name}`,
+    `SĐT: ${lead.phone}`,
+    `Dịch vụ: ${lead.service || '(không ghi)'}`,
+    `Ngày: ${lead.preferredDate || '(không ghi)'}`,
+    `Giờ: ${lead.preferredTime || '(không ghi)'}`,
+    `Ghi chú: ${lead.note || '(không ghi)'}`,
+    '',
+    `Nguồn: ${lead.sourceUrl || '(không ghi)'}`,
+  ];
+
+  let tgRes;
+  try {
+    tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: lines.join('\n'),
+        parse_mode: 'HTML',
+      }),
+    });
+  } catch (err) {
+    return {
+      ok: false,
+      error: `Không kết nối được Telegram API: ${err?.message || err}`,
+    };
+  }
+
+  let tgData = null;
+  try {
+    tgData = await tgRes.json();
+  } catch {
+    tgData = null;
+  }
+
+  if (tgData?.ok) {
+    return { ok: true };
+  }
+
+  return {
+    ok: false,
+    error: tgData?.description || `HTTP ${tgRes.status}`,
+  };
+}
+
+async function handleSalonLeadSubmit(request, env, origin, slug) {
+  const normalizedSlug = (slug || '').trim().toLowerCase();
+  if (!validateSlug(normalizedSlug)) {
+    return errorResponse('Slug không hợp lệ.', 400, origin);
+  }
+
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  const name = String(body?.name || '').trim();
+  const phone = String(body?.phone || '').trim();
+  const service = String(body?.service || '').trim();
+  const preferredDate = String(body?.preferredDate || '').trim();
+  const preferredTime = String(body?.preferredTime || '').trim();
+  const note = String(body?.note || '').trim();
+  const sourceUrl = String(body?.sourceUrl || '').trim();
+
+  if (!name) {
+    return errorResponse('Vui lòng nhập họ tên.', 422, origin);
+  }
+
+  if (!phone) {
+    return errorResponse('Vui lòng nhập số điện thoại.', 422, origin);
+  }
+
+  if (!/^[0-9+()\s.\-]{7,20}$/.test(phone)) {
+    return errorResponse('Số điện thoại không hợp lệ.', 422, origin);
+  }
+
+  const salon = await env.DB.prepare(
+    'SELECT id, slug, salon_name, telegram_chat_id, admin_data_json FROM salons WHERE slug = ? LIMIT 1',
+  ).bind(normalizedSlug).first();
+
+  if (!salon) {
+    return errorResponse('Không tìm thấy salon theo slug.', 404, origin);
+  }
+
+  const leadPayload = {
+    salonId: salon.id || null,
+    salonSlug: salon.slug || normalizedSlug,
+    salonName: salon.salon_name || normalizedSlug,
+    name,
+    phone,
+    service,
+    preferredDate,
+    preferredTime,
+    note,
+    sourceUrl: sourceUrl || request.url,
+  };
+
+  let saveResult;
+  try {
+    saveResult = await saveSalonLeadIfPossible(env, leadPayload);
+  } catch (err) {
+    return errorResponse(`Lỗi lưu lead vào D1: ${err?.message || err}`, 500, origin);
+  }
+
+  const telegramChatId = resolveSalonTelegramChatId(salon);
+  const telegramResult = await sendSalonLeadTelegram(env, telegramChatId, leadPayload);
+
+  if (telegramResult.ok) {
+    return jsonResponse(
+      {
+        success: true,
+        message: 'Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.',
+        leadSaved: Boolean(saveResult?.saved),
+        telegramSent: true,
+        warning: saveResult?.warning || null,
+      },
+      200,
+      origin,
+    );
+  }
+
+  if (saveResult?.saved) {
+    return jsonResponse(
+      {
+        success: false,
+        leadSaved: true,
+        telegramSent: false,
+        warning: `Đã lưu thông tin, nhưng gửi Telegram thất bại. ${telegramResult.error}`,
+      },
+      200,
+      origin,
+    );
+  }
+
+  return errorResponse(`Gửi Telegram thất bại: ${telegramResult.error}`, 502, origin);
+}
+
 // ─── Google Sheets ─────────────────────────────────────────────────────────
 
 async function getGoogleAccessToken(env) {
@@ -745,6 +987,10 @@ export default {
 
     if (pathname === '/api/admin/telegram/test' && method === 'POST') {
       return handleAdminTelegramTest(request, env, origin);
+    }
+
+    if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'salons' && segments[3] === 'leads' && method === 'POST') {
+      return handleSalonLeadSubmit(request, env, origin, decodeURIComponent(segments[2] || ''));
     }
 
     if (pathname !== '/api/leads' || method !== 'POST') {
