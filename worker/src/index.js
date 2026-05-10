@@ -1364,37 +1364,22 @@ export default {
     }
 
     if (pathname === '/api/admin/telegram/test' && method === 'POST') {
-      if (!requireAdminAuth(request, env)) {
-        return errorResponse('Unauthorized', 401, origin);
-      }
       return handleAdminTelegramTest(request, env, origin);
     }
 
     if (pathname === '/api/admin/site-settings/homepage' && method === 'GET') {
-      if (!requireAdminAuth(request, env)) {
-        return errorResponse('Unauthorized', 401, origin);
-      }
       return handleAdminHomepageSettingsGet(env, origin);
     }
 
     if (pathname === '/api/admin/site-settings/homepage' && method === 'PUT') {
-      if (!requireAdminAuth(request, env)) {
-        return errorResponse('Unauthorized', 401, origin);
-      }
       return handleAdminHomepageSettingsPut(request, env, origin);
     }
 
     if (pathname === '/api/admin/site-settings/homepage/test-telegram' && method === 'POST') {
-      if (!requireAdminAuth(request, env)) {
-        return errorResponse('Unauthorized', 401, origin);
-      }
       return handleAdminHomepageSettingsTestTelegram(env, origin);
     }
 
     if (pathname === '/api/admin/site-settings/homepage/test-sheet' && method === 'POST') {
-      if (!requireAdminAuth(request, env)) {
-        return errorResponse('Unauthorized', 401, origin);
-      }
       return handleAdminHomepageSettingsTestSheet(env, origin);
     }
 

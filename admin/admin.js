@@ -360,8 +360,15 @@ function syncHomepageSettingsDerivedFields() {
 async function loadHomepageSettings() {
 	try {
 		let data = null;
-		if (hasApiBaseUrl() && hasAdminToken()) {
-			data = await requestApi("/api/admin/site-settings/homepage", { method: "GET" });
+		if (hasApiBaseUrl()) {
+			const response = await fetch(`${apiConfig.baseUrl}/api/admin/site-settings/homepage`, {
+				method: "GET",
+				headers: { "Content-Type": "application/json" },
+			});
+			data = await response.json();
+			if (!response.ok || data?.success === false) {
+				throw new Error(data?.error || `HTTP ${response.status}`);
+			}
 		} else {
 			data = await requestWorkerPublic("/api/public/site-settings/homepage");
 		}
@@ -376,33 +383,43 @@ async function loadHomepageSettings() {
 }
 
 async function saveHomepageSettings() {
-	if (!hasApiBaseUrl() || !hasAdminToken()) {
-		setHomepageSettingsMessage("Can cau hinh API Base URL va Admin API Token de luu trang chu.", true);
+	if (!hasApiBaseUrl()) {
+		setHomepageSettingsMessage("Can cau hinh API Base URL de luu trang chu.", true);
 		return;
 	}
 
 	syncHomepageSettingsDerivedFields();
 	homepageSettings = readHomepageSettingsForm();
-	const result = await requestApi("/api/admin/site-settings/homepage", {
+	const response = await fetch(`${apiConfig.baseUrl}/api/admin/site-settings/homepage`, {
 		method: "PUT",
+		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(homepageSettings),
 	});
+	const result = await response.json().catch(() => null);
+	if (!response.ok || result?.success === false) {
+		throw new Error(result?.error || `HTTP ${response.status}`);
+	}
 	homepageSettings = normalizeHomepageSettings(result?.settings || homepageSettings);
 	syncHomepageSettingsInputs();
 	setHomepageSettingsMessage("Da luu cau hinh trang chu thanh cong.");
 }
 
 async function testHomepageTelegram() {
-	if (!hasApiBaseUrl() || !hasAdminToken()) {
+	if (!hasApiBaseUrl()) {
 		setHomepageSettingsMessage("Can cau hinh API de test Telegram trang chu.", true);
 		return;
 	}
 
 	setHomepageSettingsMessage("Dang gui Telegram test trang chu...");
 	try {
-		const data = await requestApi("/api/admin/site-settings/homepage/test-telegram", {
+		const response = await fetch(`${apiConfig.baseUrl}/api/admin/site-settings/homepage/test-telegram`, {
 			method: "POST",
+			headers: { "Content-Type": "application/json" },
 		});
+		const data = await response.json().catch(() => null);
+		if (!response.ok || data?.success === false) {
+			throw new Error(data?.error || `HTTP ${response.status}`);
+		}
 		if (data?.success) {
 			setHomepageSettingsMessage(`Da gui Telegram test trang chu thanh cong den Chat ID: ${homepageSettings.quoteTelegramChatId || HOMEPAGE_SETTINGS_DEFAULTS.quoteTelegramChatId}`);
 			return;
@@ -414,16 +431,21 @@ async function testHomepageTelegram() {
 }
 
 async function testHomepageSheet() {
-	if (!hasApiBaseUrl() || !hasAdminToken()) {
+	if (!hasApiBaseUrl()) {
 		setHomepageSettingsMessage("Can cau hinh API de test Google Sheet trang chu.", true);
 		return;
 	}
 
 	setHomepageSettingsMessage("Dang test Google Sheet trang chu...");
 	try {
-		const data = await requestApi("/api/admin/site-settings/homepage/test-sheet", {
+		const response = await fetch(`${apiConfig.baseUrl}/api/admin/site-settings/homepage/test-sheet`, {
 			method: "POST",
+			headers: { "Content-Type": "application/json" },
 		});
+		const data = await response.json().catch(() => null);
+		if (!response.ok || data?.success === false) {
+			throw new Error(data?.error || `HTTP ${response.status}`);
+		}
 		if (data?.success) {
 			setHomepageSettingsMessage(data?.warning ? `Test Google Sheet xong: ${data.warning}` : "Test Google Sheet trang chu thanh cong.");
 			return;
