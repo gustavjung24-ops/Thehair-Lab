@@ -747,8 +747,8 @@ function renderSalonList() {
 						<button type="button" class="btn btn-danger" data-action="delete" data-id="${item.id}">Xoa demo</button>
 						<button type="button" class="btn btn-ghost" data-action="copy-landing" data-link="${escapeHtml(publicLink)}">Copy link landing page</button>
 						<button type="button" class="btn btn-ghost" data-action="copy-admin" data-link="${escapeHtml(customerAdminLink)}">Copy link admin khach</button>
-						<button type="button" class="btn btn-ghost" data-action="test-telegram" data-id="${item.id}">Test Telegram demo</button>
-						<button type="button" class="btn btn-ghost" data-action="test-sheet" data-id="${item.id}">Test Sheet demo</button>
+						<button type="button" class="btn btn-ghost" data-action="test-telegram" data-id="${item.id}">Test Telegram</button>
+						<button type="button" class="btn btn-ghost" data-action="test-sheet" data-id="${item.id}">Test Google Sheet</button>
 					</div>
 				</article>
 			`;
@@ -1165,13 +1165,30 @@ async function onSalonListClick(event) {
 		if (!salon) {
 			return;
 		}
-		if (salon.google_sheet_id) {
-			window.alert(
-				`Demo OK: sau nay lich hen se ghi vao Google Sheet nay. (${salon.google_sheet_id})`,
-			);
-		} else {
-			window.alert("Chua nhap Google Sheet ID.");
+		if (!hasApiBaseUrl()) {
+			showFormMessage("Chua cau hinh API Base URL. Vao o API config phia tren de nhap Worker URL.", true);
+			return;
 		}
+		if (!salon.slug) {
+			showFormMessage("Salon chua co slug hop le de test Google Sheet.", true);
+			return;
+		}
+
+		showFormMessage(`Dang test Google Sheet thuc te cho ${salon.slug}...`);
+		try {
+			const response = await fetch(`${apiConfig.baseUrl}/api/admin/salons/${encodeURIComponent(salon.slug)}/google-sheet/test`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+			});
+			const data = await response.json().catch(() => null);
+			if (!response.ok || data?.success === false || data?.sheetSaved !== true) {
+				throw new Error(data?.error || `HTTP ${response.status}`);
+			}
+			showFormMessage("Da ghi test Google Sheet thanh cong.");
+		} catch (error) {
+			showFormMessage(`Test Google Sheet that bai: ${error?.message || error}`, true);
+		}
+		return;
 	}
 }
 

@@ -1402,6 +1402,91 @@ async function handleAdminHomepageSettingsTestSheet(env, origin) {
   return jsonResponse({ success: false, error: result.warning || 'Ghi Google Sheet thất bại.' }, 200, origin);
 }
 
+async function handleAdminSalonGoogleSheetTest(env, origin, slug) {
+  const normalizedSlug = (slug || '').trim().toLowerCase();
+  if (!validateSlug(normalizedSlug)) {
+    return errorResponse('Slug không hợp lệ.', 400, origin);
+  }
+
+  const salon = await env.DB.prepare(
+    'SELECT slug, salon_name, google_sheet_url, google_sheet_id, google_sheet_tab, google_apps_script_url FROM salons WHERE slug = ? LIMIT 1',
+  ).bind(normalizedSlug).first();
+
+  if (!salon) {
+    return errorResponse('Không tìm thấy salon theo slug.', 404, origin);
+  }
+
+  const googleAppsScriptUrl = normalizeGoogleAppsScriptUrl(salon.google_apps_script_url);
+  const googleSheetId = String(salon.google_sheet_id || '').trim() || resolveGoogleSheetIdFromUrl(salon.google_sheet_url);
+  const googleSheetTab = String(salon.google_sheet_tab || '').trim();
+
+  if (!googleAppsScriptUrl) {
+    return jsonResponse({ success: false, sheetSaved: false, error: 'Thiếu google_apps_script_url trong cấu hình salon.' }, 200, origin);
+  }
+
+  if (!googleSheetId) {
+    return jsonResponse({ success: false, sheetSaved: false, error: 'Thiếu google_sheet_id trong cấu hình salon.' }, 200, origin);
+  }
+
+  if (!googleSheetTab) {
+    return jsonResponse({ success: false, sheetSaved: false, error: 'Thiếu google_sheet_tab trong cấu hình salon.' }, 200, origin);
+  }
+
+  const now = new Date();
+  const createdAt = now.toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+  const today = now.toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+  const currentTime = now.toLocaleTimeString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+
+  const payloadData = {
+    created_at: createdAt,
+    salon_slug: salon.slug || normalizedSlug,
+    salon_name: salon.salon_name || normalizedSlug,
+    customer_name: 'TEST GOOGLE SHEET ADMIN',
+    phone: '0900000000',
+    service: 'Test Sheet',
+    preferred_date: today,
+    preferred_time: currentTime,
+    note: 'Test từ nút admin',
+    source_url: 'https://www.thehairlab.top/admin/',
+    status: 'test',
+  };
+
+  const scriptResult = await postToGoogleAppsScript(googleAppsScriptUrl, {
+    type: 'salon_appointment',
+    formType: 'salon',
+    sheetId: googleSheetId,
+    spreadsheetId: googleSheetId,
+    sheetTab: googleSheetTab,
+    data: payloadData,
+    row: [
+      payloadData.created_at,
+      payloadData.source_url,
+      payloadData.salon_name,
+      payloadData.customer_name,
+      payloadData.phone,
+      payloadData.service,
+      payloadData.preferred_date,
+      payloadData.preferred_time,
+      payloadData.note,
+      payloadData.status,
+    ],
+  });
+
+  if (!scriptResult.ok) {
+    return jsonResponse({
+      success: false,
+      sheetSaved: false,
+      error: scriptResult.warning || 'Apps Script ghi sheet thất bại.',
+    }, 200, origin);
+  }
+
+  return jsonResponse({
+    success: true,
+    sheetSaved: true,
+    sheetResult: scriptResult.response || null,
+  }, 200, origin);
+}
+
 async function handlePublicQuote(request, env, origin) {
   let body;
   try {
@@ -1573,6 +1658,10 @@ export default {
 
     if (pathname === '/api/admin/site-settings/homepage/test-sheet' && method === 'POST') {
       return handleAdminHomepageSettingsTestSheet(env, origin);
+    }
+
+    if (segments.length === 6 && segments[0] === 'api' && segments[1] === 'admin' && segments[2] === 'salons' && segments[4] === 'google-sheet' && segments[5] === 'test' && method === 'POST') {
+      return handleAdminSalonGoogleSheetTest(env, origin, decodeURIComponent(segments[3] || ''));
     }
 
     if (pathname === '/api/public/site-settings/homepage' && method === 'GET') {
