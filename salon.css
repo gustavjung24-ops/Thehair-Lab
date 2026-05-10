@@ -504,6 +504,10 @@ a {
     #fff;
 }
 
+.service-card[hidden] {
+  display: none !important;
+}
+
 .service-media {
   grid-row: 1 / 4;
   min-height: 130px;
@@ -676,6 +680,10 @@ a {
   aspect-ratio: 16 / 10;
   overflow: hidden;
   display: grid;
+}
+
+.gallery-card[hidden] {
+  display: none !important;
 }
 
 .gallery-card img {

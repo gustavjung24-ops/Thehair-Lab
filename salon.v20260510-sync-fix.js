@@ -553,6 +553,7 @@ function applyMissingCardVisibility(slug) {
     if (!card) return;
     card.hidden = Boolean(hidden);
     card.dataset.forceHidden = hidden ? "1" : "0";
+    card.style.display = hidden ? "none" : "";
   };
 
   if (els.consultVisualCard) {
@@ -1012,6 +1013,7 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
     img.hidden = true;
     img.removeAttribute("src");
     card.hidden = true;
+    card.style.display = "none";
     return;
   }
 
@@ -1023,6 +1025,7 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
     img.hidden = true;
     img.removeAttribute("src");
     card.hidden = true;
+    card.style.display = "none";
     card.classList.add("is-fallback");
     return;
   }
@@ -1032,6 +1035,7 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
       img.hidden = true;
       img.removeAttribute("src");
       card.hidden = true;
+      card.style.display = "none";
       card.classList.add("is-fallback");
       return;
     }
