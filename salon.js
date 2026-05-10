@@ -329,6 +329,10 @@ function buildSalonAssets(templateConfig, localAssets) {
 let activeTemplateConfig = TEMPLATE_CONFIGS[DEFAULT_TEMPLATE_ID];
 let LOCAL_ASSETS = getLocalAssetsByTemplate(DEFAULT_TEMPLATE_ID);
 let SALON_ASSETS = buildSalonAssets(activeTemplateConfig, LOCAL_ASSETS);
+let activeAdminData = null;
+let strictAdminMediaMode = false;
+let hiddenByAdminKeys = new Set();
+let bookingSuccessMessage = "Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.";
 
 const CUSTOMER_IMAGE_MANIFEST_OVERRIDES = {
   "salon-hung-saigon": {
@@ -358,6 +362,104 @@ const CUSTOMER_IMAGE_MANIFEST_OVERRIDES = {
 
 function getCustomerImageOverride(slug) {
   return CUSTOMER_IMAGE_MANIFEST_OVERRIDES[String(slug || "")] || null;
+}
+
+function isHiddenByAdminFlag(item) {
+  if (!item || typeof item !== "object") {
+    return false;
+  }
+  if (item.hidden === true) {
+    return true;
+  }
+  if (item.visible === false) {
+    return true;
+  }
+  if (item.enabled === false) {
+    return true;
+  }
+  return false;
+}
+
+function resolveServiceMediaKey(item, index) {
+  const id = String(item?.id || "").toLowerCase();
+  if (id.includes("cat") || id.includes("cut")) return "cut";
+  if (id.includes("mau") || id.includes("color") || id.includes("consult")) return "color";
+  if (id.includes("nhuom") || id.includes("fashion")) return "fashionColor";
+  if (id.includes("uon") || id.includes("perm") || id.includes("setting")) return "perm";
+  if (id.includes("duoi") || id.includes("straight")) return "straight";
+  if (id.includes("phuc-hoi") || id.includes("treatment") || id.includes("cham-soc")) return "treatment";
+
+  const fallbackByIndex = ["cut", "color", "fashionColor", "perm", "straight", "treatment"];
+  return fallbackByIndex[index] || "";
+}
+
+function resolveGalleryMediaKey(item, index) {
+  const id = String(item?.id || "").toLowerCase();
+  if (id === "space-01" || id === "space01") return "space01";
+  if (id === "space-02" || id === "space02") return "space02";
+  if (id === "space-03" || id === "space03") return "space03";
+  if (id === "space-04" || id === "space04" || id.includes("experience")) return "experience";
+
+  const fallbackByIndex = ["space01", "space02", "space03", "experience"];
+  return fallbackByIndex[index] || "";
+}
+
+function prepareAdminRendering(adminData) {
+  activeAdminData = adminData && typeof adminData === "object" ? adminData : null;
+  strictAdminMediaMode = Boolean(activeAdminData);
+  hiddenByAdminKeys = new Set();
+  bookingSuccessMessage = activeAdminData?.booking?.successMessage || "Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.";
+
+  if (!activeAdminData) {
+    return;
+  }
+
+  if (activeAdminData.hero?.imageUrl) {
+    SALON_ASSETS.hero = String(activeAdminData.hero.imageUrl).trim();
+  } else if (strictAdminMediaMode) {
+    SALON_ASSETS.hero = "";
+  }
+
+  if (activeAdminData.consultation?.imageUrl) {
+    SALON_ASSETS.consultation = String(activeAdminData.consultation.imageUrl).trim();
+  } else if (strictAdminMediaMode) {
+    SALON_ASSETS.consultation = "";
+  }
+
+  const products = Array.isArray(activeAdminData.products) ? activeAdminData.products : [];
+  if (products[0]?.imageUrl) {
+    SALON_ASSETS.productLineup = String(products[0].imageUrl).trim();
+  } else if (strictAdminMediaMode) {
+    SALON_ASSETS.productLineup = "";
+  }
+
+  const services = Array.isArray(activeAdminData.services) ? activeAdminData.services : [];
+  services.forEach((item, index) => {
+    const key = resolveServiceMediaKey(item, index);
+    if (!key) return;
+    SALON_ASSETS.services[key] = String(item?.imageUrl || "").trim();
+    if (isHiddenByAdminFlag(item)) {
+      hiddenByAdminKeys.add(`service:${key}`);
+    }
+  });
+
+  const gallery = Array.isArray(activeAdminData.gallery) ? activeAdminData.gallery : [];
+  gallery.forEach((item, index) => {
+    const key = resolveGalleryMediaKey(item, index);
+    if (!key) return;
+    SALON_ASSETS[key] = String(item?.imageUrl || "").trim();
+    if (isHiddenByAdminFlag(item)) {
+      hiddenByAdminKeys.add(`gallery:${key}`);
+    }
+  });
+
+  if (isHiddenByAdminFlag(activeAdminData.consultation)) {
+    hiddenByAdminKeys.add("consultation");
+  }
+
+  if (products[0] && isHiddenByAdminFlag(products[0])) {
+    hiddenByAdminKeys.add("product");
+  }
 }
 
 function applyCustomerImageOverrides(slug) {
@@ -411,18 +513,199 @@ function applyCustomerImageOverrides(slug) {
 function applyMissingCardVisibility(slug) {
   const override = getCustomerImageOverride(slug);
   const missingKeys = new Set(((override && override.missingKeys) || []).map((item) => String(item)));
+  const setForcedHidden = (card, hidden) => {
+    if (!card) return;
+    card.hidden = Boolean(hidden);
+    card.dataset.forceHidden = hidden ? "1" : "0";
+  };
 
   if (els.consultVisualCard) {
-    els.consultVisualCard.hidden = missingKeys.has("consultation");
+    setForcedHidden(els.consultVisualCard, missingKeys.has("consultation") || hiddenByAdminKeys.has("consultation"));
   }
   if (els.gallerySpace01Card) {
-    els.gallerySpace01Card.hidden = missingKeys.has("space-01");
+    setForcedHidden(els.gallerySpace01Card, missingKeys.has("space-01") || hiddenByAdminKeys.has("gallery:space01"));
   }
   if (els.gallerySpace04Card) {
-    els.gallerySpace04Card.hidden = missingKeys.has("experience");
+    setForcedHidden(els.gallerySpace04Card, missingKeys.has("experience") || hiddenByAdminKeys.has("gallery:experience"));
   }
   if (els.serviceVisualConsultCard) {
-    els.serviceVisualConsultCard.hidden = missingKeys.has("dv-mau-toc");
+    setForcedHidden(els.serviceVisualConsultCard, missingKeys.has("dv-mau-toc") || hiddenByAdminKeys.has("service:color"));
+  }
+  if (els.gallerySpace02Card) {
+    setForcedHidden(els.gallerySpace02Card, hiddenByAdminKeys.has("gallery:space02"));
+  }
+  if (els.gallerySpace03Card) {
+    setForcedHidden(els.gallerySpace03Card, hiddenByAdminKeys.has("gallery:space03"));
+  }
+  if (els.serviceVisualCutCard) {
+    setForcedHidden(els.serviceVisualCutCard, hiddenByAdminKeys.has("service:cut"));
+  }
+  if (els.serviceVisualColorCard) {
+    setForcedHidden(els.serviceVisualColorCard, hiddenByAdminKeys.has("service:fashionColor"));
+  }
+  if (els.serviceVisualStylingCard) {
+    setForcedHidden(els.serviceVisualStylingCard, hiddenByAdminKeys.has("service:perm"));
+  }
+  if (els.serviceVisualStraightCard) {
+    setForcedHidden(els.serviceVisualStraightCard, hiddenByAdminKeys.has("service:straight"));
+  }
+  if (els.serviceVisualTreatmentCard) {
+    setForcedHidden(els.serviceVisualTreatmentCard, hiddenByAdminKeys.has("service:treatment"));
+  }
+  if (els.productLineupCard) {
+    setForcedHidden(els.productLineupCard, hiddenByAdminKeys.has("product"));
+  }
+}
+
+function applyAdminDataContent(adminData) {
+  if (!adminData || typeof adminData !== "object") {
+    return;
+  }
+
+  const heroTitle = document.querySelector(".hero-left h1");
+  const heroDescription = document.querySelector(".hero-left .hero-subheadline");
+  const heroPrimaryButton = document.querySelector(".hero-actions .btn.btn-primary");
+  if (heroTitle && hasRenderableValue(adminData.hero?.title)) {
+    heroTitle.textContent = String(adminData.hero.title).trim();
+  }
+  if (heroDescription && hasRenderableValue(adminData.hero?.description)) {
+    heroDescription.textContent = String(adminData.hero.description).trim();
+  }
+  if (heroPrimaryButton && hasRenderableValue(adminData.hero?.primaryButton)) {
+    heroPrimaryButton.textContent = String(adminData.hero.primaryButton).trim();
+  }
+  if (els.ctaCall && hasRenderableValue(adminData.hero?.secondaryButton)) {
+    els.ctaCall.textContent = String(adminData.hero.secondaryButton).trim();
+  }
+  if (els.ctaZalo && hasRenderableValue(adminData.hero?.zaloButton)) {
+    els.ctaZalo.textContent = String(adminData.hero.zaloButton).trim();
+  }
+
+  const trustCards = Array.from(document.querySelectorAll(".trust-grid .trust-badge"));
+  const trustData = Array.isArray(adminData.trustBadges) ? adminData.trustBadges : [];
+  trustCards.forEach((card, index) => {
+    const item = trustData[index];
+    if (!item) {
+      card.hidden = true;
+      return;
+    }
+    card.hidden = isHiddenByAdminFlag(item);
+    const titleNode = card.querySelector("strong");
+    const descNode = card.querySelector("span");
+    if (titleNode && hasRenderableValue(item.title)) titleNode.textContent = String(item.title).trim();
+    if (descNode && hasRenderableValue(item.description)) descNode.textContent = String(item.description).trim();
+  });
+
+  const serviceCards = Array.from(document.querySelectorAll(".service-grid .service-card"));
+  const services = Array.isArray(adminData.services) ? adminData.services : [];
+  serviceCards.forEach((card, index) => {
+    const item = services[index];
+    if (!item) {
+      card.hidden = true;
+      return;
+    }
+    card.hidden = isHiddenByAdminFlag(item);
+    const titleNode = card.querySelector("h3");
+    const descNode = card.querySelector("p");
+    const priceNode = card.querySelector(".service-foot strong");
+    if (titleNode && hasRenderableValue(item.title)) titleNode.textContent = String(item.title).trim();
+    if (descNode && hasRenderableValue(item.description)) descNode.textContent = String(item.description).trim();
+    if (priceNode && hasRenderableValue(item.price)) priceNode.textContent = String(item.price).trim();
+  });
+
+  const consultTitleNode = document.querySelector(".consult-section .section-head h2");
+  const consultDescNode = document.querySelector(".consult-section .section-head + .consult-layout .consult-steps")
+    ? document.querySelector(".consult-section .section-head p.eyebrow")
+    : null;
+  if (consultTitleNode && hasRenderableValue(adminData.consultation?.title)) {
+    consultTitleNode.textContent = String(adminData.consultation.title).trim();
+  }
+  if (consultDescNode && hasRenderableValue(adminData.consultation?.description)) {
+    consultDescNode.textContent = String(adminData.consultation.description).trim();
+  }
+
+  const consultSteps = Array.from(document.querySelectorAll(".consult-steps li"));
+  const consultBullets = Array.isArray(adminData.consultation?.bullets) ? adminData.consultation.bullets : [];
+  consultSteps.forEach((step, index) => {
+    const item = consultBullets[index];
+    if (!item) {
+      step.hidden = true;
+      return;
+    }
+    step.hidden = isHiddenByAdminFlag(item);
+    const titleNode = step.querySelector("strong");
+    const descNode = step.querySelector("p");
+    if (titleNode && hasRenderableValue(item.title)) titleNode.textContent = String(item.title).trim();
+    if (descNode && hasRenderableValue(item.description)) descNode.textContent = String(item.description).trim();
+  });
+
+  const galleryCards = [els.gallerySpace01Card, els.gallerySpace02Card, els.gallerySpace03Card, els.gallerySpace04Card].filter(Boolean);
+  const galleryItems = Array.isArray(adminData.gallery) ? adminData.gallery : [];
+  galleryCards.forEach((card, index) => {
+    const item = galleryItems[index];
+    if (!item) {
+      card.hidden = true;
+      return;
+    }
+    card.hidden = isHiddenByAdminFlag(item);
+    const caption = card.querySelector(".gallery-caption");
+    if (caption && hasRenderableValue(item.title)) caption.textContent = String(item.title).trim();
+  });
+
+  const product = Array.isArray(adminData.products) ? adminData.products[0] : null;
+  const productSection = document.getElementById("product-section");
+  if (productSection) {
+    productSection.hidden = !product || isHiddenByAdminFlag(product);
+  }
+  if (product) {
+    const productTitle = document.querySelector(".product-section h2");
+    const productDesc = document.querySelector(".product-section p:not(.eyebrow)");
+    if (productTitle && hasRenderableValue(product.title)) productTitle.textContent = String(product.title).trim();
+    if (productDesc && hasRenderableValue(product.description)) productDesc.textContent = String(product.description).trim();
+  }
+
+  const feedbackCards = Array.from(document.querySelectorAll(".testimonial-grid .testimonial-card"));
+  const feedbackItems = Array.isArray(adminData.feedback) ? adminData.feedback : [];
+  feedbackCards.forEach((card, index) => {
+    const item = feedbackItems[index];
+    if (!item) {
+      card.hidden = true;
+      return;
+    }
+    card.hidden = isHiddenByAdminFlag(item);
+    const contentNode = card.querySelector("p");
+    const nameNode = card.querySelector("strong");
+    if (contentNode && hasRenderableValue(item.content)) contentNode.textContent = `“${String(item.content).trim()}”`;
+    if (nameNode && hasRenderableValue(item.name)) nameNode.textContent = String(item.name).trim();
+  });
+
+  if (adminData.booking && typeof adminData.booking === "object") {
+    const bookingTitle = document.querySelector(".appointment-form h2");
+    const bookingEyebrow = document.querySelector(".appointment-form .eyebrow");
+    if (bookingTitle && hasRenderableValue(adminData.booking.title)) bookingTitle.textContent = String(adminData.booking.title).trim();
+    if (bookingEyebrow && hasRenderableValue(adminData.booking.note)) bookingEyebrow.textContent = String(adminData.booking.note).trim();
+
+    const fieldMap = {
+      "customer-name": "customer-name",
+      "customer-phone": "customer-phone",
+      "service-name": "service-name",
+      "appointment-date": "appointment-date",
+      "appointment-time": "appointment-time",
+      "customer-note": "customer-note",
+    };
+    const bookingFields = Array.isArray(adminData.booking.fields) ? adminData.booking.fields : [];
+    bookingFields.forEach((field) => {
+      const domId = fieldMap[String(field?.id || "")];
+      if (!domId) return;
+      const input = document.getElementById(domId);
+      if (!input) return;
+      const wrapper = input.closest(".field");
+      if (wrapper) {
+        wrapper.hidden = isHiddenByAdminFlag(field);
+        const labelNode = wrapper.querySelector("span");
+        if (labelNode && hasRenderableValue(field.label)) labelNode.textContent = String(field.label).trim();
+      }
+    });
   }
 }
 
@@ -689,6 +972,13 @@ async function setMediaWithFallback(img, card, src, fallbackSrc, allowCompanyIma
     return;
   }
 
+  if (card.dataset.forceHidden === "1") {
+    img.hidden = true;
+    img.removeAttribute("src");
+    card.hidden = true;
+    return;
+  }
+
   const preferredSrc = src && String(src).trim() ? String(src).trim() : "";
   const finalFallback = fallbackSrc && String(fallbackSrc).trim() ? String(fallbackSrc).trim() : "";
 
@@ -777,64 +1067,65 @@ function updateHeroBackdropImage() {
 
 async function renderMediaBlocks() {
   updateHeroBackdropImage();
+  const mediaFallback = (fallback) => (strictAdminMediaMode ? "" : fallback);
 
   await Promise.all([
-    setMediaWithFallback(els.heroVisualImage, els.heroVisualCard, SALON_ASSETS.hero, LOCAL_ASSETS.hero, false),
+    setMediaWithFallback(els.heroVisualImage, els.heroVisualCard, SALON_ASSETS.hero, mediaFallback(LOCAL_ASSETS.hero), false),
     setMediaWithFallback(
       els.consultVisualImage,
       els.consultVisualCard,
       SALON_ASSETS.consultation,
-      LOCAL_ASSETS.consultation,
+      mediaFallback(LOCAL_ASSETS.consultation),
       false
     ),
 
-    setMediaWithFallback(els.serviceVisualCut, els.serviceVisualCutCard, SALON_ASSETS.services.cut, LOCAL_ASSETS.services.cut, false),
+    setMediaWithFallback(els.serviceVisualCut, els.serviceVisualCutCard, SALON_ASSETS.services.cut, mediaFallback(LOCAL_ASSETS.services.cut), false),
     setMediaWithFallback(
       els.serviceVisualConsult,
       els.serviceVisualConsultCard,
       SALON_ASSETS.services.color,
-      LOCAL_ASSETS.services.color,
+      mediaFallback(LOCAL_ASSETS.services.color),
       false
     ),
     setMediaWithFallback(
       els.serviceVisualColor,
       els.serviceVisualColorCard,
       SALON_ASSETS.services.fashionColor,
-      LOCAL_ASSETS.services.fashionColor,
+      mediaFallback(LOCAL_ASSETS.services.fashionColor),
       false
     ),
     setMediaWithFallback(
       els.serviceVisualStyling,
       els.serviceVisualStylingCard,
       SALON_ASSETS.services.perm,
-      LOCAL_ASSETS.services.perm,
+      mediaFallback(LOCAL_ASSETS.services.perm),
       false
     ),
     setMediaWithFallback(
       els.serviceVisualStraight,
       els.serviceVisualStraightCard,
       SALON_ASSETS.services.straight,
-      LOCAL_ASSETS.services.straight,
+      mediaFallback(LOCAL_ASSETS.services.straight),
       false
     ),
     setMediaWithFallback(
       els.serviceVisualTreatment,
       els.serviceVisualTreatmentCard,
       SALON_ASSETS.services.treatment,
-      LOCAL_ASSETS.services.treatment,
+      mediaFallback(LOCAL_ASSETS.services.treatment),
       false
     ),
 
-    setMediaWithFallback(els.gallerySpace01, els.gallerySpace01Card, SALON_ASSETS.space01, LOCAL_ASSETS.space01, false),
-    setMediaWithFallback(els.gallerySpace02, els.gallerySpace02Card, SALON_ASSETS.space02, LOCAL_ASSETS.space02, false),
-    setMediaWithFallback(els.gallerySpace03, els.gallerySpace03Card, SALON_ASSETS.space03, LOCAL_ASSETS.space03, false),
-    setMediaWithFallback(els.gallerySpace04, els.gallerySpace04Card, SALON_ASSETS.experience, LOCAL_ASSETS.experience, false),
+    setMediaWithFallback(els.gallerySpace01, els.gallerySpace01Card, SALON_ASSETS.space01, mediaFallback(LOCAL_ASSETS.space01), false),
+    setMediaWithFallback(els.gallerySpace02, els.gallerySpace02Card, SALON_ASSETS.space02, mediaFallback(LOCAL_ASSETS.space02), false),
+    setMediaWithFallback(els.gallerySpace03, els.gallerySpace03Card, SALON_ASSETS.space03, mediaFallback(LOCAL_ASSETS.space03), false),
+    setMediaWithFallback(els.gallerySpace04, els.gallerySpace04Card, SALON_ASSETS.experience, mediaFallback(LOCAL_ASSETS.experience), false),
 
     setMediaWithFallback(
       els.productLineupImage,
       els.productLineupCard,
       SALON_ASSETS.productLineup,
-      LOCAL_ASSETS.products,
+      mediaFallback(LOCAL_ASSETS.products),
       true
     ),
   ]);
@@ -947,7 +1238,7 @@ function mergeSalonData(apiSalon, templateConfig) {
   };
 }
 
-function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme) {
+function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme, adminData = null) {
   applyTheme(themeConfig, salon.theme_color);
   updateSeo(salon);
 
@@ -1009,6 +1300,7 @@ function renderSalon(salon, slug, themeConfig = activeTemplateConfig.theme) {
   setupLogo(salon.logo_url || LOCAL_ASSETS.logo);
   updateContactActions(salon);
   renderQuickActions(salon);
+  applyAdminDataContent(adminData);
   applyMissingCardVisibility(slug);
   renderMediaBlocks();
   showState("ready");
@@ -1121,11 +1413,11 @@ function bindPublicLeadForm(salon, slug) {
       if (data?.success) {
         if (data?.warning) {
           setAppointmentFeedback(
-            `Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm. Lưu ý: ${data.warning}`,
+            `${bookingSuccessMessage} Lưu ý: ${data.warning}`,
             "warning"
           );
         } else {
-          setAppointmentFeedback("Đã gửi thông tin tư vấn. Salon sẽ liên hệ lại sớm.", "success");
+          setAppointmentFeedback(bookingSuccessMessage, "success");
         }
         renderQuickActions(salon);
         return;
@@ -1225,7 +1517,8 @@ async function loadSalon() {
           };
           // Merge and apply full admin data rendering
           const mergedSalon = mergeSalonData(salonToRender, activeTemplateConfig);
-          renderSalon(mergedSalon, slug, resolvedTheme);
+          prepareAdminRendering(salonData.admin_data);
+          renderSalon(mergedSalon, slug, resolvedTheme, salonData.admin_data);
           bindPublicLeadForm(mergedSalon, slug);
           return;
         } else {
@@ -1243,7 +1536,8 @@ async function loadSalon() {
             },
             activeTemplateConfig
           );
-          renderSalon(salonToRender, slug, activeTemplateConfig.theme);
+          prepareAdminRendering(null);
+          renderSalon(salonToRender, slug, activeTemplateConfig.theme, null);
           bindPublicLeadForm(salonToRender, slug);
           return;
         }
@@ -1273,7 +1567,8 @@ async function loadSalon() {
 
     if (response.ok && data?.success && data?.salon) {
       const salon = mergeSalonData(data.salon, activeTemplateConfig);
-      renderSalon(salon, slug);
+      prepareAdminRendering(null);
+      renderSalon(salon, slug, activeTemplateConfig.theme, null);
       bindPublicLeadForm(salon, slug);
       return;
     }
@@ -1285,7 +1580,8 @@ async function loadSalon() {
 
   // Final fallback: use static config if any defined
   const fallbackSalon = mergeSalonData(demoOverride || null, activeTemplateConfig);
-  renderSalon(fallbackSalon, slug);
+  prepareAdminRendering(null);
+  renderSalon(fallbackSalon, slug, activeTemplateConfig.theme, null);
   bindPublicLeadForm(fallbackSalon, slug);
 }
 

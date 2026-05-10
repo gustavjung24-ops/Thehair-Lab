@@ -1185,6 +1185,34 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    async function loadStateOnline() {
+      const endpoint = `${THL_WORKER_API_BASE}/api/salons/${ADMIN_SLUG}`;
+      try {
+        const response = await fetch(endpoint, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          return false;
+        }
+
+        const data = await response.json().catch(() => null);
+        const onlineAdminData = data?.salon?.admin_data;
+        if (!onlineAdminData || typeof onlineAdminData !== "object") {
+          return false;
+        }
+
+        state = normalizeLoadedData(onlineAdminData);
+        persistSilently();
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
     async function saveDataOnline() {
       // Attempt to save to D1 via Worker API
       const endpoint = `${THL_WORKER_API_BASE}/api/admin/salons/${ADMIN_SLUG}`;
@@ -1272,7 +1300,7 @@
       return inputHash === credentials.passwordHash;
     }
 
-    function loadState() {
+    function loadStateLocal() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
         state = deepClone(DEFAULT_ADMIN_DATA);
@@ -1341,12 +1369,17 @@
       }
     }
 
-    function renderApp() {
+    async function renderApp() {
       const session = getSession();
       isAuthenticated = Boolean(session && session.loggedIn);
       renderAuthView();
       if (!isAuthenticated) return;
-      loadState();
+
+      loadStateLocal();
+      const loadedOnline = await loadStateOnline();
+      if (loadedOnline) {
+        showToast("Đã đồng bộ dữ liệu mới nhất từ hệ thống.");
+      }
       renderSections();
     }
 
@@ -1365,7 +1398,7 @@
       }
       persistSession(phone);
       isAuthenticated = true;
-      renderApp();
+      await renderApp();
       showToast("Đăng nhập thành công");
     }
 
@@ -1517,21 +1550,19 @@
       });
     }
 
-    function saveData() {
+    async function saveData() {
       collectInputs();
       state.version = DATA_VERSION;
       persistSilently();
       renderSections();
-      showToast("Đã lưu trên thiết bị này");
+      showToast("Đã lưu nháp trên thiết bị này");
       
-      // Try to save online (fire-and-forget)
-      saveDataOnline().then((savedOnline) => {
-        if (savedOnline) {
-          showToast("Đã lưu online thành công");
-        }
-      }).catch(() => {
-        // Silent fail - user already has local save
-      });
+      const savedOnline = await saveDataOnline();
+      if (savedOnline) {
+        showToast("Đã lưu online thành công");
+      } else {
+        showToast("Lưu online thất bại. Dữ liệu hiện chỉ ở máy này.");
+      }
     }
 
     function resetData() {
