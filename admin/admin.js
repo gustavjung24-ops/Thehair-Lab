@@ -866,7 +866,7 @@ function findSalonById(id) {
 	return salons.find((item) => String(item.id) === String(id));
 }
 
-function onSalonListClick(event) {
+async function onSalonListClick(event) {
 	const target = event.target;
 	if (!(target instanceof HTMLElement)) {
 		return;
