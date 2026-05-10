@@ -27,6 +27,8 @@ const APP_STATE = {
   },
 }
 
+const HOME_QUOTE_ZALO_LINK = 'https://zalo.me/0902964685'
+
 const DEFAULT_CAPABILITIES = [
   {
     title: 'Tư vấn danh mục theo mô hình',
@@ -1002,7 +1004,7 @@ function validateLeadForm(form, formData) {
   }
 
   if (hasRequiredField(form, 'businessModel') && !formData.businessModel) {
-    return 'Vui lòng chọn mô hình kinh doanh.'
+    return 'Vui lòng chọn mẫu landing page muốn nhận.'
   }
 
   if (hasRequiredField(form, 'interest') && !formData.interest) {
@@ -1010,6 +1012,60 @@ function validateLeadForm(form, formData) {
   }
 
   return null
+}
+
+async function copyToClipboardWithFallback(text) {
+  if (navigator?.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch (_error) {
+      // Fallback to textarea + execCommand below.
+    }
+  }
+
+  try {
+    const helper = document.createElement('textarea')
+    helper.value = text
+    helper.setAttribute('readonly', '')
+    helper.style.position = 'fixed'
+    helper.style.opacity = '0'
+    helper.style.pointerEvents = 'none'
+    helper.style.left = '-9999px'
+    document.body.appendChild(helper)
+    helper.focus()
+    helper.select()
+    const copied = document.execCommand('copy')
+    document.body.removeChild(helper)
+    return copied
+  } catch (_error) {
+    return false
+  }
+}
+
+function buildHomeQuoteMessage(formData) {
+  const note = hasUsableValue(formData.note) ? formData.note : '(không có)'
+
+  return [
+    'YÊU CẦU BÁO GIÁ THE HAIR LAB',
+    '',
+    `Tên salon: ${formData.businessName}`,
+    `Người liên hệ: ${formData.contactName}`,
+    `SĐT/Zalo: ${formData.phone}`,
+    `Khu vực: ${formData.area}`,
+    `Nhóm sản phẩm quan tâm: ${formData.interest}`,
+    `Mẫu landing page muốn nhận: ${formData.businessModel}`,
+    `Ghi chú: ${note}`,
+    '',
+    'Nguồn: https://www.thehairlab.top/',
+  ].join('\n')
+}
+
+function openQuoteZaloLink() {
+  const popup = window.open(HOME_QUOTE_ZALO_LINK, '_blank', 'noopener')
+  if (!popup) {
+    window.location.href = HOME_QUOTE_ZALO_LINK
+  }
 }
 
 function buildLeadMessage(formData) {
@@ -1066,6 +1122,27 @@ async function handleLeadSubmit(event) {
   const validationError = validateLeadForm(form, formData)
   if (validationError) {
     showFormStatus(form, validationError, true)
+    return
+  }
+
+  if (form.classList.contains('quote-form')) {
+    const quoteMessage = buildHomeQuoteMessage(formData)
+    const copied = await copyToClipboardWithFallback(quoteMessage)
+    openQuoteZaloLink()
+
+    if (copied) {
+      showFormStatus(
+        form,
+        'Nội dung yêu cầu đã được copy. Vui lòng dán vào Zalo và gửi cho đội kinh doanh.'
+      )
+      return
+    }
+
+    showFormStatus(
+      form,
+      'Không thể tự động copy nội dung. Vui lòng nhập lại vào Zalo và gửi cho đội kinh doanh.',
+      true
+    )
     return
   }
 
