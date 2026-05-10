@@ -636,6 +636,61 @@ async function saveAdminSalonBySlug(request, env, origin, slug) {
   return jsonResponse({ success: true, salon: updated }, 200, origin);
 }
 
+// ─── Telegram Admin Test ──────────────────────────────────────────────────
+
+async function handleAdminTelegramTest(request, env, origin) {
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  const chatId = String(body?.chatId || '').trim();
+  const salonName = String(body?.salonName || '').trim();
+
+  if (!chatId) {
+    return errorResponse('Thiếu chatId.', 400, origin);
+  }
+
+  const token = env.TELEGRAM_BOT_TOKEN;
+  if (!token) {
+    return errorResponse('TELEGRAM_BOT_TOKEN chưa được cấu hình trong Worker secret.', 500, origin);
+  }
+
+  const text = [
+    `✅ <b>Test Telegram - The Hair Lab</b>`,
+    `🏪 Salon: ${salonName || '(không tên)'}`,
+    `💬 Chat ID: <code>${chatId}</code>`,
+    `🔗 Kết nối thành công.`,
+  ].join('\n');
+
+  let tgRes;
+  try {
+    tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
+    });
+  } catch (err) {
+    return errorResponse(`Không kết nối được Telegram API: ${err?.message || err}`, 502, origin);
+  }
+
+  let tgData;
+  try {
+    tgData = await tgRes.json();
+  } catch {
+    tgData = null;
+  }
+
+  if (tgData?.ok) {
+    return jsonResponse({ success: true, message: 'Đã gửi Telegram thành công.' }, 200, origin);
+  }
+
+  const errDesc = tgData?.description || `HTTP ${tgRes.status}`;
+  return jsonResponse({ success: false, error: `Telegram API lỗi: ${errDesc}` }, 200, origin);
+}
+
 // ─── Main Handler ──────────────────────────────────────────────────────────
 
 export default {
@@ -686,6 +741,10 @@ export default {
 
     if (segments.length === 4 && segments[0] === 'api' && segments[1] === 'public' && segments[2] === 'salons' && method === 'GET') {
       return getPublicSalonBySlug(env, origin, decodeURIComponent(segments[3] || ''));
+    }
+
+    if (pathname === '/api/admin/telegram/test' && method === 'POST') {
+      return handleAdminTelegramTest(request, env, origin);
     }
 
     if (pathname !== '/api/leads' || method !== 'POST') {

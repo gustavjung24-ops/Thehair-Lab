@@ -920,12 +920,33 @@ function onSalonListClick(event) {
 		if (!salon) {
 			return;
 		}
-		if (salon.telegram_chat_id) {
-			window.alert(
-				`Demo OK: sau nay lich hen cua salon nay se gui ve Telegram Chat ID nay. (${salon.telegram_chat_id})`,
-			);
-		} else {
+		if (!salon.telegram_chat_id) {
 			window.alert("Chua nhap Telegram Chat ID.");
+			return;
+		}
+		if (!hasApiBaseUrl()) {
+			window.alert("Chua cau hinh API Base URL. Vao o API config phia tren de nhap Worker URL.");
+			return;
+		}
+		showFormMessage("Dang gui Telegram test...");
+		try {
+			const res = await fetch(`${apiConfig.baseUrl}/api/admin/telegram/test`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					slug: salon.slug,
+					chatId: salon.telegram_chat_id,
+					salonName: salon.salon_name,
+				}),
+			});
+			const data = await res.json();
+			if (data?.success) {
+				showFormMessage(`Da gui Telegram test thanh cong den Chat ID: ${salon.telegram_chat_id}`);
+			} else {
+				showFormMessage(`Gui Telegram that bai: ${data?.error || "Loi khong xac dinh"}`, true);
+			}
+		} catch (err) {
+			showFormMessage(`Loi ket noi Worker: ${err?.message || err}`, true);
 		}
 		return;
 	}
