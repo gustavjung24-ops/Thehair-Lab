@@ -790,11 +790,11 @@ async function syncSalonToWorkerBySlug(payload) {
 }
 
 function saveSalonToLocal(payload) {
-	const existing = salons.find((item) => item.id === payload.id);
+	const existing = salons.find((item) => String(item.id) === String(payload.id));
 	const isEdit = Boolean(existing);
 	if (existing) {
 		payload.created_at = existing.created_at || nowIso();
-		salons = salons.map((item) => (item.id === payload.id ? payload : item));
+		salons = salons.map((item) => (String(item.id) === String(payload.id) ? payload : item));
 	} else {
 		payload.created_at = nowIso();
 		salons.unshift(payload);
