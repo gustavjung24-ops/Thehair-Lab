@@ -69,6 +69,60 @@
         <p id="api-mode-status" class="message" role="status" aria-live="polite"></p>
       </section>
 
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h3>Cau hinh trang chu The Hair Lab</h3>
+            <p class="muted">Cau hinh co dinh cho form bao gia trang chu /.</p>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <label class="field">
+            <span>Site URL</span>
+            <input id="homepage-site-url" type="text" value="https://www.thehairlab.top/" readonly />
+          </label>
+          <label class="field">
+            <span>Telegram Chat ID nhan bao gia tong</span>
+            <input id="homepage-quote-telegram-chat-id" type="text" placeholder="-5104953507" />
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label class="field">
+            <span>Google Sheet URL</span>
+            <input id="homepage-google-sheet-url" type="url" placeholder="https://docs.google.com/spreadsheets/d/..." />
+          </label>
+          <label class="field">
+            <span>Google Sheet ID</span>
+            <input id="homepage-google-sheet-id" type="text" placeholder="1ABCxyz" />
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label class="field">
+            <span>Google Sheet Tab</span>
+            <input id="homepage-google-sheet-tab" type="text" placeholder="homepage_quotes" />
+          </label>
+          <label class="field inline-toggle">
+            <span>Bật/tắt nhận báo giá</span>
+            <input id="homepage-quote-enabled" type="checkbox" checked />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Ghi chú nội bộ</span>
+          <textarea id="homepage-internal-note" rows="3" placeholder="Ghi chú riêng cho đội vận hành"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button id="btn-save-homepage-settings" type="button" class="btn btn-primary">Luu cau hinh trang chu</button>
+          <button id="btn-test-homepage-telegram" type="button" class="btn btn-ghost">Test Telegram trang chu</button>
+          <button id="btn-test-homepage-sheet" type="button" class="btn btn-ghost">Test Google Sheet</button>
+        </div>
+        <p id="homepage-settings-message" class="message" role="status" aria-live="polite"></p>
+      </section>
+
       <section class="stats-grid" id="stats-grid" aria-label="Thong ke tong quan"></section>
 
       <section class="panel">
@@ -194,6 +248,6 @@
     </section>
   </main>
 
-  <script src="./admin.js?v=20260510-async-fix"></script>
+  <script src="./admin.js?v=20260510-homepage-settings"></script>
 </body>
 </html>

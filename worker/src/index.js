@@ -52,6 +52,153 @@ function validateSlug(slug) {
   return /^[a-z0-9-]+$/.test(slug);
 }
 
+const DEFAULT_HOMEPAGE_SETTINGS = {
+  siteName: 'The Hair Lab',
+  siteUrl: 'https://www.thehairlab.top/',
+  quoteTelegramChatId: '-5104953507',
+  googleSheetUrl: '',
+  googleSheetId: '',
+  googleSheetTab: 'homepage_quotes',
+  quoteEnabled: true,
+  internalNote: '',
+};
+
+function normalizeHomepageSettings(body) {
+  const safeBody = body && typeof body === 'object' ? body : {};
+  const text = (value) => (typeof value === 'string' ? value.trim() : '');
+  const bool = (value, fallback) => {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
+      if (['false', '0', 'no', 'off'].includes(normalized)) return false;
+    }
+    return fallback;
+  };
+
+  return {
+    siteName: text(safeBody.siteName) || DEFAULT_HOMEPAGE_SETTINGS.siteName,
+    siteUrl: text(safeBody.siteUrl) || DEFAULT_HOMEPAGE_SETTINGS.siteUrl,
+    quoteTelegramChatId: text(safeBody.quoteTelegramChatId) || DEFAULT_HOMEPAGE_SETTINGS.quoteTelegramChatId,
+    googleSheetUrl: text(safeBody.googleSheetUrl),
+    googleSheetId: text(safeBody.googleSheetId),
+    googleSheetTab: text(safeBody.googleSheetTab) || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    quoteEnabled: bool(safeBody.quoteEnabled, DEFAULT_HOMEPAGE_SETTINGS.quoteEnabled),
+    internalNote: text(safeBody.internalNote),
+  };
+}
+
+function resolveGoogleSheetIdFromUrl(sheetUrl) {
+  const value = String(sheetUrl || '').trim();
+  if (!value) {
+    return '';
+  }
+
+  const byPath = value.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (byPath) {
+    return byPath[1];
+  }
+
+  const byQuery = value.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+  if (byQuery) {
+    return byQuery[1];
+  }
+
+  return '';
+}
+
+async function getSiteSettingsRow(env, key) {
+  if (!env?.DB) {
+    return null;
+  }
+
+  try {
+    await ensureSiteSettingsSchema(env);
+    return await env.DB.prepare('SELECT key, value_json, updated_at FROM site_settings WHERE key = ? LIMIT 1')
+      .bind(key)
+      .first();
+  } catch {
+    return null;
+  }
+}
+
+async function upsertSiteSettingsRow(env, key, valueJson) {
+  try {
+    await ensureSiteSettingsSchema(env);
+    await env.DB.prepare(`
+      INSERT INTO site_settings (key, value_json, updated_at)
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(key) DO UPDATE SET
+        value_json = excluded.value_json,
+        updated_at = CURRENT_TIMESTAMP
+    `).bind(key, valueJson).run();
+  } catch (error) {
+    throw new Error(`SITE_SETTINGS_SAVE_FAILED: ${error?.message || error}`);
+  }
+}
+
+async function loadHomepageSettings(env) {
+  const row = await getSiteSettingsRow(env, 'homepage');
+  if (!row?.value_json) {
+    return { ...DEFAULT_HOMEPAGE_SETTINGS };
+  }
+
+  try {
+    return {
+      ...DEFAULT_HOMEPAGE_SETTINGS,
+      ...normalizeHomepageSettings(JSON.parse(row.value_json)),
+    };
+  } catch {
+    return { ...DEFAULT_HOMEPAGE_SETTINGS };
+  }
+}
+
+function publicHomepageSettings(settings) {
+  return {
+    siteName: settings.siteName,
+    siteUrl: settings.siteUrl,
+    googleSheetUrl: settings.googleSheetUrl || '',
+    googleSheetId: settings.googleSheetId || '',
+    googleSheetTab: settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    quoteEnabled: Boolean(settings.quoteEnabled),
+  };
+}
+
+function adminHomepageSettings(settings) {
+  return {
+    ...DEFAULT_HOMEPAGE_SETTINGS,
+    ...settings,
+  };
+}
+
+let siteSettingsSchemaEnsured = false;
+
+async function ensureSiteSettingsSchema(env) {
+  if (siteSettingsSchemaEnsured || !env?.DB) {
+    return;
+  }
+
+  try {
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        key TEXT PRIMARY KEY,
+        value_json TEXT NOT NULL,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE INDEX IF NOT EXISTS idx_site_settings_updated_at ON site_settings(updated_at)
+    `).run();
+  } catch {
+    return;
+  }
+
+  siteSettingsSchemaEnsured = true;
+}
+
 function normalizeSalonPayload(body) {
   const safeBody = body && typeof body === 'object' ? body : {};
   const text = (value) => (typeof value === 'string' ? value.trim() : '');
@@ -526,6 +673,10 @@ async function appendToSheet(env, lead) {
     '',      // Ghi chú chăm sóc
   ];
 
+  await appendRowToSheet(accessToken, sheetId, tabName, row);
+}
+
+async function appendRowToSheet(accessToken, sheetId, tabName, row) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tabName)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   await fetch(url, {
@@ -536,6 +687,56 @@ async function appendToSheet(env, lead) {
     },
     body: JSON.stringify({ values: [row] }),
   });
+}
+
+async function appendHomepageQuoteToSheet(env, settings, quote) {
+  const sheetId = settings.googleSheetId || resolveGoogleSheetIdFromUrl(settings.googleSheetUrl);
+  const tabName = settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab;
+
+  if (!sheetId) {
+    return { ok: false, skipped: true, warning: 'Chưa cấu hình Google Sheet ID cho trang chủ.' };
+  }
+
+  const accessToken = await getGoogleAccessToken(env);
+  if (!accessToken) {
+    return { ok: false, skipped: true, warning: 'Chưa cấu hình Google service account để ghi Google Sheet.' };
+  }
+
+  const time = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+  const row = [
+    time,
+    quote.sourceUrl || '',
+    quote.businessName || '',
+    quote.contactName || '',
+    quote.phone || '',
+    quote.area || '',
+    quote.interest || '',
+    quote.businessModel || '',
+    quote.note || '',
+  ];
+
+  try {
+    await appendRowToSheet(accessToken, sheetId, tabName, row);
+    return { ok: true, saved: true };
+  } catch (error) {
+    return { ok: false, saved: false, warning: `Ghi Google Sheet thất bại: ${error?.message || error}` };
+  }
+}
+
+function buildHomepageQuoteMessage(quote) {
+  return [
+    '📩 <b>YÊU CẦU BÁO GIÁ MỚI - THE HAIR LAB</b>',
+    '',
+    `Tên salon: ${quote.businessName}`,
+    `Người liên hệ: ${quote.contactName}`,
+    `SĐT/Zalo: ${quote.phone}`,
+    `Khu vực: ${quote.area || '(không ghi)'}`,
+    `Nhóm sản phẩm quan tâm: ${quote.interest || '(không ghi)'}`,
+    `Mẫu landing page muốn nhận: ${quote.businessModel || '(không ghi)'}`,
+    `Ghi chú: ${quote.note || '(không ghi)'}`,
+    '',
+    `Nguồn: ${quote.sourceUrl || DEFAULT_HOMEPAGE_SETTINGS.siteUrl}`,
+  ].join('\n');
 }
 
 // ─── Admin/Public Salons API ──────────────────────────────────────────────
@@ -933,6 +1134,84 @@ async function handleAdminTelegramTest(request, env, origin) {
   return jsonResponse({ success: false, error: `Telegram API lỗi: ${errDesc}` }, 200, origin);
 }
 
+async function handleAdminHomepageSettingsGet(env, origin) {
+  const settings = adminHomepageSettings(await loadHomepageSettings(env));
+  return jsonResponse({ success: true, settings }, 200, origin);
+}
+
+async function handleAdminHomepageSettingsPut(request, env, origin) {
+  let body;
+  try {
+    body = await readJson(request);
+  } catch {
+    return errorResponse('Dữ liệu không hợp lệ.', 400, origin);
+  }
+
+  const current = await loadHomepageSettings(env);
+  const merged = normalizeHomepageSettings({ ...current, ...body });
+  await upsertSiteSettingsRow(env, 'homepage', JSON.stringify(merged));
+  return jsonResponse({ success: true, settings: adminHomepageSettings(merged) }, 200, origin);
+}
+
+async function handleAdminHomepageSettingsTestTelegram(env, origin) {
+  const settings = await loadHomepageSettings(env);
+  const token = (env.TELEGRAM_BOT_TOKEN || '').trim();
+  if (!token) {
+    return errorResponse('TELEGRAM_BOT_TOKEN chưa được cấu hình trong Worker secret.', 500, origin);
+  }
+
+  const chatId = settings.quoteTelegramChatId || DEFAULT_HOMEPAGE_SETTINGS.quoteTelegramChatId;
+  const text = [
+    '🧪 <b>Test Telegram trang chủ - The Hair Lab</b>',
+    '',
+    `Site: ${settings.siteName}`,
+    `Chat ID: <code>${chatId}</code>`,
+    `Sheet tab: ${settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab}`,
+  ].join('\n');
+
+  let tgRes;
+  try {
+    tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
+    });
+  } catch (err) {
+    return errorResponse(`Không kết nối được Telegram API: ${err?.message || err}`, 502, origin);
+  }
+
+  const tgData = await tgRes.json().catch(() => null);
+  if (!tgData?.ok) {
+    return jsonResponse({ success: false, error: tgData?.description || `HTTP ${tgRes.status}` }, 200, origin);
+  }
+
+  return jsonResponse({ success: true, telegramSent: true }, 200, origin);
+}
+
+async function handleAdminHomepageSettingsTestSheet(env, origin) {
+  const settings = await loadHomepageSettings(env);
+  if (!settings.quoteEnabled) {
+    return jsonResponse({ success: false, error: 'Báo giá trang chủ đang tắt.' }, 200, origin);
+  }
+
+  const result = await appendHomepageQuoteToSheet(env, settings, {
+    businessName: 'Test Google Sheet - The Hair Lab',
+    contactName: 'System Test',
+    phone: '0000000000',
+    area: 'homepage-settings',
+    interest: 'test-sheet',
+    businessModel: settings.googleSheetTab || DEFAULT_HOMEPAGE_SETTINGS.googleSheetTab,
+    note: 'Test từ admin tổng',
+    sourceUrl: settings.siteUrl,
+  });
+
+  if (result.ok || result.skipped) {
+    return jsonResponse({ success: true, sheetSaved: Boolean(result.saved), warning: result.warning || null }, 200, origin);
+  }
+
+  return jsonResponse({ success: false, error: result.warning || 'Ghi Google Sheet thất bại.' }, 200, origin);
+}
+
 async function handlePublicQuote(request, env, origin) {
   let body;
   try {
@@ -949,6 +1228,11 @@ async function handlePublicQuote(request, env, origin) {
   const businessModel = String(body?.businessModel || '').trim();
   const note = String(body?.note || '').trim();
   const sourceUrl = String(body?.sourceUrl || '').trim() || 'https://www.thehairlab.top/';
+
+  const settings = await loadHomepageSettings(env);
+  if (!settings.quoteEnabled) {
+    return errorResponse('Trang chủ hiện đang tạm tắt nhận báo giá.', 503, origin);
+  }
 
   if (!businessName) {
     return errorResponse('Vui lòng nhập tên salon.', 422, origin);
@@ -971,20 +1255,8 @@ async function handlePublicQuote(request, env, origin) {
     return errorResponse('TELEGRAM_BOT_TOKEN chưa được cấu hình trong Worker secret.', 500, origin);
   }
 
-  const groupChatId = '-5104953507';
-  const lines = [
-    '📩 <b>YÊU CẦU BÁO GIÁ MỚI - THE HAIR LAB</b>',
-    '',
-    `Tên salon: ${businessName}`,
-    `Người liên hệ: ${contactName}`,
-    `SĐT/Zalo: ${phone}`,
-    `Khu vực: ${area || '(không ghi)'}`,
-    `Nhóm sản phẩm quan tâm: ${interest || '(không ghi)'}`,
-    `Mẫu landing page muốn nhận: ${businessModel || '(không ghi)'}`,
-    `Ghi chú: ${note || '(không ghi)'}`,
-    '',
-    `Nguồn: ${sourceUrl}`,
-  ];
+  const groupChatId = settings.quoteTelegramChatId || DEFAULT_HOMEPAGE_SETTINGS.quoteTelegramChatId;
+  const lines = buildHomepageQuoteMessage({ businessName, contactName, phone, area, interest, businessModel, note, sourceUrl }).split('\n');
 
   let tgRes;
   try {
@@ -1017,7 +1289,26 @@ async function handlePublicQuote(request, env, origin) {
     return jsonResponse({ success: false, error }, 200, origin);
   }
 
-  return jsonResponse({ success: true, telegramSent: true }, 200, origin);
+  const sheetResult = await appendHomepageQuoteToSheet(env, settings, {
+    businessName,
+    contactName,
+    phone,
+    area,
+    interest,
+    businessModel,
+    note,
+    sourceUrl,
+  });
+
+  if (sheetResult.ok) {
+    return jsonResponse({ success: true, telegramSent: true, sheetSaved: true }, 200, origin);
+  }
+
+  if (sheetResult.skipped) {
+    return jsonResponse({ success: true, telegramSent: true, sheetSaved: false, warning: sheetResult.warning || null }, 200, origin);
+  }
+
+  return jsonResponse({ success: true, telegramSent: true, sheetSaved: false, warning: sheetResult.warning || null }, 200, origin);
 }
 
 // ─── Main Handler ──────────────────────────────────────────────────────────
@@ -1073,7 +1364,43 @@ export default {
     }
 
     if (pathname === '/api/admin/telegram/test' && method === 'POST') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
       return handleAdminTelegramTest(request, env, origin);
+    }
+
+    if (pathname === '/api/admin/site-settings/homepage' && method === 'GET') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
+      return handleAdminHomepageSettingsGet(env, origin);
+    }
+
+    if (pathname === '/api/admin/site-settings/homepage' && method === 'PUT') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
+      return handleAdminHomepageSettingsPut(request, env, origin);
+    }
+
+    if (pathname === '/api/admin/site-settings/homepage/test-telegram' && method === 'POST') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
+      return handleAdminHomepageSettingsTestTelegram(env, origin);
+    }
+
+    if (pathname === '/api/admin/site-settings/homepage/test-sheet' && method === 'POST') {
+      if (!requireAdminAuth(request, env)) {
+        return errorResponse('Unauthorized', 401, origin);
+      }
+      return handleAdminHomepageSettingsTestSheet(env, origin);
+    }
+
+    if (pathname === '/api/public/site-settings/homepage' && method === 'GET') {
+      const settings = publicHomepageSettings(await loadHomepageSettings(env));
+      return jsonResponse({ success: true, settings }, 200, origin);
     }
 
     if (pathname === '/api/public/quote' && method === 'POST') {

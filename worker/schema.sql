@@ -23,6 +23,12 @@ CREATE TABLE IF NOT EXISTS salons (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS site_settings (
+  key TEXT PRIMARY KEY,
+  value_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS leads (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   salon_id INTEGER,
@@ -91,6 +97,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
 
 CREATE INDEX IF NOT EXISTS idx_salons_slug ON salons(slug);
 CREATE INDEX IF NOT EXISTS idx_salons_status ON salons(status);
+CREATE INDEX IF NOT EXISTS idx_site_settings_updated_at ON site_settings(updated_at);
 CREATE INDEX IF NOT EXISTS idx_leads_salon_id ON leads(salon_id);
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at);
 CREATE INDEX IF NOT EXISTS idx_services_salon_id ON salon_services(salon_id);

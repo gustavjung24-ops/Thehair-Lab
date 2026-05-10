@@ -1,6 +1,16 @@
 ﻿const SALONS_KEY = "thehairlab_admin_salons";
 const SESSION_KEY = "thehairlab_admin_session";
 const API_CONFIG_KEY = "thehairlab_admin_api_config";
+const HOMEPAGE_SETTINGS_DEFAULTS = {
+	siteName: "The Hair Lab",
+	siteUrl: "https://www.thehairlab.top/",
+	quoteTelegramChatId: "-5104953507",
+	googleSheetUrl: "",
+	googleSheetId: "",
+	googleSheetTab: "homepage_quotes",
+	quoteEnabled: true,
+	internalNote: "",
+};
 const WORKER_BASES = [
 	"https://thehairlab-leads-worker.khuongbinh-info.workers.dev",
 	"https://thehairlab-leads-worker.khuongbinh-thehairlab.workers.dev",
@@ -35,6 +45,17 @@ const els = {
 	apiToken: document.getElementById("api-token"),
 	saveApiConfigBtn: document.getElementById("btn-save-api-config"),
 	apiModeStatus: document.getElementById("api-mode-status"),
+	homepageSiteUrl: document.getElementById("homepage-site-url"),
+	homepageQuoteTelegramChatId: document.getElementById("homepage-quote-telegram-chat-id"),
+	homepageGoogleSheetUrl: document.getElementById("homepage-google-sheet-url"),
+	homepageGoogleSheetId: document.getElementById("homepage-google-sheet-id"),
+	homepageGoogleSheetTab: document.getElementById("homepage-google-sheet-tab"),
+	homepageQuoteEnabled: document.getElementById("homepage-quote-enabled"),
+	homepageInternalNote: document.getElementById("homepage-internal-note"),
+	homepageSettingsMessage: document.getElementById("homepage-settings-message"),
+	saveHomepageSettingsBtn: document.getElementById("btn-save-homepage-settings"),
+	testHomepageTelegramBtn: document.getElementById("btn-test-homepage-telegram"),
+	testHomepageSheetBtn: document.getElementById("btn-test-homepage-sheet"),
 	statsGrid: document.getElementById("stats-grid"),
 	salonList: document.getElementById("salon-list"),
 	salonForm: document.getElementById("salon-form"),
@@ -70,6 +91,7 @@ let salons = [];
 let slugWasManual = false;
 let apiConfig = null;
 let activeWorkerBase = "";
+let homepageSettings = {...HOMEPAGE_SETTINGS_DEFAULTS};
 
 function nowIso() {
 	return new Date().toISOString();
@@ -263,6 +285,153 @@ function saveApiConfig(baseUrl, token) {
 	};
 	localStorage.setItem(API_CONFIG_KEY, JSON.stringify(normalized));
 	apiConfig = normalized;
+}
+
+function normalizeHomepageSettings(value) {
+	const source = value && typeof value === "object" ? value : {};
+	return {
+		...HOMEPAGE_SETTINGS_DEFAULTS,
+		siteName: String(source.siteName || HOMEPAGE_SETTINGS_DEFAULTS.siteName).trim(),
+		siteUrl: String(source.siteUrl || HOMEPAGE_SETTINGS_DEFAULTS.siteUrl).trim(),
+		quoteTelegramChatId: String(source.quoteTelegramChatId || HOMEPAGE_SETTINGS_DEFAULTS.quoteTelegramChatId).trim(),
+		googleSheetUrl: String(source.googleSheetUrl || "").trim(),
+		googleSheetId: String(source.googleSheetId || "").trim(),
+		googleSheetTab: String(source.googleSheetTab || HOMEPAGE_SETTINGS_DEFAULTS.googleSheetTab).trim() || HOMEPAGE_SETTINGS_DEFAULTS.googleSheetTab,
+		quoteEnabled: source.quoteEnabled === false ? false : true,
+		internalNote: String(source.internalNote || "").trim(),
+	};
+}
+
+function setHomepageSettingsMessage(message, isError = false) {
+	if (!els.homepageSettingsMessage) {
+		return;
+	}
+	els.homepageSettingsMessage.textContent = message;
+	els.homepageSettingsMessage.style.color = isError ? "#b62439" : "#4e42a8";
+}
+
+function syncHomepageSettingsInputs() {
+	homepageSettings = normalizeHomepageSettings(homepageSettings);
+	if (els.homepageSiteUrl) {
+		els.homepageSiteUrl.value = homepageSettings.siteUrl;
+	}
+	if (els.homepageQuoteTelegramChatId) {
+		els.homepageQuoteTelegramChatId.value = homepageSettings.quoteTelegramChatId;
+	}
+	if (els.homepageGoogleSheetUrl) {
+		els.homepageGoogleSheetUrl.value = homepageSettings.googleSheetUrl;
+	}
+	if (els.homepageGoogleSheetId) {
+		els.homepageGoogleSheetId.value = homepageSettings.googleSheetId;
+	}
+	if (els.homepageGoogleSheetTab) {
+		els.homepageGoogleSheetTab.value = homepageSettings.googleSheetTab;
+	}
+	if (els.homepageQuoteEnabled) {
+		els.homepageQuoteEnabled.checked = Boolean(homepageSettings.quoteEnabled);
+	}
+	if (els.homepageInternalNote) {
+		els.homepageInternalNote.value = homepageSettings.internalNote;
+	}
+}
+
+function readHomepageSettingsForm() {
+	return normalizeHomepageSettings({
+		siteName: els.homepageSiteUrl?.value ? HOMEPAGE_SETTINGS_DEFAULTS.siteName : HOMEPAGE_SETTINGS_DEFAULTS.siteName,
+		siteUrl: els.homepageSiteUrl?.value || HOMEPAGE_SETTINGS_DEFAULTS.siteUrl,
+		quoteTelegramChatId: els.homepageQuoteTelegramChatId?.value || HOMEPAGE_SETTINGS_DEFAULTS.quoteTelegramChatId,
+		googleSheetUrl: els.homepageGoogleSheetUrl?.value || "",
+		googleSheetId: els.homepageGoogleSheetId?.value || "",
+		googleSheetTab: els.homepageGoogleSheetTab?.value || HOMEPAGE_SETTINGS_DEFAULTS.googleSheetTab,
+		quoteEnabled: Boolean(els.homepageQuoteEnabled?.checked),
+		internalNote: els.homepageInternalNote?.value || "",
+	});
+}
+
+function syncHomepageSettingsDerivedFields() {
+	if (els.homepageGoogleSheetId && els.homepageGoogleSheetUrl && !els.homepageGoogleSheetId.value.trim()) {
+		const parsed = parseGoogleSheetId(els.homepageGoogleSheetUrl.value.trim());
+		if (parsed) {
+			els.homepageGoogleSheetId.value = parsed;
+		}
+	}
+}
+
+async function loadHomepageSettings() {
+	try {
+		let data = null;
+		if (hasApiBaseUrl() && hasAdminToken()) {
+			data = await requestApi("/api/admin/site-settings/homepage", { method: "GET" });
+		} else {
+			data = await requestWorkerPublic("/api/public/site-settings/homepage");
+		}
+		homepageSettings = normalizeHomepageSettings(data?.settings || data?.homepage || data || HOMEPAGE_SETTINGS_DEFAULTS);
+		syncHomepageSettingsInputs();
+		setHomepageSettingsMessage(`Da tai cau hinh trang chu (${homepageSettings.siteUrl}).`);
+	} catch (error) {
+		homepageSettings = {...HOMEPAGE_SETTINGS_DEFAULTS};
+		syncHomepageSettingsInputs();
+		setHomepageSettingsMessage(`Khong tai duoc cau hinh trang chu: ${error?.message || error}`, true);
+	}
+}
+
+async function saveHomepageSettings() {
+	if (!hasApiBaseUrl() || !hasAdminToken()) {
+		setHomepageSettingsMessage("Can cau hinh API Base URL va Admin API Token de luu trang chu.", true);
+		return;
+	}
+
+	syncHomepageSettingsDerivedFields();
+	homepageSettings = readHomepageSettingsForm();
+	const result = await requestApi("/api/admin/site-settings/homepage", {
+		method: "PUT",
+		body: JSON.stringify(homepageSettings),
+	});
+	homepageSettings = normalizeHomepageSettings(result?.settings || homepageSettings);
+	syncHomepageSettingsInputs();
+	setHomepageSettingsMessage("Da luu cau hinh trang chu thanh cong.");
+}
+
+async function testHomepageTelegram() {
+	if (!hasApiBaseUrl() || !hasAdminToken()) {
+		setHomepageSettingsMessage("Can cau hinh API de test Telegram trang chu.", true);
+		return;
+	}
+
+	setHomepageSettingsMessage("Dang gui Telegram test trang chu...");
+	try {
+		const data = await requestApi("/api/admin/site-settings/homepage/test-telegram", {
+			method: "POST",
+		});
+		if (data?.success) {
+			setHomepageSettingsMessage(`Da gui Telegram test trang chu thanh cong den Chat ID: ${homepageSettings.quoteTelegramChatId || HOMEPAGE_SETTINGS_DEFAULTS.quoteTelegramChatId}`);
+			return;
+		}
+		setHomepageSettingsMessage(`Gui Telegram trang chu that bai: ${data?.error || "Loi khong xac dinh"}`, true);
+	} catch (error) {
+		setHomepageSettingsMessage(`Loi ket noi Worker: ${error?.message || error}`, true);
+	}
+}
+
+async function testHomepageSheet() {
+	if (!hasApiBaseUrl() || !hasAdminToken()) {
+		setHomepageSettingsMessage("Can cau hinh API de test Google Sheet trang chu.", true);
+		return;
+	}
+
+	setHomepageSettingsMessage("Dang test Google Sheet trang chu...");
+	try {
+		const data = await requestApi("/api/admin/site-settings/homepage/test-sheet", {
+			method: "POST",
+		});
+		if (data?.success) {
+			setHomepageSettingsMessage(data?.warning ? `Test Google Sheet xong: ${data.warning}` : "Test Google Sheet trang chu thanh cong.");
+			return;
+		}
+		setHomepageSettingsMessage(`Test Google Sheet that bai: ${data?.error || "Loi khong xac dinh"}`, true);
+	} catch (error) {
+		setHomepageSettingsMessage(`Loi ket noi Worker: ${error?.message || error}`, true);
+	}
 }
 
 function setApiModeStatus(message, isError = false) {
@@ -617,6 +786,7 @@ async function onLoginSubmit(event) {
 		setSession({ email, logged_in_at: nowIso() });
 		showLoginMessage("Dang nhap thanh cong.", false);
 		showView(true);
+		await loadHomepageSettings();
 		await loadSalonsData();
 		renderAll();
 		return;
@@ -635,6 +805,7 @@ async function onSaveApiConfig() {
 
 	saveApiConfig(baseUrl, token);
 	syncApiConfigInputs();
+	await loadHomepageSettings();
 	await loadSalonsData();
 	renderAll();
 }
@@ -999,6 +1170,7 @@ async function onClearStorageClick() {
 async function init() {
 	loadApiConfig();
 	syncApiConfigInputs();
+	await loadHomepageSettings();
 	await loadSalonsData();
 
 	const session = getSession();
@@ -1013,6 +1185,9 @@ async function init() {
 	els.saveApiConfigBtn.addEventListener("click", onSaveApiConfig);
 	els.resetFormBtn.addEventListener("click", resetForm);
 	els.clearStorageBtn.addEventListener("click", onClearStorageClick);
+	els.saveHomepageSettingsBtn.addEventListener("click", saveHomepageSettings);
+	els.testHomepageTelegramBtn.addEventListener("click", testHomepageTelegram);
+	els.testHomepageSheetBtn.addEventListener("click", testHomepageSheet);
 
 	els.fields.salon_name.addEventListener("input", onSalonNameInput);
 	els.fields.slug.addEventListener("input", onSlugInput);
